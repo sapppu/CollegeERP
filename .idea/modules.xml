@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AWT/AWT.iml" filepath="$PROJECT_DIR$/AWT/AWT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Assignment 6-7/Assignment 6-7.iml" filepath="$PROJECT_DIR$/Assignment 6-7/Assignment 6-7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CollectionFramework/CollectionFramework.iml" filepath="$PROJECT_DIR$/CollectionFramework/CollectionFramework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Filehandling/Filehandling.iml" filepath="$PROJECT_DIR$/Filehandling/Filehandling.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/IdeaProjects.iml" filepath="$PROJECT_DIR$/.idea/IdeaProjects.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MCAJDBC/MCAJDBC.iml" filepath="$PROJECT_DIR$/MCAJDBC/MCAJDBC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Socket_Programming/Socket_Programming.iml" filepath="$PROJECT_DIR$/Socket_Programming/Socket_Programming.iml" />
+      <module fileurl="file://$PROJECT_DIR$/javaMCAsem1/javaMCAsem1.iml" filepath="$PROJECT_DIR$/javaMCAsem1/javaMCAsem1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/multithreading/multithreading.iml" filepath="$PROJECT_DIR$/multithreading/multithreading.iml" />
+      <module fileurl="file://$PROJECT_DIR$/practice/practice.iml" filepath="$PROJECT_DIR$/practice/practice.iml" />
+    </modules>
+  </component>
+</project>

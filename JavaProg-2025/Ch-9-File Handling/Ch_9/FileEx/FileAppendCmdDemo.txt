@@ -1,0 +1,23 @@
+ import  java.io.*;
+ class FileAppendCmdDemo
+ {
+ 	public static void main(String args[]) throws FileNotFoundException , 							                     IOException
+ 		{
+			File f1= new File(args[0]);
+			File f2= new File(args[1]);
+			if(f1.exists()&&f2.exists())
+			{
+				FileInputStream fin=new FilepInutStream(f2);
+				FileOutputStream fout=new FileOutputStream(f1,true);
+				int  n;
+				while((n=fin.read()!= -1))
+				{
+					fout.write(n);
+				}
+				fin.close();
+				fout.close();
+			}
+			else
+			{ System.out.println(“File doesn’t exist ”)  };
+		}
+	}

@@ -1,0 +1,38 @@
+// Program illustrate the use of package / import statement . How to write java package program
+// subdirectory name  : r
+// Sourcefile name : R.java
+package r;
+public class  R
+{
+	public void r1() 
+	{
+		System.out.println("Hello you are in r1 !!");
+	}
+}
+// subdirectory name  : s
+// Sourcefile name : S.java
+package s;
+public class  S
+{
+	public void s1() 
+	{
+		System.out.println("Hello you are in s1 !!");
+	}
+}
+// subdirectory name  : q
+// Sourcefile name : ImportDemo.java
+package q;
+import r.R;
+import s.S;
+public class  ImportDemo
+{
+	public static void main (String args[]) 
+	{
+		R obj1= new R();
+		obj1.r1();
+
+		S obj2= new S();
+		obj2.s1();
+		System.out.println("Hello you finish ImportDemo !!");
+	}
+}

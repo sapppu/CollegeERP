@@ -1,0 +1,8 @@
+package p;
+class C 
+{
+	void c1()
+	{
+		System.out.println("Hello c1 !");
+	}
+}

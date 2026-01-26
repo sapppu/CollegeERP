@@ -1,0 +1,248 @@
+class Bank {
+    private int balance = 0;
+
+    public synchronized void deposit(int amount) {
+        balance = balance + amount;
+        System.out.println(Thread.currentThread().getName() + " deposited " + amount + " | Balance: " + balance);
+    }
+
+    public void depositUsingBlock(int amount) {
+        synchronized(this) {
+            balance = balance + amount;
+            System.out.println(Thread.currentThread().getName() + " deposited " + amount + " using block | Balance: " + balance);
+        }
+    }
+}
+
+class MyThread extends Thread {
+    Bank bank;
+
+    MyThread(Bank bank) {
+        this.bank = bank;
+    }
+
+    public void run() {
+        bank.deposit(100);
+        bank.depositUsingBlock(200);
+    }
+}
+
+public class SyncDemo {
+    public static void main(String[] args) {
+        Bank bank = new Bank();
+
+        MyThread t1 = new MyThread(bank);
+        MyThread t2 = new MyThread(bank);
+
+        t1.setName("Thread-1");
+        t2.setName("Thread-2");
+
+        t1.start();
+        t2.start();
+    }
+}
+---------------------------------------------------------------------------------
+import java.util.*;
+
+class SinThread extends Thread {
+    double degree, result;
+
+    SinThread(double degree) {
+        this.degree = degree;
+    }
+
+    public void run() {
+        double rad = Math.toRadians(degree);
+        result = Math.sin(rad);
+        System.out.println("Sin(" + degree + ") = " + result);
+    }
+}
+
+class CosThread extends Thread {
+    double degree, result;
+
+    CosThread(double degree) {
+        this.degree = degree;
+    }
+
+    public void run() {
+        double rad = Math.toRadians(degree);
+        result = Math.cos(rad);
+        System.out.println("Cos(" + degree + ") = " + result);
+    }
+}
+
+class TanThread extends Thread {
+    double degree, result;
+
+    TanThread(double degree) {
+        this.degree = degree;
+    }
+
+    public void run() {
+        double rad = Math.toRadians(degree);
+        result = Math.tan(rad);
+        System.out.println("Tan(" + degree + ") = " + result);
+    }
+}
+
+public class TrigoThreads {
+    public static void main(String[] args) throws InterruptedException {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter angle in degrees: ");
+        double degree = sc.nextDouble();
+
+        SinThread t1 = new SinThread(degree);
+        CosThread t2 = new CosThread(degree);
+        TanThread t3 = new TanThread(degree);
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        t1.join();
+        t2.join();
+        t3.join();
+
+    }
+}
+
+---------------------------------------------------------------------------------------
+class SharedResource {
+    int data;
+    boolean hasData = false;
+
+    public synchronized void produce(int value) {
+        while (hasData) {
+            try { wait(); } catch (InterruptedException e) {}
+        }
+        data = value;
+        hasData = true;
+        System.out.println("Produced: " + data);
+        notifyAll();
+    }
+
+    public synchronized int consume() {
+        while (!hasData) {
+            try { wait(); } catch (InterruptedException e) {}
+        }
+        System.out.println("Consumed: " + data);
+        hasData = false;
+        notify();
+        return data;
+    }
+}
+
+class Producer extends Thread {
+    SharedResource obj;
+    Producer(SharedResource obj) {
+        this.obj = obj;
+    }
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            obj.produce(i);
+            try { Thread.sleep(500); } catch (Exception e) {}
+        }
+    }
+}
+
+class Consumer extends Thread {
+    SharedResource obj;
+    Consumer(SharedResource obj) {
+        this.obj = obj;
+    }
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            obj.consume();
+            try { Thread.sleep(500); } catch (Exception e) {}
+        }
+    }
+}
+
+public class InterThreadDemo {
+    public static void main(String[] args) {
+        SharedResource obj = new SharedResource();
+        Producer p = new Producer(obj);
+        Consumer c = new Consumer(obj);
+
+        p.start();
+        c.start();
+    }
+}
+-----------------------------------------------------------------------
+import java.util.Scanner;
+
+class ReservationSystem {
+    int totalSeats;
+
+    ReservationSystem(int seats) {
+        totalSeats = seats;
+    }
+
+    synchronized void bookTicket(String name, int seats) {
+        System.out.println(name + " is trying to book " + seats + " seat(s)");
+
+        if (seats <= totalSeats) {
+            System.out.println("Booking confirmed for " + name);
+            totalSeats = totalSeats - seats;
+            System.out.println("Seats left: " + totalSeats);
+        } else {
+            System.out.println("Booking failed for " + name +
+                    ". Requested: " + seats +
+                    ", Available: " + totalSeats);
+        }
+    }
+}
+
+class BookingThread extends Thread {
+    ReservationSystem rs;
+    String name;
+    int seats;
+
+    BookingThread(ReservationSystem rs, String name, int seats) {
+        this.rs = rs;
+        this.name = name;
+        this.seats = seats;
+    }
+
+    public void run() {
+        rs.bookTicket(name, seats);
+    }
+}
+
+public class TicketReservation {
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter total seats: ");
+        int total = sc.nextInt();
+        sc.nextLine();
+
+        ReservationSystem rs = new ReservationSystem(total);
+
+        System.out.print("Enter number of booking requests: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        BookingThread threads[] = new BookingThread[n];
+
+        for(int i = 0; i < n; i++) {
+            System.out.println("\nBooking Request #" + (i + 1));
+            System.out.print("Enter Name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter Seats Required: ");
+            int seats = sc.nextInt();
+            sc.nextLine();
+
+            threads[i] = new BookingThread(rs, name, seats);
+        }
+
+        for(int i = 0; i < n; i++) threads[i].start();
+        for(int i = 0; i < n; i++) threads[i].join();
+
+    }
+}
+
+
+

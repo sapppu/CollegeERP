@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Practical_slips/Practical_1/Practical_1.iml" filepath="$PROJECT_DIR$/Practical_slips/Practical_1/Practical_1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Practical_slips/Practical_slips.iml" filepath="$PROJECT_DIR$/Practical_slips/Practical_slips.iml" />
+      <module fileurl="file://$PROJECT_DIR$/practical_assignments/practical_assignments.iml" filepath="$PROJECT_DIR$/practical_assignments/practical_assignments.iml" />
+      <module fileurl="file://$PROJECT_DIR$/untitled.iml" filepath="$PROJECT_DIR$/untitled.iml" />
+    </modules>
+  </component>
+</project>

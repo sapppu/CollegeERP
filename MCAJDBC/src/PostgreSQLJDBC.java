@@ -1,0 +1,41 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class PostgreSQLJDBC {
+    public static void main(String[] args) {
+        try {
+            //Step1- Load the driver
+            Class.forName("org.postgresql.Driver");
+
+            // Database URL
+            String url = "jdbc:postgresql://localhost:5432/testdb";
+            String user = "testuser";
+            String password = "test123";
+
+            // Step 4 - Create connection
+            Connection con = DriverManager.getConnection(url, user, password);
+
+            System.out.println("Connected to PostgreSQL successfully");
+
+            // Step 3 - Create statement
+            Statement stmt = con.createStatement();
+
+            // step 4- Execute query
+            ResultSet rs = stmt.executeQuery("SELECT version()");
+            // step 5 - Rad the records
+            while (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
+
+            // Close connection
+            rs.close();
+            stmt.close();
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

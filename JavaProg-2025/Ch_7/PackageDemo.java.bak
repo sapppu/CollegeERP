@@ -1,0 +1,14 @@
+import p1.B.*;
+import p2.C.*;
+public class PackageDemo 
+{
+public static void main(String args[])
+	{
+		B b =new B();
+		b.b1();
+		C c =new C();
+		c.c1();
+	}
+
+}
+
