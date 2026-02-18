@@ -1,0 +1,17 @@
+<h2>All Students</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+    </tr>
+
+    <tr th:each="u : ${users}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.username}"></td>
+    </tr>
+
+</table>
+
+<br>
+<a href="/admin/dashboard">Back to Dashboard</a>

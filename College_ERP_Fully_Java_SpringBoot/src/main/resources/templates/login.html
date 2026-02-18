@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ERP Login</title>
+  <style>
+    body{
+      font-family:Arial;
+      background:linear-gradient(to right,#1e3799,#4a69bd);
+    }
+    .box{
+      width:350px;
+      background:white;
+      padding:30px;
+      margin:120px auto;
+      border-radius:10px;
+      text-align:center;
+    }
+    input{
+      width:90%;
+      padding:10px;
+      margin:10px;
+    }
+    button{
+      padding:10px 25px;
+      background:#1e3799;
+      color:white;
+      border:none;
+      border-radius:5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>College ERP Login</h2>
+
+  <form method="post" action="/login">
+    <input type="text" name="username" placeholder="Username"><br>
+    <input type="password" name="password" placeholder="Password"><br>
+    <button type="submit">Login</button>
+  </form>
+
+</div>
+
+</body>
+</html>

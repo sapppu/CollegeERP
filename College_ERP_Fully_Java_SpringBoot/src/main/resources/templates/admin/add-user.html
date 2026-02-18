@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add User</title>
+    <style>
+        body { font-family: Arial; background:#f4f4f4; margin:0; }
+
+        .header {
+            background:#1e3799;
+            color:white;
+            padding:15px;
+            font-size:22px;
+        }
+
+        .container{
+            width:400px;
+            margin:60px auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 0 10px gray;
+            text-align:center;
+        }
+
+        input, select{
+            width:90%;
+            padding:10px;
+            margin:10px;
+        }
+
+        button{
+            background:#1e3799;
+            color:white;
+            padding:12px 20px;
+            border:none;
+            border-radius:5px;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        button:hover{ background:#4a69bd; }
+
+        a{
+            text-decoration:none;
+            display:block;
+            margin-top:20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">College ERP - Add User</div>
+
+<div class="container">
+
+    <h2>Add Student / Faculty</h2>
+
+    <form method="post" action="/admin/save-user">
+
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <select name="role">
+            <option value="ROLE_STUDENT">Student</option>
+            <option value="ROLE_FACULTY">Faculty</option>
+        </select>
+
+        <br><br>
+        <button type="submit">Save User</button>
+
+    </form>
+
+    <a href="/admin/dashboard">⬅ Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
