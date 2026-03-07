@@ -1,15 +1,10 @@
-
 package com.college.erp.controller.student;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/student/courseregistration")
+@Controller
 public class CourseRegistrationController {
-    @GetMapping
-    public String page() {
-        return "CourseRegistrationController working";
-    }
+    @GetMapping("/student/courseregistration")
+    public String page() { return "student/course-registration"; }
 }

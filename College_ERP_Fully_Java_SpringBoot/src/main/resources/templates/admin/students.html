@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Students</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f9; padding: 40px; margin: 0; }
+        .navbar { background: #1e3799; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; margin: -40px -40px 30px -40px; }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; }
+        h2 { color: #1e3799; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: center; }
+        th { background: #1e3799; color: white; }
+        tr:hover { background: #f1f2f6; }
+        a { text-decoration: none; padding: 6px 12px; border-radius: 6px; color: white; }
+        .edit { background: #38ada9; }
+        .delete { background: #e55039; }
+        .top { margin-bottom: 20px; }
+        .btn { background: #1e3799; color: white; padding: 10px 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <h2>College ERP — All Students</h2>
+    <a href="/admin/dashboard">⬅ Dashboard</a>
+</div>
+
+<h2>All Students</h2>
+<div class="top">
+    <a href="/admin/add-student" class="btn">➕ Add New Student</a>
+</div>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Enrollment No</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Department</th>
+        <th>Year</th>
+        <th>Username</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="s : ${list}">
+        <td th:text="${s.id}"></td>
+        <td th:text="${s.enrollmentNo}"></td>
+        <td th:text="${s.name}"></td>
+        <td th:text="${s.email}"></td>
+        <td th:text="${s.phone}"></td>
+        <td th:text="${s.department}"></td>
+        <td th:text="${s.year}"></td>
+        <td th:text="${s.username}"></td>
+        <td>
+            <a th:href="@{/admin/edit-student/{id}(id=${s.id})}" class="edit">Edit</a>
+            <a th:href="@{/admin/delete-student/{id}(id=${s.id})}" class="delete"
+               onclick="return confirm('Delete this student and their login?')">Delete</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

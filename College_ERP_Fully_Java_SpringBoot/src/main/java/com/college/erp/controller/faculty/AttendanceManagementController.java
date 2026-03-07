@@ -1,15 +1,10 @@
-
 package com.college.erp.controller.faculty;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/faculty/attendancemanagement")
+@Controller
 public class AttendanceManagementController {
-    @GetMapping
-    public String page() {
-        return "AttendanceManagementController working";
-    }
+    @GetMapping("/faculty/attendancemanagement")
+    public String page() { return "faculty/attendance-management"; }
 }

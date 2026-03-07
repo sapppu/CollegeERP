@@ -1,17 +1,59 @@
-<h2>All Faculty</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Faculty</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f9; padding: 40px; margin: 0; }
+        .navbar { background: #1e3799; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; margin: -40px -40px 30px -40px; }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; }
+        h2 { color: #1e3799; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: center; }
+        th { background: #1e3799; color: white; }
+        tr:hover { background: #f1f2f6; }
+        a { text-decoration: none; padding: 6px 12px; border-radius: 6px; color: white; }
+        .edit { background: #38ada9; }
+        .delete { background: #e55039; }
+        .top { margin-bottom: 20px; }
+        .btn { background: #1e3799; color: white; padding: 10px 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <h2>College ERP — All Faculty</h2>
+    <a href="/admin/dashboard">⬅ Dashboard</a>
+</div>
 
-<table border="1" cellpadding="10">
+<h2>All Faculty</h2>
+<div class="top">
+    <a href="/admin/add-faculty" class="btn">➕ Add New Faculty</a>
+</div>
+
+<table>
     <tr>
         <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Department</th>
+        <th>Designation</th>
         <th>Username</th>
+        <th>Actions</th>
     </tr>
-
-    <tr th:each="u : ${users}">
-        <td th:text="${u.id}"></td>
-        <td th:text="${u.username}"></td>
+    <tr th:each="f : ${list}">
+        <td th:text="${f.id}"></td>
+        <td th:text="${f.name}"></td>
+        <td th:text="${f.email}"></td>
+        <td th:text="${f.phone}"></td>
+        <td th:text="${f.department}"></td>
+        <td th:text="${f.designation}"></td>
+        <td th:text="${f.username}"></td>
+        <td>
+            <a th:href="@{/admin/edit-faculty/{id}(id=${f.id})}" class="edit">Edit</a>
+            <a th:href="@{/admin/delete-faculty/{id}(id=${f.id})}" class="delete"
+               onclick="return confirm('Delete this faculty and their login?')">Delete</a>
+        </td>
     </tr>
-
 </table>
-
-<br>
-<a href="/admin/dashboard">Back to Dashboard</a>
+</body>
+</html>

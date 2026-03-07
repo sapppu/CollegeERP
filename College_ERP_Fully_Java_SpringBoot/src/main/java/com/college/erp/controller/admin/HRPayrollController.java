@@ -1,15 +1,10 @@
-
 package com.college.erp.controller.admin;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/admin/hrpayroll")
+@Controller
 public class HRPayrollController {
-    @GetMapping
-    public String page() {
-        return "HRPayrollController working";
-    }
+    @GetMapping("/admin/hrpayroll")
+    public String page() { return "admin/hr-payroll"; }
 }
