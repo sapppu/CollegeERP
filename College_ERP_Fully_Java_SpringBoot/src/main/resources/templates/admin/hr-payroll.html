@@ -3,25 +3,225 @@
 <head>
   <title>HR & Payroll</title>
   <style>
-    body { font-family: Arial; background: #f4f6f9; margin: 0; }
-    .navbar { background: #1e3799; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-    .navbar a { color: white; text-decoration: none; font-weight: bold; }
-    .container { padding: 40px; }
-    h2 { color: #1e3799; }
-    .box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-top: 20px; }
-    .box p { color: #555; font-size: 16px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 250px; background: #1e3799; color: white;
+      display: flex; flex-direction: column;
+      position: fixed; height: 100vh; top: 0; left: 0; z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 25px 20px; font-size: 18px; font-weight: bold;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
+    .menu-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.5); padding: 15px 20px 5px;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 20px; color: rgba(255,255,255,0.85);
+      text-decoration: none; font-size: 14px;
+      border-left: 3px solid transparent; transition: 0.2s;
+    }
+    .menu-item:hover, .menu-item.active {
+      background: rgba(255,255,255,0.12); color: white;
+      border-left-color: #74b9ff;
+    }
+    .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+    .sidebar-footer a {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(255,255,255,0.8); text-decoration: none;
+      font-size: 14px; padding: 10px; border-radius: 8px;
+    }
+    .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+    .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+    .topbar {
+      background: white; padding: 15px 30px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .topbar h1 { font-size: 20px; color: #2d3436; }
+    .content { padding: 30px; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+    .stat-card {
+      background: white; border-radius: 12px; padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex;
+      align-items: center; gap: 15px;
+    }
+    .stat-icon { font-size: 32px; }
+    .stat-info .value { font-size: 26px; font-weight: bold; color: #2d3436; }
+    .stat-info .label { font-size: 13px; color: #636e72; margin-top: 2px; }
+
+    .card {
+      background: white; border-radius: 12px; padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .card-header {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 20px;
+    }
+    .card-header h2 { font-size: 18px; color: #2d3436; }
+    .btn {
+      padding: 10px 20px; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 14px; font-weight: bold;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary { background: #1e3799; color: white; }
+    .btn-primary:hover { background: #162d85; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+    .btn-warning { background: #fdcb6e; color: #2d3436; }
+    .btn-warning:hover { background: #f9b928; }
+    .btn-success { background: #00b894; color: white; }
+    .btn-success:hover { background: #00a381; }
+    .btn-danger { background: #d63031; color: white; }
+    .btn-danger:hover { background: #b71c1c; }
+    .btn-secondary { background: #636e72; color: white; }
+    .btn-secondary:hover { background: #4a5054; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8f9ff; padding: 12px 15px; text-align: left; font-size: 13px; color: #636e72; font-weight: 600; }
+    td { padding: 14px 15px; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #2d3436; }
+    tr:hover td { background: #f8f9ff; }
+
+    .badge {
+      padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
+    }
+    .badge-paid { background: #d4edda; color: #155724; }
+    .badge-unpaid { background: #f8d7da; color: #721c24; }
+
+    .actions { display: flex; gap: 6px; }
   </style>
 </head>
 <body>
-<div class="navbar">
-  <h2>College ERP — HR & Payroll</h2>
-  <a href="/admin/dashboard">⬅ Back to Dashboard</a>
-</div>
-<div class="container">
-  <h2>💰 HR & Payroll</h2>
-  <div class="box">
-    <p>HR & Payroll module — coming soon.</p>
+
+<div class="sidebar">
+  <div class="sidebar-brand">🎓 College ERP</div>
+  <div class="sidebar-menu">
+    <div class="menu-label">Main Menu</div>
+    <a href="/admin/dashboard" class="menu-item">🏠 Dashboard</a>
+    <a href="/admin/students" class="menu-item">🎓 Students</a>
+    <a href="/admin/faculty" class="menu-item">👨‍🏫 Faculty</a>
+    <a href="/admin/departmentmanagement" class="menu-item">🏢 Departments</a>
+    <a href="/admin/academiccalendar" class="menu-item">📅 Academic Calendar</a>
+    <a href="/admin/coursesyllabus" class="menu-item">📚 Course Syllabus</a>
+    <a href="/admin/feestructure" class="menu-item">💳 Fee Structure</a>
+    <a href="/admin/hrpayroll" class="menu-item active">💼 HR & Payroll</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/logout">🚪 Logout</a>
   </div>
 </div>
+
+<div class="main">
+  <div class="topbar">
+    <h1>💼 HR & Payroll Management</h1>
+    <span>Admin Panel</span>
+  </div>
+
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+          <div class="value" th:text="${totalRecords}">0</div>
+          <div class="label">Total Records</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <div class="value" th:text="${paidCount}">0</div>
+          <div class="label">Paid</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <div class="value" th:text="${unpaidCount}">0</div>
+          <div class="label">Unpaid</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="value" th:text="'₹' + ${totalPaid}">₹0</div>
+          <div class="label">Total Paid Amount</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Payroll Records</h2>
+        <a href="/admin/add-payroll" class="btn btn-primary">+ Add Payroll</a>
+      </div>
+
+      <table>
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Faculty Name</th>
+          <th>Department</th>
+          <th>Designation</th>
+          <th>Month / Year</th>
+          <th>Basic Salary</th>
+          <th>Allowances</th>
+          <th>Deductions</th>
+          <th>Net Salary</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p, i : ${list}">
+          <td th:text="${i.count}">1</td>
+          <td th:text="${p.facultyName}">Name</td>
+          <td th:text="${p.department}">Dept</td>
+          <td th:text="${p.designation}">Designation</td>
+          <td th:text="${p.month} + ' ' + ${p.year}">Month Year</td>
+          <td th:text="'₹' + ${p.basicSalary}">0</td>
+          <td th:text="'₹' + ${p.allowances}">0</td>
+          <td th:text="'₹' + ${p.deductions}">0</td>
+          <td th:text="'₹' + ${p.netSalary}">0</td>
+          <td>
+                            <span th:class="${p.status == 'Paid'} ? 'badge badge-paid' : 'badge badge-unpaid'"
+                                  th:text="${p.status}">Status</span>
+          </td>
+          <td>
+            <div class="actions">
+              <a th:href="@{/admin/mark-paid/{id}(id=${p.id})}"
+                 th:if="${p.status == 'Unpaid'}"
+                 class="btn btn-sm btn-success">✔ Paid</a>
+              <a th:href="@{/admin/mark-unpaid/{id}(id=${p.id})}"
+                 th:if="${p.status == 'Paid'}"
+                 class="btn btn-sm btn-secondary">↩ Unpaid</a>
+              <a th:href="@{/admin/edit-payroll/{id}(id=${p.id})}"
+                 class="btn btn-sm btn-warning">✏ Edit</a>
+              <a th:href="@{/admin/delete-payroll/{id}(id=${p.id})}"
+                 class="btn btn-sm btn-danger"
+                 onclick="return confirm('Delete this record?')">🗑</a>
+            </div>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(list)}">
+          <td colspan="11" style="text-align:center; color:#999; padding:30px;">
+            No payroll records found. Click "+ Add Payroll" to add one.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>

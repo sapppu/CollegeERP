@@ -1,36 +1,61 @@
 package com.college.erp.controller.admin;
 
 import com.college.erp.model.User;
-import com.college.erp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.college.erp.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AdminUserController {
 
-    @Autowired
-    private UserRepository repo;
+    private final UserService userService;
 
-    // open add user page
-    @GetMapping("/admin/add-user")
-    public String addUserPage(){
-        return "admin/add-user";   // ⭐ FIXED PATH
+    public AdminUserController(UserService userService) {
+        this.userService = userService;
     }
 
-    // save user in database
+    @GetMapping("/admin/userrolepermission")
+    public String viewUsers(Model model) {
+        model.addAttribute("list", userService.getAll());
+        model.addAttribute("totalRecords", userService.countTotal());
+        model.addAttribute("adminCount", userService.countByRole("ADMIN"));
+        model.addAttribute("facultyCount", userService.countByRole("FACULTY"));
+        model.addAttribute("studentCount", userService.countByRole("STUDENT"));
+        return "admin/user-role-permission";
+    }
+
+    @GetMapping("/admin/add-user")
+    public String addUserPage() {
+        return "admin/add-user";
+    }
+
     @PostMapping("/admin/save-user")
-    public String saveUser(@RequestParam String username,
-                           @RequestParam String password,
-                           @RequestParam String role){
+    public String saveUser(User user, RedirectAttributes ra) {
+        if (userService.usernameExists(user.getUsername())) {
+            ra.addFlashAttribute("error", "Username '" + user.getUsername() + "' already exists!");
+            return "redirect:/admin/add-user";
+        }
+        userService.save(user);
+        return "redirect:/admin/userrolepermission";
+    }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);   // No {noop} now (we added encoder in security)
-        user.setRole(role);
+    @GetMapping("/admin/edit-user/{id}")
+    public String editUserPage(@PathVariable Long id, Model model) {
+        model.addAttribute("user", userService.getById(id));
+        return "admin/edit-user";
+    }
 
-        repo.save(user);
+    @PostMapping("/admin/update-user")
+    public String updateUser(User user) {
+        userService.save(user);
+        return "redirect:/admin/userrolepermission";
+    }
 
-        return "redirect:/admin/dashboard";
+    @GetMapping("/admin/delete-user/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.delete(id);
+        return "redirect:/admin/userrolepermission";
     }
 }

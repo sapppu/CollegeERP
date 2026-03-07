@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Transport Allotment</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+    .sidebar { width: 250px; background: #1e3799; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+    .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    .sidebar-menu { flex: 1; padding: 15px 0; }
+    .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+    .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
+    .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+    .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; }
+    .sidebar-footer a:hover { background: rgba(255,255,255,0.1); }
+    .main { margin-left: 250px; flex: 1; }
+    .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .topbar h1 { font-size: 20px; color: #2d3436; }
+    .content { padding: 30px; }
+    .form-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); max-width: 850px; }
+    .form-card h2 { margin-bottom: 25px; color: #1e3799; font-size: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: #636e72; }
+    .form-group input, .form-group select { padding: 10px 14px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
+    .form-group input:focus, .form-group select:focus { border-color: #1e3799; box-shadow: 0 0 0 3px rgba(30,55,153,0.1); }
+    .form-actions { margin-top: 25px; display: flex; gap: 12px; }
+    .btn { padding: 11px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; }
+    .btn-primary { background: #1e3799; color: white; }
+    .btn-secondary { background: #636e72; color: white; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-brand">🎓 College ERP</div>
+  <div class="sidebar-menu">
+    <a href="/admin/dashboard" class="menu-item">🏠 Dashboard</a>
+    <a href="/admin/students" class="menu-item">🎓 Students</a>
+    <a href="/admin/faculty" class="menu-item">👨‍🏫 Faculty</a>
+    <a href="/admin/departmentmanagement" class="menu-item">🏢 Departments</a>
+    <a href="/admin/academiccalendar" class="menu-item">📅 Academic Calendar</a>
+    <a href="/admin/coursesyllabus" class="menu-item">📚 Course Syllabus</a>
+    <a href="/admin/feestructure" class="menu-item">💳 Fee Structure</a>
+    <a href="/admin/hrpayroll" class="menu-item">💼 HR &amp; Payroll</a>
+    <a href="/admin/expensebudget" class="menu-item">📈 Expense &amp; Budget</a>
+    <a href="/admin/scholarship" class="menu-item">🎖️ Scholarship</a>
+    <a href="/admin/hostelmanagement" class="menu-item">🏠 Hostel</a>
+    <a href="/admin/transportmanagement" class="menu-item active">🚌 Transport</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/logout">🚪 Logout</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1>✏️ Edit Transport Allotment</h1>
+    <a href="/admin/transportmanagement" style="text-decoration:none; color:#1e3799; font-size:14px;">⬅ Back to Transport</a>
+  </div>
+  <div class="content">
+    <div class="form-card">
+      <h2>🚌 Edit Transport Allotment</h2>
+      <form action="/admin/update-transport" method="post">
+        <input type="hidden" name="id" th:value="${transport.id}" />
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Student Name</label>
+            <select name="studentName" required>
+              <option th:each="st : ${students}"
+                      th:value="${st.name}"
+                      th:text="${st.name} + ' (' + ${st.enrollmentNo} + ')'"
+                      th:selected="${st.name == transport.studentName}"></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Enrollment No</label>
+            <input type="text" name="enrollmentNo" th:value="${transport.enrollmentNo}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Department</label>
+            <select name="department" required>
+              <option th:each="d : ${departments}"
+                      th:value="${d.name}" th:text="${d.name}"
+                      th:selected="${d.name == transport.department}"></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Year</label>
+            <select name="year" required>
+              <option th:each="y : ${ {'1st Year','2nd Year','3rd Year','4th Year'} }"
+                      th:value="${y}" th:text="${y}"
+                      th:selected="${y == transport.year}"></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Route Number</label>
+            <input type="text" name="routeNumber" th:value="${transport.routeNumber}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Route Name</label>
+            <input type="text" name="routeName" th:value="${transport.routeName}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Pickup Point</label>
+            <input type="text" name="pickupPoint" th:value="${transport.pickupPoint}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Bus Number</label>
+            <input type="text" name="busNumber" th:value="${transport.busNumber}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Driver Name</label>
+            <input type="text" name="driverName" th:value="${transport.driverName}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Driver Phone</label>
+            <input type="text" name="driverPhone" th:value="${transport.driverPhone}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Fee Amount (₹)</label>
+            <input type="number" name="feeAmount" th:value="${transport.feeAmount}" step="0.01" required />
+          </div>
+
+          <div class="form-group">
+            <label>Academic Year</label>
+            <input type="text" name="academicYear" th:value="${transport.academicYear}" required />
+          </div>
+
+          <div class="form-group">
+            <label>Fee Status</label>
+            <select name="feeStatus" required>
+              <option value="Unpaid" th:selected="${transport.feeStatus == 'Unpaid'}">Unpaid</option>
+              <option value="Paid"   th:selected="${transport.feeStatus == 'Paid'}">Paid</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" required>
+              <option value="Active"   th:selected="${transport.status == 'Active'}">Active</option>
+              <option value="Inactive" th:selected="${transport.status == 'Inactive'}">Inactive</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">💾 Update Allotment</button>
+          <a href="/admin/transportmanagement" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

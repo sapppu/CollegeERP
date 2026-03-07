@@ -1,27 +1,222 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Role & Permissions</title>
+    <title>User Role &amp; Permissions</title>
     <style>
-        body { font-family: Arial; background: #f4f6f9; margin: 0; }
-        .navbar { background: #1e3799; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .navbar a { color: white; text-decoration: none; font-weight: bold; }
-        .container { padding: 40px; }
-        h2 { color: #1e3799; }
-        .box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-top: 20px; }
-        .box p { color: #555; font-size: 16px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+
+        .sidebar { width: 250px; background: #1e3799; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
+        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; border-left: 3px solid transparent; transition: 0.2s; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; }
+        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+        .topbar h1 { font-size: 20px; color: #2d3436; }
+        .content { padding: 30px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 15px; }
+        .stat-icon { font-size: 32px; }
+        .stat-info .value { font-size: 26px; font-weight: bold; color: #2d3436; }
+        .stat-info .label { font-size: 13px; color: #636e72; margin-top: 2px; }
+
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 14px; }
+
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card-header h2 { font-size: 18px; color: #2d3436; }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; }
+        .btn-primary   { background: #1e3799; color: white; }
+        .btn-primary:hover { background: #162d85; }
+        .btn-sm        { padding: 5px 11px; font-size: 12px; border-radius: 6px; }
+        .btn-danger    { background: #d63031; color: white; }
+        .btn-warning   { background: #fdcb6e; color: #2d3436; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9ff; padding: 12px 15px; text-align: left; font-size: 13px; color: #636e72; font-weight: 600; }
+        td { padding: 13px 15px; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #2d3436; }
+        tr:hover td { background: #f8f9ff; }
+
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-admin   { background: #e8d5ff; color: #6f42c1; }
+        .badge-faculty { background: #cce5ff; color: #004085; }
+        .badge-student { background: #d4edda; color: #155724; }
+
+        .permissions-box { background: #f8f9ff; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #636e72; line-height: 1.8; }
+        .perm-item { display: flex; align-items: center; gap: 6px; }
+        .perm-item::before { content: "✅"; font-size: 11px; }
+
+        .actions { display: flex; gap: 5px; }
     </style>
 </head>
 <body>
-<div class="navbar">
-    <h2>College ERP — User Role & Permissions</h2>
-    <a href="/admin/dashboard">⬅ Back to Dashboard</a>
-</div>
-<div class="container">
-    <h2>🔐 User Role & Permissions</h2>
-    <div class="box">
-        <p>User Role & Permissions module — coming soon.</p>
+
+<div class="sidebar">
+    <div class="sidebar-brand">🎓 College ERP</div>
+    <div class="sidebar-menu">
+        <div class="menu-label">Main Menu</div>
+        <a href="/admin/dashboard" class="menu-item">🏠 Dashboard</a>
+        <a href="/admin/students" class="menu-item">🎓 Students</a>
+        <a href="/admin/faculty" class="menu-item">👨‍🏫 Faculty</a>
+        <a href="/admin/departmentmanagement" class="menu-item">🏢 Departments</a>
+        <a href="/admin/academiccalendar" class="menu-item">📅 Academic Calendar</a>
+        <a href="/admin/coursesyllabus" class="menu-item">📚 Course Syllabus</a>
+        <a href="/admin/feestructure" class="menu-item">💳 Fee Structure</a>
+        <a href="/admin/hrpayroll" class="menu-item">💼 HR &amp; Payroll</a>
+        <a href="/admin/expensebudget" class="menu-item">📈 Expense &amp; Budget</a>
+        <a href="/admin/scholarship" class="menu-item">🎖️ Scholarship</a>
+        <a href="/admin/hostelmanagement" class="menu-item">🏠 Hostel</a>
+        <a href="/admin/transportmanagement" class="menu-item">🚌 Transport</a>
+        <a href="/admin/inventoryasset" class="menu-item">📦 Inventory</a>
+        <a href="/admin/eventseminar" class="menu-item">🎤 Events &amp; Seminars</a>
+        <a href="/admin/alumni" class="menu-item">🤝 Alumni</a>
+        <a href="/admin/userrolepermission" class="menu-item active">🔐 User Roles</a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/logout">🚪 Logout</a>
     </div>
 </div>
+
+<div class="main">
+    <div class="topbar">
+        <h1>🔐 User Role &amp; Permissions</h1>
+        <span>Admin Panel</span>
+    </div>
+    <div class="content">
+
+        <!-- Error flash -->
+        <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <div class="value" th:text="${totalRecords}">0</div>
+                    <div class="label">Total Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛡️</div>
+                <div class="stat-info">
+                    <div class="value" th:text="${adminCount}">0</div>
+                    <div class="label">Admins</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👨‍🏫</div>
+                <div class="stat-info">
+                    <div class="value" th:text="${facultyCount}">0</div>
+                    <div class="label">Faculty</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎓</div>
+                <div class="stat-info">
+                    <div class="value" th:text="${studentCount}">0</div>
+                    <div class="label">Students</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Permissions Info -->
+        <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:20px; margin-bottom:30px;">
+            <div class="card">
+                <h3 style="color:#6f42c1; margin-bottom:12px;">🛡️ Admin Permissions</h3>
+                <div class="permissions-box">
+                    <div class="perm-item">Full dashboard access</div>
+                    <div class="perm-item">Manage students &amp; faculty</div>
+                    <div class="perm-item">Manage all modules</div>
+                    <div class="perm-item">View all reports</div>
+                    <div class="perm-item">Manage users &amp; roles</div>
+                    <div class="perm-item">System settings</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 style="color:#004085; margin-bottom:12px;">👨‍🏫 Faculty Permissions</h3>
+                <div class="permissions-box">
+                    <div class="perm-item">Faculty dashboard</div>
+                    <div class="perm-item">Mark attendance</div>
+                    <div class="perm-item">Upload marks</div>
+                    <div class="perm-item">View timetable</div>
+                    <div class="perm-item">Lesson planning</div>
+                    <div class="perm-item">View students</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 style="color:#155724; margin-bottom:12px;">🎓 Student Permissions</h3>
+                <div class="permissions-box">
+                    <div class="perm-item">Student dashboard</div>
+                    <div class="perm-item">View attendance</div>
+                    <div class="perm-item">View marks</div>
+                    <div class="perm-item">View timetable</div>
+                    <div class="perm-item">View fee details</div>
+                    <div class="perm-item">View notices</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card">
+            <div class="card-header">
+                <h2>System Users</h2>
+                <a href="/admin/add-user" class="btn btn-primary">+ Add User</a>
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Access Level</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u, i : ${list}">
+                    <td th:text="${i.count}">1</td>
+                    <td>
+                        <strong th:text="${u.username}">user</strong>
+                    </td>
+                    <td>
+                            <span th:class="${u.role == 'ADMIN'}   ? 'badge badge-admin'   :
+                                           (${u.role == 'FACULTY'} ? 'badge badge-faculty' : 'badge badge-student')"
+                                  th:text="${u.role}">ROLE</span>
+                    </td>
+                    <td>
+                        <span th:if="${u.role == 'ADMIN'}"   style="font-size:13px; color:#636e72;">Full System Access — all modules</span>
+                        <span th:if="${u.role == 'FACULTY'}" style="font-size:13px; color:#636e72;">Faculty portal — attendance, marks, timetable</span>
+                        <span th:if="${u.role == 'STUDENT'}" style="font-size:13px; color:#636e72;">Student portal — view-only access</span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <a th:href="@{/admin/edit-user/{id}(id=${u.id})}"
+                               class="btn btn-sm btn-warning">✏ Edit</a>
+                            <a th:href="@{/admin/delete-user/{id}(id=${u.id})}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Delete this user? They will lose all access.')">🗑</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(list)}">
+                    <td colspan="5" style="text-align:center; color:#999; padding:30px;">
+                        No users found.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
 </body>
 </html>

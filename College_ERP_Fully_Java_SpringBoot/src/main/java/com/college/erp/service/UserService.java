@@ -3,6 +3,7 @@ package com.college.erp.service;
 import com.college.erp.model.User;
 import com.college.erp.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -13,13 +14,33 @@ public class UserService {
         this.repo = repo;
     }
 
-    public void saveUser(String username, String password, String role) {
-
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);   // plain for now
-        user.setRole(role);
-
+    public void save(User user) {
         repo.save(user);
+    }
+
+    public List<User> getAll() {
+        return repo.findAll();
+    }
+
+    public User getById(Long id) {
+        return repo.findById(id).get();
+    }
+
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
+
+    public long countTotal() {
+        return repo.count();
+    }
+
+    public long countByRole(String role) {
+        return repo.findAll().stream()
+                .filter(u -> role.equals(u.getRole()))
+                .count();
+    }
+
+    public boolean usernameExists(String username) {
+        return repo.findByUsername(username).isPresent();
     }
 }
