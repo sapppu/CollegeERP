@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Add Payroll</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px; background: #1e3799; color: white;
+      display: flex; flex-direction: column;
+      position: fixed; height: 100vh; top: 0; left: 0; z-index: 100;
+    }
+    .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    .sidebar-menu { flex: 1; padding: 15px 0; }
+    .menu-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 20px; color: rgba(255,255,255,0.85);
+      text-decoration: none; font-size: 14px; border-left: 3px solid transparent;
+    }
+    .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
+    .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+    .sidebar-footer a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; display: flex; align-items: center; gap: 10px; border-radius: 8px; }
+    .sidebar-footer a:hover { background: rgba(255,255,255,0.1); }
+
+    .main { margin-left: 250px; flex: 1; }
+    .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .topbar h1 { font-size: 20px; color: #2d3436; }
+    .content { padding: 30px; }
+
+    .form-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); max-width: 800px; }
+    .form-card h2 { margin-bottom: 25px; color: #1e3799; font-size: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: #636e72; }
+    .form-group input, .form-group select {
+      padding: 10px 14px; border: 1px solid #dfe6e9; border-radius: 8px;
+      font-size: 14px; outline: none; transition: 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: #1e3799; box-shadow: 0 0 0 3px rgba(30,55,153,0.1); }
+    .form-actions { margin-top: 25px; display: flex; gap: 12px; }
+    .btn { padding: 11px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; }
+    .btn-primary { background: #1e3799; color: white; }
+    .btn-primary:hover { background: #162d85; }
+    .btn-secondary { background: #636e72; color: white; }
+    .btn-secondary:hover { background: #4a5054; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-brand">🎓 College ERP</div>
+  <div class="sidebar-menu">
+    <a href="/admin/dashboard" class="menu-item">🏠 Dashboard</a>
+    <a href="/admin/students" class="menu-item">🎓 Students</a>
+    <a href="/admin/faculty" class="menu-item">👨‍🏫 Faculty</a>
+    <a href="/admin/departmentmanagement" class="menu-item">🏢 Departments</a>
+    <a href="/admin/academiccalendar" class="menu-item">📅 Academic Calendar</a>
+    <a href="/admin/coursesyllabus" class="menu-item">📚 Course Syllabus</a>
+    <a href="/admin/feestructure" class="menu-item">💳 Fee Structure</a>
+    <a href="/admin/hrpayroll" class="menu-item active">💼 HR & Payroll</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/logout">🚪 Logout</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1>➕ Add Payroll Record</h1>
+    <a href="/admin/hrpayroll" style="text-decoration:none; color:#1e3799; font-size:14px;">⬅ Back to Payroll</a>
+  </div>
+  <div class="content">
+    <div class="form-card">
+      <h2>💼 New Payroll Entry</h2>
+      <form action="/admin/save-payroll" method="post">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Faculty Name</label>
+            <select name="facultyName" required>
+              <option value="">-- Select Faculty --</option>
+              <option th:each="f : ${facultyList}" th:value="${f.name}" th:text="${f.name}"></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Department</label>
+            <input type="text" name="department" placeholder="e.g. Computer Science" required />
+          </div>
+
+          <div class="form-group">
+            <label>Designation</label>
+            <input type="text" name="designation" placeholder="e.g. Assistant Professor" required />
+          </div>
+
+          <div class="form-group">
+            <label>Month</label>
+            <select name="month" required>
+              <option value="">-- Select Month --</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Year</label>
+            <input type="text" name="year" placeholder="e.g. 2025" required />
+          </div>
+
+          <div class="form-group">
+            <label>Basic Salary (₹)</label>
+            <input type="number" name="basicSalary" placeholder="e.g. 50000" step="0.01" required />
+          </div>
+
+          <div class="form-group">
+            <label>Allowances (₹)</label>
+            <input type="number" name="allowances" placeholder="e.g. 5000" step="0.01" value="0" />
+          </div>
+
+          <div class="form-group">
+            <label>Deductions (₹)</label>
+            <input type="number" name="deductions" placeholder="e.g. 2000" step="0.01" value="0" />
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" required>
+              <option value="Unpaid">Unpaid</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">💾 Save Payroll</button>
+          <a href="/admin/hrpayroll" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
