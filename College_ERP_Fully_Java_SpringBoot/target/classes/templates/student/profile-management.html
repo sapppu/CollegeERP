@@ -1,27 +1,216 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Profile Management</title>
+    <title>My Profile</title>
     <style>
-        body { font-family: Arial; background: #f4f6f9; margin: 0; }
-        .navbar { background: #16a085; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .navbar a { color: white; text-decoration: none; font-weight: bold; }
-        .container { padding: 40px; }
-        h2 { color: #16a085; }
-        .box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-top: 20px; }
-        .box p { color: #555; font-size: 16px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+
+        .sidebar { width: 250px; background: #16a085; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
+        .sidebar-brand span { font-size: 26px; }
+        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
+        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #55efc4; }
+        .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 99; }
+        .topbar h1 { font-size: 20px; color: #16a085; }
+        .student-badge { background: #16a085; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+
+        .content { padding: 30px; }
+
+        /* PROFILE HEADER */
+        .profile-header {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-bottom: 24px;
+        }
+        .avatar {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .profile-name h2 { font-size: 22px; color: #2d3436; }
+        .profile-name p  { font-size: 14px; color: #888; margin-top: 4px; }
+        .profile-badges { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .p-badge { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .p-badge.green  { background: #e0faf4; color: #16a085; }
+        .p-badge.blue   { background: #eaf4ff; color: #0984e3; }
+        .p-badge.orange { background: #fef3e2; color: #e67e22; }
+
+        /* SUCCESS ALERT */
+        .alert-success {
+            background: #e0faf4;
+            color: #16a085;
+            border: 1px solid #b2dfdb;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* CARDS GRID */
+        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .card-title { font-size: 15px; font-weight: bold; color: #2d3436; border-bottom: 2px solid #f1f2f6; padding-bottom: 12px; margin-bottom: 18px; }
+
+        /* INFO TABLE */
+        .info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #f8f9fa; font-size: 14px; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #888; font-weight: 500; }
+        .info-value { color: #2d3436; font-weight: bold; text-align: right; }
+
+        /* EDIT FORM */
+        label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; }
+        input:focus { border-color: #16a085; outline: none; }
+        .btn-save { background: #16a085; color: white; padding: 11px 28px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
+        .btn-save:hover { background: #1abc9c; }
+
+        /* NO PROFILE */
+        .no-profile { text-align: center; padding: 50px; color: #aaa; font-size: 16px; }
     </style>
 </head>
 <body>
-<div class="navbar">
-    <h2>College ERP — Profile Management</h2>
-    <a href="/student/studentdashboard">⬅ Back to Dashboard</a>
-</div>
-<div class="container">
-    <h2>👤 Profile Management</h2>
-    <div class="box">
-        <p>Profile Management module — coming soon.</p>
+
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <span>🎓</span>
+        <div>
+            <div>College ERP</div>
+            <div style="font-size:11px;font-weight:normal;opacity:0.7;">Student Portal</div>
+        </div>
+    </div>
+    <nav class="sidebar-menu">
+        <div class="menu-label">Main</div>
+        <a href="/student/studentdashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+        <div class="menu-label">Academic</div>
+        <a href="/student/profilemanagement" class="menu-item active"><span class="icon">👤</span> My Profile</a>
+        <a href="/student/academicrecords" class="menu-item"><span class="icon">📋</span> Academic Records</a>
+        <a href="/student/courseregistration" class="menu-item"><span class="icon">📖</span> Course Registration</a>
+        <div class="menu-label">Finance</div>
+        <a href="/student/feepayment" class="menu-item"><span class="icon">💳</span> Fee Payment</a>
+        <div class="menu-label">Services</div>
+        <a href="/student/librarymanagement" class="menu-item"><span class="icon">📚</span> Library</a>
+        <a href="/student/placement" class="menu-item"><span class="icon">💼</span> Placement</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a>
     </div>
 </div>
+
+<div class="main">
+    <div class="topbar">
+        <h1>👤 My Profile</h1>
+        <span class="student-badge">👨‍🎓 Student</span>
+    </div>
+
+    <div class="content">
+
+        <!-- Success Alert -->
+        <div class="alert-success" th:if="${param.success}">
+            ✅ Profile updated successfully!
+        </div>
+
+        <!-- No Profile Found -->
+        <div class="no-profile" th:if="${student == null}">
+            ⚠️ Profile not found. Please contact the admin to link your account.
+        </div>
+
+        <!-- Profile Header -->
+        <div class="profile-header" th:if="${student != null}">
+            <div class="avatar" th:text="${#strings.substring(student.name, 0, 1)}">S</div>
+            <div class="profile-name">
+                <h2 th:text="${student.name}">Student Name</h2>
+                <p th:text="${student.email}">email@example.com</p>
+                <div class="profile-badges">
+                    <span class="p-badge green"  th:text="${student.department}">Department</span>
+                    <span class="p-badge blue"   th:text="'Year: ' + ${student.year}">Year</span>
+                    <span class="p-badge orange" th:text="'Enroll: ' + ${student.enrollmentNo}">Enrollment</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards-grid" th:if="${student != null}">
+
+            <!-- View Info -->
+            <div class="card">
+                <div class="card-title">📋 Student Information</div>
+                <div class="info-row">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value" th:text="${student.name}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Enrollment No.</span>
+                    <span class="info-value" th:text="${student.enrollmentNo}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Department</span>
+                    <span class="info-value" th:text="${student.department}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Year</span>
+                    <span class="info-value" th:text="${student.year}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value" th:text="${student.gender}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value" th:text="${student.dob}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value" th:text="${student.phone}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Address</span>
+                    <span class="info-value" th:text="${student.address}"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Username</span>
+                    <span class="info-value" th:text="${student.username}"></span>
+                </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div class="card">
+                <div class="card-title">✏️ Update Contact Info</div>
+                <form action="/student/updateprofile" method="post">
+                    <label>Email Address</label>
+                    <input type="email" name="email" th:value="${student.email}" placeholder="Your email" required>
+
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" th:value="${student.phone}" placeholder="Your phone">
+
+                    <label>Address</label>
+                    <input type="text" name="address" th:value="${student.address}" placeholder="Your address">
+
+                    <button type="submit" class="btn-save">💾 Update Profile</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

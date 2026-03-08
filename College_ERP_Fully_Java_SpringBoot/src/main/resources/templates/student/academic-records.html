@@ -3,25 +3,305 @@
 <head>
     <title>Academic Records</title>
     <style>
-        body { font-family: Arial; background: #f4f6f9; margin: 0; }
-        .navbar { background: #16a085; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .navbar a { color: white; text-decoration: none; font-weight: bold; }
-        .container { padding: 40px; }
-        h2 { color: #16a085; }
-        .box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-top: 20px; }
-        .box p { color: #555; font-size: 16px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+
+        .sidebar { width: 250px; background: #16a085; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
+        .sidebar-brand span { font-size: 26px; }
+        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
+        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #55efc4; }
+        .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 99; }
+        .topbar h1 { font-size: 20px; color: #16a085; }
+        .student-badge { background: #16a085; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+
+        .content { padding: 30px; }
+
+        /* STAT CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
+        .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 14px; border-left: 5px solid; transition: 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+        .stat-card.green  { border-color: #16a085; }
+        .stat-card.blue   { border-color: #0984e3; }
+        .stat-card.orange { border-color: #e67e22; }
+        .stat-card.purple { border-color: #8e44ad; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .stat-card.green  .stat-icon { background: #e0faf4; }
+        .stat-card.blue   .stat-icon { background: #eaf4ff; }
+        .stat-card.orange .stat-icon { background: #fef3e2; }
+        .stat-card.purple .stat-icon { background: #f3e5ff; }
+        .stat-info h3 { font-size: 22px; font-weight: bold; color: #2d3436; }
+        .stat-info p  { font-size: 13px; color: #888; margin-top: 2px; }
+
+        /* SECTION TITLE */
+        .section-title { font-size: 15px; font-weight: bold; color: #2d3436; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: #dfe6e9; margin-left: 10px; }
+
+        /* STUDENT INFO BANNER */
+        .info-banner { background: linear-gradient(135deg, #16a085, #1abc9c); color: white; border-radius: 12px; padding: 20px 28px; margin-bottom: 26px; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 14px rgba(22,160,133,0.3); }
+        .banner-avatar { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; }
+        .banner-info h2 { font-size: 18px; font-weight: bold; }
+        .banner-info p  { font-size: 13px; opacity: 0.85; margin-top: 3px; }
+        .banner-chips { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; }
+        .chip { background: rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        /* TABLES */
+        .table-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 24px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f8f9fa; color: #555; padding: 12px 15px; text-align: left; font-weight: 600; border-bottom: 2px solid #eee; white-space: nowrap; }
+        td { padding: 12px 15px; border-bottom: 1px solid #f1f2f6; color: #444; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fff9; }
+
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-theory    { background: #eaf4ff; color: #0984e3; }
+        .badge-practical { background: #e0faf4; color: #16a085; }
+        .badge-elective  { background: #fef3e2; color: #e67e22; }
+        .badge-pass      { background: #e0faf4; color: #16a085; }
+        .badge-pending   { background: #fef3e2; color: #e67e22; }
+
+        /* ATTENDANCE BARS */
+        .att-wrap { display: flex; align-items: center; gap: 10px; }
+        .att-bar  { flex: 1; background: #f1f2f6; border-radius: 10px; height: 8px; overflow: hidden; min-width: 80px; }
+        .att-fill { height: 100%; border-radius: 10px; }
+        .att-pct  { font-size: 13px; font-weight: bold; min-width: 38px; text-align: right; }
+
+        /* EMPTY */
+        .empty-row { text-align: center; color: #aaa; padding: 30px; font-size: 14px; }
+
+        /* NO PROFILE */
+        .no-profile { text-align: center; padding: 60px; color: #aaa; font-size: 16px; }
+
+        /* TABS */
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: white; padding: 6px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); width: fit-content; }
+        .tab-btn { padding: 9px 22px; border-radius: 8px; border: none; background: transparent; font-size: 14px; cursor: pointer; color: #888; font-weight: 500; transition: 0.2s; }
+        .tab-btn.active { background: #16a085; color: white; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
-<div class="navbar">
-    <h2>College ERP — Academic Records</h2>
-    <a href="/student/studentdashboard">⬅ Back to Dashboard</a>
-</div>
-<div class="container">
-    <h2>🎓 Academic Records</h2>
-    <div class="box">
-        <p>Academic Records module — coming soon.</p>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <span>🎓</span>
+        <div>
+            <div>College ERP</div>
+            <div style="font-size:11px;font-weight:normal;opacity:0.7;">Student Portal</div>
+        </div>
+    </div>
+    <nav class="sidebar-menu">
+        <div class="menu-label">Main</div>
+        <a href="/student/studentdashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+        <div class="menu-label">Academic</div>
+        <a href="/student/profilemanagement" class="menu-item"><span class="icon">👤</span> My Profile</a>
+        <a href="/student/academicrecords" class="menu-item active"><span class="icon">📋</span> Academic Records</a>
+        <a href="/student/courseregistration" class="menu-item"><span class="icon">📖</span> Course Registration</a>
+        <div class="menu-label">Finance</div>
+        <a href="/student/feepayment" class="menu-item"><span class="icon">💳</span> Fee Payment</a>
+        <div class="menu-label">Services</div>
+        <a href="/student/librarymanagement" class="menu-item"><span class="icon">📚</span> Library</a>
+        <a href="/student/placement" class="menu-item"><span class="icon">💼</span> Placement</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a>
     </div>
 </div>
+
+<!-- MAIN -->
+<div class="main">
+    <div class="topbar">
+        <h1>📋 Academic Records</h1>
+        <span class="student-badge">👨‍🎓 Student</span>
+    </div>
+
+    <div class="content">
+
+        <!-- No Profile -->
+        <div class="no-profile" th:if="${student == null}">
+            ⚠️ Profile not found. Please contact admin to link your account.
+        </div>
+
+        <div th:if="${student != null}">
+
+            <!-- Banner -->
+            <div class="info-banner">
+                <div class="banner-avatar" th:text="${#strings.substring(student.name,0,1)}">S</div>
+                <div class="banner-info">
+                    <h2 th:text="${student.name}">Student Name</h2>
+                    <p th:text="'Enrollment: ' + ${student.enrollmentNo} + '  |  ' + ${student.department}"></p>
+                </div>
+                <div class="banner-chips">
+                    <span class="chip" th:text="'Year: ' + ${student.year}">Year</span>
+                    <span class="chip">CGPA: 8.4</span>
+                    <span class="chip">Attendance: 92%</span>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="stats-grid">
+                <div class="stat-card green">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info"><h3>92%</h3><p>Overall Attendance</p></div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info"><h3>8.4</h3><p>Current CGPA</p></div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-info">
+                        <h3 th:text="${courses != null ? #lists.size(courses) : 0}">0</h3>
+                        <p>Courses in Dept.</p>
+                    </div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-info"><h3>A+</h3><p>Grade</p></div>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('courses', this)">📚 My Courses</button>
+                <button class="tab-btn"        onclick="switchTab('attendance', this)">📅 Attendance</button>
+                <button class="tab-btn"        onclick="switchTab('marks', this)">🎯 Marks</button>
+            </div>
+
+            <!-- TAB: Courses -->
+            <div id="tab-courses" class="tab-content active">
+                <div class="section-title">📚 Courses — <span th:text="${student.department}"></span></div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Course Name</th>
+                            <th>Type</th>
+                            <th>Credits</th>
+                            <th>Semester</th>
+                            <th>Faculty</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(courses)}">
+                            <td colspan="8" class="empty-row">No courses found for your department.</td>
+                        </tr>
+                        <tr th:each="c, i : ${courses}">
+                            <td th:text="${i.count}"></td>
+                            <td><strong th:text="${c.courseCode}"></strong></td>
+                            <td th:text="${c.courseName}"></td>
+                            <td>
+                                <span th:if="${c.courseType=='Theory'}"    class="badge badge-theory">Theory</span>
+                                <span th:if="${c.courseType=='Practical'}" class="badge badge-practical">Practical</span>
+                                <span th:if="${c.courseType=='Elective'}"  class="badge badge-elective">Elective</span>
+                            </td>
+                            <td th:text="${c.credits}"></td>
+                            <td th:text="${c.semester}"></td>
+                            <td th:text="${c.facultyName}"></td>
+                            <td><span class="badge badge-pass">Active</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: Attendance -->
+            <div id="tab-attendance" class="tab-content">
+                <div class="section-title">📅 Subject-wise Attendance</div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>Total Classes</th>
+                            <th>Attended</th>
+                            <th>Attendance %</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(courses)}">
+                            <td colspan="6" class="empty-row">No attendance data available.</td>
+                        </tr>
+                        <tr th:each="c, i : ${courses}">
+                            <td th:text="${i.count}"></td>
+                            <td th:text="${c.courseName}"></td>
+                            <td>50</td>
+                            <td>46</td>
+                            <td>
+                                <div class="att-wrap">
+                                    <div class="att-bar">
+                                        <div class="att-fill" style="width:92%; background:#16a085;"></div>
+                                    </div>
+                                    <span class="att-pct" style="color:#16a085;">92%</span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-pass">✅ Good</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: Marks -->
+            <div id="tab-marks" class="tab-content">
+                <div class="section-title">🎯 Internal Assessment Marks</div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>IA-1 (25)</th>
+                            <th>IA-2 (25)</th>
+                            <th>Assignment (10)</th>
+                            <th>Total (60)</th>
+                            <th>Grade</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(courses)}">
+                            <td colspan="7" class="empty-row">No marks data available.</td>
+                        </tr>
+                        <tr th:each="c, i : ${courses}">
+                            <td th:text="${i.count}"></td>
+                            <td th:text="${c.courseName}"></td>
+                            <td>21</td>
+                            <td>22</td>
+                            <td>9</td>
+                            <td><strong>52</strong></td>
+                            <td><span class="badge badge-pass">A</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(name, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        btn.classList.add('active');
+    }
+</script>
+
 </body>
 </html>
