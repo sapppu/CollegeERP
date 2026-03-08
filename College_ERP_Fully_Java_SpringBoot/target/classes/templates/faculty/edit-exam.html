@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Exam</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background: #8e44ad; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
+        .sidebar-brand span { font-size: 26px; }
+        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
+        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #d7bde2; }
+        .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .topbar h1 { font-size: 20px; color: #8e44ad; }
+        .faculty-badge { background: #8e44ad; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .content { padding: 30px; }
+        .form-card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); max-width: 680px; }
+        .form-card h2 { color: #8e44ad; margin-bottom: 25px; font-size: 18px; }
+        .sec { color: #8e44ad; font-size: 13px; font-weight: bold; border-bottom: 2px solid #8e44ad; padding-bottom: 6px; margin: 18px 0 14px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 14px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { border-color: #8e44ad; outline: none; }
+        textarea { resize: vertical; height: 75px; }
+        .row { display: flex; gap: 18px; }
+        .row .field { flex: 1; }
+        .btn-row { display: flex; gap: 15px; margin-top: 10px; }
+        .btn-save { background: #8e44ad; color: white; padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-save:hover { background: #9b59b6; }
+        .btn-cancel { background: #dfe6e9; color: #555; padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+        .btn-cancel:hover { background: #b2bec3; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-brand"><span>🎓</span><div><div>College ERP</div><div style="font-size:11px;font-weight:normal;opacity:0.7;">Faculty Portal</div></div></div>
+    <nav class="sidebar-menu">
+        <div class="menu-label">Main</div>
+        <a href="/faculty/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+        <div class="menu-label">Teaching</div>
+        <a href="/faculty/lessonplanning"           class="menu-item"><span class="icon">🗒️</span> Lesson Planning</a>
+        <a href="/faculty/attendancemanagement"     class="menu-item"><span class="icon">📋</span> Attendance</a>
+        <a href="/faculty/internalassessment"       class="menu-item"><span class="icon">📊</span> Internal Assessment</a>
+        <a href="/faculty/examinationmanagement"    class="menu-item active"><span class="icon">📝</span> Examinations</a>
+        <a href="/faculty/studentprogressanalytics" class="menu-item"><span class="icon">📈</span> Student Progress</a>
+        <div class="menu-label">Personal</div>
+        <a href="/faculty/facultyleave"             class="menu-item"><span class="icon">🏖️</span> My Leave</a>
+        <a href="/faculty/researchpublication"      class="menu-item"><span class="icon">🔬</span> Research</a>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a></div>
+</div>
+<div class="main">
+    <div class="topbar">
+        <h1>📝 Edit Exam</h1>
+        <span class="faculty-badge">✏️ Editing</span>
+    </div>
+    <div class="content">
+        <div class="form-card">
+            <h2>✏️ Edit Exam Details</h2>
+            <form action="/faculty/update-exam" method="post">
+                <input type="hidden" name="id" th:value="${exam.id}">
+
+                <div class="sec">Basic Info</div>
+                <label>Exam Title</label>
+                <input type="text" name="examTitle" th:value="${exam.examTitle}" required>
+
+                <label>Subject</label>
+                <input type="text" name="subject" th:value="${exam.subject}" required>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Exam Type</label>
+                        <select name="examType">
+                            <option value="Unit Test"    th:selected="${exam.examType=='Unit Test'}">Unit Test</option>
+                            <option value="Mid Semester" th:selected="${exam.examType=='Mid Semester'}">Mid Semester</option>
+                            <option value="End Semester" th:selected="${exam.examType=='End Semester'}">End Semester</option>
+                            <option value="Practical"    th:selected="${exam.examType=='Practical'}">Practical</option>
+                            <option value="Viva"         th:selected="${exam.examType=='Viva'}">Viva</option>
+                            <option value="Other"        th:selected="${exam.examType=='Other'}">Other</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Year</label>
+                        <select name="year">
+                            <option value="FY" th:selected="${exam.year=='FY'}">FY</option>
+                            <option value="SY" th:selected="${exam.year=='SY'}">SY</option>
+                            <option value="TY" th:selected="${exam.year=='TY'}">TY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sec">Schedule</div>
+                <div class="row">
+                    <div class="field">
+                        <label>Exam Date</label>
+                        <input type="date" name="examDate" th:value="${exam.examDate}">
+                    </div>
+                    <div class="field">
+                        <label>Start Time</label>
+                        <input type="time" name="startTime" th:value="${exam.startTime}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Duration</label>
+                        <select name="duration">
+                            <option value="1 Hour"    th:selected="${exam.duration=='1 Hour'}">1 Hour</option>
+                            <option value="1.5 Hours" th:selected="${exam.duration=='1.5 Hours'}">1.5 Hours</option>
+                            <option value="2 Hours"   th:selected="${exam.duration=='2 Hours'}">2 Hours</option>
+                            <option value="3 Hours"   th:selected="${exam.duration=='3 Hours'}">3 Hours</option>
+                            <option value="Half Day"  th:selected="${exam.duration=='Half Day'}">Half Day</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Venue</label>
+                        <input type="text" name="venue" th:value="${exam.venue}">
+                    </div>
+                </div>
+
+                <div class="sec">Marks</div>
+                <div class="row">
+                    <div class="field">
+                        <label>Total Marks</label>
+                        <input type="number" name="totalMarks" th:value="${exam.totalMarks}">
+                    </div>
+                    <div class="field">
+                        <label>Passing Marks</label>
+                        <input type="number" name="passingMarks" th:value="${exam.passingMarks}">
+                    </div>
+                </div>
+
+                <label>Instructions</label>
+                <textarea name="instructions" th:text="${exam.instructions}"></textarea>
+
+                <label>Status</label>
+                <select name="status">
+                    <option value="Upcoming"  th:selected="${exam.status=='Upcoming'}">Upcoming</option>
+                    <option value="Ongoing"   th:selected="${exam.status=='Ongoing'}">Ongoing</option>
+                    <option value="Completed" th:selected="${exam.status=='Completed'}">Completed</option>
+                    <option value="Cancelled" th:selected="${exam.status=='Cancelled'}">Cancelled</option>
+                </select>
+
+                <div class="btn-row">
+                    <button type="submit" class="btn-save">✅ Update Exam</button>
+                    <a href="/faculty/examinationmanagement" class="btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

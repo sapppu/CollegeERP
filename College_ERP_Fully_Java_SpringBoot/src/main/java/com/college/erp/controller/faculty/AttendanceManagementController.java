@@ -43,12 +43,15 @@ public class AttendanceManagementController {
         model.addAttribute("faculty", faculty);
 
         List<Attendance> allRecords = attendanceService.getByFaculty(username);
-        model.addAttribute("allRecords",    allRecords);
-        model.addAttribute("totalRecords",  allRecords.size());
-        model.addAttribute("presentCount",  attendanceService.countPresent(username));
-        model.addAttribute("absentCount",   attendanceService.countAbsent(username));
-        model.addAttribute("subjects",      attendanceService.getSubjects(username));
-        model.addAttribute("dates",         attendanceService.getDates(username));
+        model.addAttribute("allRecords",   allRecords);
+        model.addAttribute("totalRecords", allRecords.size());
+
+        // FIX: faculty-side counts now use countFacultyPresent / countFacultyAbsent
+        model.addAttribute("presentCount", attendanceService.countFacultyPresent(username));
+        model.addAttribute("absentCount",  attendanceService.countFacultyAbsent(username));
+
+        model.addAttribute("subjects", attendanceService.getSubjects(username));
+        model.addAttribute("dates",    attendanceService.getDates(username));
 
         if (subject != null && !subject.isBlank()) {
             model.addAttribute("filteredRecords",
@@ -65,6 +68,7 @@ public class AttendanceManagementController {
                 .filter(s -> faculty.getDepartment().equals(s.getDepartment()))
                 .toList()
                 : List.of();
+
         model.addAttribute("students", students);
         model.addAttribute("courses",
                 faculty != null ? courseRepo.findByDepartment(faculty.getDepartment()) : List.of());

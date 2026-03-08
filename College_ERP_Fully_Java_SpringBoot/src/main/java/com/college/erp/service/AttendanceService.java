@@ -12,10 +12,12 @@ public class AttendanceService {
 
     public AttendanceService(AttendanceRepository repo) { this.repo = repo; }
 
-    public void save(Attendance a)            { repo.save(a); }
+    public void save(Attendance a)             { repo.save(a); }
     public void saveAll(List<Attendance> list) { repo.saveAll(list); }
-    public Attendance getById(Long id)        { return repo.findById(id).get(); }
-    public void delete(Long id)               { repo.deleteById(id); }
+    public Attendance getById(Long id)         { return repo.findById(id).orElseThrow(() -> new RuntimeException("Attendance not found: " + id)); }
+    public void delete(Long id)                { repo.deleteById(id); }
+
+    // ─── FACULTY-SIDE methods (use markedBy) ────────────────────────────────
 
     public List<Attendance> getByFaculty(String username) {
         return repo.findByMarkedBy(username);
@@ -37,25 +39,35 @@ public class AttendanceService {
         return repo.findDistinctDatesByFaculty(username);
     }
 
-    public long countPresent(String username) {
-        return repo.countByMarkedByAndStatus(username, "Present");
+    // Faculty dashboard stat counts (counts by markedBy = faculty username)
+    public long countFacultyPresent(String facultyUsername) {
+        return repo.countByMarkedByAndStatus(facultyUsername, "Present");
     }
 
-    public long countAbsent(String username) {
-        return repo.countByMarkedByAndStatus(username, "Absent");
+    public long countFacultyAbsent(String facultyUsername) {
+        return repo.countByMarkedByAndStatus(facultyUsername, "Absent");
     }
 
-    // Add to existing AttendanceService.java — paste these 3 methods inside the class
+    // ─── STUDENT-SIDE methods (use studentUsername) ──────────────────────────
 
-    public long countLate(String username) {
-        return repo.countByStudentUsernameAndStatus(username, "Late");
+    // FIX: these now correctly query by studentUsername, not markedBy
+    public long countPresent(String studentUsername) {
+        return repo.countByStudentUsernameAndStatus(studentUsername, "Present");
     }
 
-    public List<Attendance> getByUsername(String username) {
-        return repo.findByStudentUsername(username);
+    public long countAbsent(String studentUsername) {
+        return repo.countByStudentUsernameAndStatus(studentUsername, "Absent");
     }
 
-    public List<Object[]> getSubjectSummary(String username) {
-        return repo.findSubjectSummaryByUsername(username);
+    public long countLate(String studentUsername) {
+        return repo.countByStudentUsernameAndStatus(studentUsername, "Late");
+    }
+
+    public List<Attendance> getByUsername(String studentUsername) {
+        return repo.findByStudentUsername(studentUsername);
+    }
+
+    public List<Object[]> getSubjectSummary(String studentUsername) {
+        return repo.findSubjectSummaryByUsername(studentUsername);
     }
 }

@@ -6,173 +6,48 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
 
-        /* ── SIDEBAR ── */
-        .sidebar {
-            width: 250px;
-            background: #1e3799;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            top: 0; left: 0;
-            z-index: 100;
-        }
-        .sidebar-brand {
-            padding: 25px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .sidebar { width: 250px; background: #1e3799; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
         .sidebar-brand span { font-size: 26px; }
         .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
-        .menu-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.5);
-            padding: 15px 20px 5px;
-        }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            font-size: 14px;
-            transition: 0.2s;
-            border-left: 3px solid transparent;
-        }
-        .menu-item:hover, .menu-item.active {
-            background: rgba(255,255,255,0.12);
-            color: white;
-            border-left-color: #74b9ff;
-        }
+        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
         .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
-        .sidebar-footer {
-            padding: 15px 20px;
-            border-top: 1px solid rgba(255,255,255,0.15);
-        }
-        .sidebar-footer a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            font-size: 14px;
-            padding: 10px;
-            border-radius: 8px;
-            transition: 0.2s;
-        }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
         .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
 
-        /* ── MAIN CONTENT ── */
         .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
-
-        /* ── TOPBAR ── */
-        .topbar {
-            background: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            position: sticky;
-            top: 0;
-            z-index: 99;
-        }
+        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 99; }
         .topbar h1 { font-size: 20px; color: #1e3799; }
         .topbar-right { display: flex; align-items: center; gap: 15px; }
-        .admin-badge {
-            background: #1e3799;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-        }
+        .admin-badge { background: #1e3799; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
         .date-label { font-size: 13px; color: #888; }
 
-        /* ── PAGE BODY ── */
         .content { padding: 30px; }
 
-        /* ── STAT CARDS ── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border-left: 5px solid;
-            transition: 0.2s;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 12px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 16px; border-left: 5px solid; transition: 0.2s; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
-        .stat-card.blue  { border-color: #1e3799; }
-        .stat-card.green { border-color: #00b894; }
-        .stat-card.orange{ border-color: #e67e22; }
-        .stat-card.red   { border-color: #e55039; }
-        .stat-icon {
-            width: 52px; height: 52px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px;
-        }
-        .stat-card.blue  .stat-icon { background: #eaf0ff; }
-        .stat-card.green .stat-icon { background: #e0faf4; }
+        .stat-card.blue   { border-color: #1e3799; }
+        .stat-card.green  { border-color: #00b894; }
+        .stat-card.orange { border-color: #e67e22; }
+        .stat-card.red    { border-color: #e55039; }
+        .stat-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .stat-card.blue   .stat-icon { background: #eaf0ff; }
+        .stat-card.green  .stat-icon { background: #e0faf4; }
         .stat-card.orange .stat-icon { background: #fef3e2; }
-        .stat-card.red   .stat-icon { background: #fdecea; }
+        .stat-card.red    .stat-icon { background: #fdecea; }
         .stat-info h3 { font-size: 24px; color: #2d3436; font-weight: bold; }
         .stat-info p  { font-size: 13px; color: #888; margin-top: 2px; }
 
-        /* ── QUICK ACTION CARDS ── */
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2d3436;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #dfe6e9;
-            margin-left: 10px;
-        }
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-        .action-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px 18px;
-            text-align: center;
-            text-decoration: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            transition: 0.25s;
-            border-top: 4px solid transparent;
-        }
-        .action-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
+        .section-title { font-size: 16px; font-weight: bold; color: #2d3436; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: #dfe6e9; margin-left: 10px; }
+
+        .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+        .action-card { background: white; border-radius: 12px; padding: 24px 18px; text-align: center; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.06); transition: 0.25s; border-top: 4px solid transparent; }
+        .action-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .action-card.c1 { border-top-color: #1e3799; }
         .action-card.c2 { border-top-color: #00b894; }
         .action-card.c3 { border-top-color: #8e44ad; }
@@ -181,41 +56,21 @@
         .action-card.c6 { border-top-color: #0984e3; }
         .action-card.c7 { border-top-color: #00cec9; }
         .action-card.c8 { border-top-color: #fdcb6e; }
-        .action-icon { font-size: 36px; margin-bottom: 10px; }
+        .action-icon  { font-size: 36px; margin-bottom: 10px; }
         .action-title { font-size: 14px; font-weight: bold; color: #2d3436; }
         .action-sub   { font-size: 12px; color: #999; margin-top: 4px; }
 
-        /* ── MANAGEMENT TABLE SECTION ── */
         .table-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-        .table-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+        .table-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .table-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .table-card-header h3 { font-size: 15px; color: #2d3436; }
-        .view-all {
-            font-size: 13px;
-            color: #1e3799;
-            text-decoration: none;
-            font-weight: bold;
-        }
+        .view-all { font-size: 13px; color: #1e3799; text-decoration: none; font-weight: bold; }
         .mini-table { width: 100%; border-collapse: collapse; font-size: 13px; }
         .mini-table th { background: #f8f9fa; color: #666; padding: 8px 10px; text-align: left; font-weight: 600; }
         .mini-table td { padding: 10px; border-bottom: 1px solid #f1f2f6; color: #444; }
         .mini-table tr:last-child td { border-bottom: none; }
-        .badge {
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
+        .empty-msg { text-align: center; color: #aaa; padding: 20px; }
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .badge-blue   { background: #eaf0ff; color: #1e3799; }
         .badge-green  { background: #e0faf4; color: #00b894; }
         .badge-purple { background: #f3e5ff; color: #8e44ad; }
@@ -223,7 +78,6 @@
 </head>
 <body>
 
-<!-- ── SIDEBAR ── -->
 <div class="sidebar">
     <div class="sidebar-brand">
         <span>🎓</span>
@@ -232,94 +86,45 @@
             <div style="font-size:11px; font-weight:normal; opacity:0.7;">Admin Panel</div>
         </div>
     </div>
-
     <nav class="sidebar-menu">
-
         <div class="menu-label">Main</div>
-        <a href="/admin/dashboard" class="menu-item active">
-            <span class="icon">📊</span> Dashboard
-        </a>
+        <a href="/admin/dashboard" class="menu-item active"><span class="icon">📊</span> Dashboard</a>
 
         <div class="menu-label">People</div>
-        <a href="/admin/students" class="menu-item">
-            <span class="icon">👨‍🎓</span> Students
-        </a>
-        <a href="/admin/add-student" class="menu-item">
-            <span class="icon">➕</span> Add Student
-        </a>
-        <a href="/admin/faculty" class="menu-item">
-            <span class="icon">👩‍🏫</span> Faculty
-        </a>
-        <a href="/admin/add-faculty" class="menu-item">
-            <span class="icon">➕</span> Add Faculty
-        </a>
+        <a href="/admin/students"   class="menu-item"><span class="icon">👨‍🎓</span> Students</a>
+        <a href="/admin/add-student" class="menu-item"><span class="icon">➕</span> Add Student</a>
+        <a href="/admin/faculty"    class="menu-item"><span class="icon">👩‍🏫</span> Faculty</a>
+        <a href="/admin/add-faculty" class="menu-item"><span class="icon">➕</span> Add Faculty</a>
 
         <div class="menu-label">Academic</div>
-        <a href="/admin/academiccalendar" class="menu-item">
-            <span class="icon">📅</span> Academic Calendar
-        </a>
-        <a href="/admin/coursesyllabus" class="menu-item">
-            <span class="icon">📚</span> Course Syllabus
-        </a>
-        <a href="/admin/departmentmanagement" class="menu-item">
-            <span class="icon">🏫</span> Departments
-        </a>
+        <a href="/admin/academiccalendar"    class="menu-item"><span class="icon">📅</span> Academic Calendar</a>
+        <a href="/admin/coursesyllabus"      class="menu-item"><span class="icon">📚</span> Course Syllabus</a>
+        <a href="/admin/departmentmanagement" class="menu-item"><span class="icon">🏫</span> Departments</a>
 
         <div class="menu-label">Finance</div>
-        <a href="/admin/feestructure" class="menu-item">
-            <span class="icon">💰</span> Fee Structure
-        </a>
-        <a href="/admin/expensebudget" class="menu-item">
-            <span class="icon">📈</span> Expense & Budget
-        </a>
-        <a href="/admin/scholarship" class="menu-item">
-            <span class="icon">🎖️</span> Scholarship
-        </a>
+        <a href="/admin/feestructure"  class="menu-item"><span class="icon">💰</span> Fee Structure</a>
+        <a href="/admin/expensebudget" class="menu-item"><span class="icon">📈</span> Expense &amp; Budget</a>
+        <a href="/admin/scholarship"   class="menu-item"><span class="icon">🎖️</span> Scholarship</a>
 
         <div class="menu-label">Administration</div>
-        <a href="/admin/hrpayroll" class="menu-item">
-            <span class="icon">💼</span> HR & Payroll
-        </a>
-        <a href="/admin/hostelmanagement" class="menu-item">
-            <span class="icon">🏠</span> Hostel
-        </a>
-        <a href="/admin/transportmanagement" class="menu-item">
-            <span class="icon">🚌</span> Transport
-        </a>
-        <a href="/admin/inventoryasset" class="menu-item">
-            <span class="icon">📦</span> Inventory
-        </a>
-        <a href="/admin/eventseminar" class="menu-item">
-            <span class="icon">🎤</span> Events & Seminars
-        </a>
-        <a href="/admin/alumni" class="menu-item">
-            <span class="icon">🤝</span> Alumni
-        </a>
+        <a href="/admin/hrpayroll"           class="menu-item"><span class="icon">💼</span> HR &amp; Payroll</a>
+        <a href="/admin/hostelmanagement"    class="menu-item"><span class="icon">🏠</span> Hostel</a>
+        <a href="/admin/transportmanagement" class="menu-item"><span class="icon">🚌</span> Transport</a>
+        <a href="/admin/inventoryasset"      class="menu-item"><span class="icon">📦</span> Inventory</a>
+        <a href="/admin/eventseminar"        class="menu-item"><span class="icon">🎤</span> Events &amp; Seminars</a>
+        <a href="/admin/alumni"              class="menu-item"><span class="icon">🤝</span> Alumni</a>
 
         <div class="menu-label">System</div>
-        <a href="/admin/userrolepermission" class="menu-item">
-            <span class="icon">🔐</span> Roles & Permissions
-        </a>
-        <a href="/admin/systemsettingslogs" class="menu-item">
-            <span class="icon">⚙️</span> Settings & Logs
-        </a>
-        <a href="/admin/superadmindashboard" class="menu-item">
-            <span class="icon">👑</span> Super Admin
-        </a>
-
+        <a href="/admin/userrolepermission" class="menu-item"><span class="icon">🔐</span> Roles &amp; Permissions</a>
+        <a href="/admin/systemsettingslogs" class="menu-item"><span class="icon">⚙️</span> Settings &amp; Logs</a>
+        <a href="/admin/superadmindashboard" class="menu-item"><span class="icon">👑</span> Super Admin</a>
     </nav>
-
     <div class="sidebar-footer">
-        <a href="/logout">
-            <span style="font-size:18px;">🚪</span> Logout
-        </a>
+        <a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a>
     </div>
 </div>
 
-<!-- ── MAIN ── -->
 <div class="main">
-
-    <!-- Topbar -->
     <div class="topbar">
         <h1>Admin Dashboard</h1>
         <div class="topbar-right">
@@ -328,89 +133,57 @@
         </div>
     </div>
 
-    <!-- Content -->
     <div class="content">
 
-        <!-- Stat Cards -->
+        <!-- ── STAT CARDS ── -->
         <div class="stats-grid">
             <div class="stat-card blue">
                 <div class="stat-icon">👨‍🎓</div>
                 <div class="stat-info">
-                    <h3>--</h3>
+                    <h3 th:text="${totalStudents}">0</h3>
                     <p>Total Students</p>
                 </div>
             </div>
             <div class="stat-card green">
                 <div class="stat-icon">👩‍🏫</div>
                 <div class="stat-info">
-                    <h3>--</h3>
+                    <h3 th:text="${totalFaculty}">0</h3>
                     <p>Total Faculty</p>
                 </div>
             </div>
             <div class="stat-card orange">
                 <div class="stat-icon">🏫</div>
                 <div class="stat-info">
-                    <h3>--</h3>
+                    <h3 th:text="${totalDepts}">0</h3>
                     <p>Departments</p>
                 </div>
             </div>
             <div class="stat-card red">
                 <div class="stat-icon">📋</div>
                 <div class="stat-info">
-                    <h3>--</h3>
+                    <h3 th:text="${activeCourses}">0</h3>
                     <p>Active Courses</p>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions -->
+        <!-- ── QUICK ACTIONS ── -->
         <div class="section-title">⚡ Quick Actions</div>
         <div class="actions-grid">
-            <a href="/admin/add-student" class="action-card c1">
-                <div class="action-icon">👨‍🎓</div>
-                <div class="action-title">Add Student</div>
-                <div class="action-sub">Register new student</div>
-            </a>
-            <a href="/admin/add-faculty" class="action-card c2">
-                <div class="action-icon">👩‍🏫</div>
-                <div class="action-title">Add Faculty</div>
-                <div class="action-sub">Register new faculty</div>
-            </a>
-            <a href="/admin/academiccalendar" class="action-card c3">
-                <div class="action-icon">📅</div>
-                <div class="action-title">Academic Calendar</div>
-                <div class="action-sub">Manage schedules</div>
-            </a>
-            <a href="/admin/feestructure" class="action-card c4">
-                <div class="action-icon">💰</div>
-                <div class="action-title">Fee Structure</div>
-                <div class="action-sub">Manage fees</div>
-            </a>
-            <a href="/admin/hrpayroll" class="action-card c5">
-                <div class="action-icon">💼</div>
-                <div class="action-title">HR & Payroll</div>
-                <div class="action-sub">Staff management</div>
-            </a>
-            <a href="/admin/coursesyllabus" class="action-card c6">
-                <div class="action-icon">📚</div>
-                <div class="action-title">Course Syllabus</div>
-                <div class="action-sub">Manage courses</div>
-            </a>
-            <a href="/admin/eventseminar" class="action-card c7">
-                <div class="action-icon">🎤</div>
-                <div class="action-title">Events & Seminars</div>
-                <div class="action-sub">College events</div>
-            </a>
-            <a href="/admin/systemsettingslogs" class="action-card c8">
-                <div class="action-icon">⚙️</div>
-                <div class="action-title">System Settings</div>
-                <div class="action-sub">Logs & config</div>
-            </a>
+            <a href="/admin/add-student"      class="action-card c1"><div class="action-icon">👨‍🎓</div><div class="action-title">Add Student</div><div class="action-sub">Register new student</div></a>
+            <a href="/admin/add-faculty"      class="action-card c2"><div class="action-icon">👩‍🏫</div><div class="action-title">Add Faculty</div><div class="action-sub">Register new faculty</div></a>
+            <a href="/admin/academiccalendar" class="action-card c3"><div class="action-icon">📅</div><div class="action-title">Academic Calendar</div><div class="action-sub">Manage schedules</div></a>
+            <a href="/admin/feestructure"     class="action-card c4"><div class="action-icon">💰</div><div class="action-title">Fee Structure</div><div class="action-sub">Manage fees</div></a>
+            <a href="/admin/hrpayroll"        class="action-card c5"><div class="action-icon">💼</div><div class="action-title">HR &amp; Payroll</div><div class="action-sub">Staff management</div></a>
+            <a href="/admin/coursesyllabus"   class="action-card c6"><div class="action-icon">📚</div><div class="action-title">Course Syllabus</div><div class="action-sub">Manage courses</div></a>
+            <a href="/admin/eventseminar"     class="action-card c7"><div class="action-icon">🎤</div><div class="action-title">Events &amp; Seminars</div><div class="action-sub">College events</div></a>
+            <a href="/admin/systemsettingslogs" class="action-card c8"><div class="action-icon">⚙️</div><div class="action-title">System Settings</div><div class="action-sub">Logs &amp; config</div></a>
         </div>
 
-        <!-- Management Sections -->
+        <!-- ── MANAGEMENT OVERVIEW ── -->
         <div class="section-title">📋 Management Overview</div>
         <div class="table-grid">
+
             <div class="table-card">
                 <div class="table-card-header">
                     <h3>👨‍🎓 Recent Students</h3>
@@ -418,16 +191,17 @@
                 </div>
                 <table class="mini-table">
                     <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Department</th>
-                        <th>Year</th>
-                    </tr>
+                    <tr><th>Name</th><th>Department</th><th>Year</th></tr>
                     </thead>
                     <tbody>
-                    <tr><td colspan="3" style="text-align:center; color:#aaa; padding:20px;">
-                        Add students to see them here
-                    </td></tr>
+                    <tr th:if="${#lists.isEmpty(recentStudents)}">
+                        <td colspan="3" class="empty-msg">No students added yet</td>
+                    </tr>
+                    <tr th:each="s : ${recentStudents}">
+                        <td th:text="${s.name}">-</td>
+                        <td><span class="badge badge-blue" th:text="${s.department}">-</span></td>
+                        <td th:text="${s.year}">-</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -439,30 +213,29 @@
                 </div>
                 <table class="mini-table">
                     <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Department</th>
-                        <th>Role</th>
-                    </tr>
+                    <tr><th>Name</th><th>Department</th><th>Designation</th></tr>
                     </thead>
                     <tbody>
-                    <tr><td colspan="3" style="text-align:center; color:#aaa; padding:20px;">
-                        Add faculty to see them here
-                    </td></tr>
+                    <tr th:if="${#lists.isEmpty(recentFaculty)}">
+                        <td colspan="3" class="empty-msg">No faculty added yet</td>
+                    </tr>
+                    <tr th:each="f : ${recentFaculty}">
+                        <td th:text="${f.name}">-</td>
+                        <td><span class="badge badge-green" th:text="${f.department}">-</span></td>
+                        <td><span class="badge badge-purple" th:text="${f.designation}">-</span></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
 <script>
-    // Show current date in topbar
     const d = new Date();
     document.getElementById('dateLabel').textContent =
         d.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 </script>
-
 </body>
 </html>

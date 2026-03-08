@@ -45,7 +45,7 @@
         .section-title { font-size: 15px; font-weight: bold; color: #2d3436; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .section-title::after { content: ''; flex: 1; height: 1px; background: #dfe6e9; margin-left: 10px; }
 
-        /* STUDENT INFO BANNER */
+        /* STUDENT BANNER */
         .info-banner { background: linear-gradient(135deg, #16a085, #1abc9c); color: white; border-radius: 12px; padding: 20px 28px; margin-bottom: 26px; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 14px rgba(22,160,133,0.3); }
         .banner-avatar { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; }
         .banner-info h2 { font-size: 18px; font-weight: bold; }
@@ -65,19 +65,24 @@
         .badge-theory    { background: #eaf4ff; color: #0984e3; }
         .badge-practical { background: #e0faf4; color: #16a085; }
         .badge-elective  { background: #fef3e2; color: #e67e22; }
-        .badge-pass      { background: #e0faf4; color: #16a085; }
-        .badge-pending   { background: #fef3e2; color: #e67e22; }
+        .badge-good      { background: #e0faf4; color: #16a085; }
+        .badge-warning   { background: #fef3e2; color: #e67e22; }
+        .badge-danger    { background: #fdecea; color: #e55039; }
+        .badge-type      { background: #f3e5ff; color: #8e44ad; }
 
-        /* ATTENDANCE BARS */
+        /* ATTENDANCE BAR */
         .att-wrap { display: flex; align-items: center; gap: 10px; }
         .att-bar  { flex: 1; background: #f1f2f6; border-radius: 10px; height: 8px; overflow: hidden; min-width: 80px; }
         .att-fill { height: 100%; border-radius: 10px; }
         .att-pct  { font-size: 13px; font-weight: bold; min-width: 38px; text-align: right; }
 
-        /* EMPTY */
-        .empty-row { text-align: center; color: #aaa; padding: 30px; font-size: 14px; }
+        /* MARKS PROGRESS BAR */
+        .mark-bar-wrap { display: flex; align-items: center; gap: 10px; }
+        .mark-bar { flex: 1; background: #f1f2f6; border-radius: 10px; height: 8px; overflow: hidden; min-width: 80px; }
+        .mark-fill { height: 100%; border-radius: 10px; }
 
-        /* NO PROFILE */
+        /* EMPTY / NO PROFILE */
+        .empty-row  { text-align: center; color: #aaa; padding: 30px; font-size: 14px; }
         .no-profile { text-align: center; padding: 60px; color: #aaa; font-size: 16px; }
 
         /* TABS */
@@ -103,14 +108,15 @@
         <div class="menu-label">Main</div>
         <a href="/student/studentdashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
         <div class="menu-label">Academic</div>
-        <a href="/student/profilemanagement" class="menu-item"><span class="icon">👤</span> My Profile</a>
-        <a href="/student/academicrecords" class="menu-item active"><span class="icon">📋</span> Academic Records</a>
+        <a href="/student/profilemanagement"  class="menu-item"><span class="icon">👤</span> My Profile</a>
+        <a href="/student/academicrecords"    class="menu-item active"><span class="icon">📋</span> Academic Records</a>
         <a href="/student/courseregistration" class="menu-item"><span class="icon">📖</span> Course Registration</a>
+        <a href="/student/attendance"         class="menu-item"><span class="icon">📅</span> My Attendance</a>
         <div class="menu-label">Finance</div>
         <a href="/student/feepayment" class="menu-item"><span class="icon">💳</span> Fee Payment</a>
         <div class="menu-label">Services</div>
         <a href="/student/librarymanagement" class="menu-item"><span class="icon">📚</span> Library</a>
-        <a href="/student/placement" class="menu-item"><span class="icon">💼</span> Placement</a>
+        <a href="/student/placement"         class="menu-item"><span class="icon">💼</span> Placement</a>
     </nav>
     <div class="sidebar-footer">
         <a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a>
@@ -121,7 +127,8 @@
 <div class="main">
     <div class="topbar">
         <h1>📋 Academic Records</h1>
-        <span class="student-badge">👨‍🎓 Student</span>
+        <span class="student-badge"
+              th:text="${student != null ? '👨‍🎓 ' + student.name : '👨‍🎓 Student'}">👨‍🎓 Student</span>
     </div>
 
     <div class="content">
@@ -135,27 +142,33 @@
 
             <!-- Banner -->
             <div class="info-banner">
-                <div class="banner-avatar" th:text="${#strings.substring(student.name,0,1)}">S</div>
+                <div class="banner-avatar" th:text="${#strings.substring(student.name, 0, 1)}">S</div>
                 <div class="banner-info">
                     <h2 th:text="${student.name}">Student Name</h2>
                     <p th:text="'Enrollment: ' + ${student.enrollmentNo} + '  |  ' + ${student.department}"></p>
                 </div>
                 <div class="banner-chips">
                     <span class="chip" th:text="'Year: ' + ${student.year}">Year</span>
-                    <span class="chip">CGPA: 8.4</span>
-                    <span class="chip">Attendance: 92%</span>
+                    <span class="chip" th:text="'Attendance: ' + ${attPct} + '%'">Att%</span>
+                    <span class="chip" th:text="'Avg Marks: ' + ${avgMarkPct} + '%'">Marks%</span>
                 </div>
             </div>
 
-            <!-- Stat Cards -->
+            <!-- Stat Cards — all real data -->
             <div class="stats-grid">
                 <div class="stat-card green">
                     <div class="stat-icon">📅</div>
-                    <div class="stat-info"><h3>92%</h3><p>Overall Attendance</p></div>
+                    <div class="stat-info">
+                        <h3 th:text="${attPct + '%'}">0%</h3>
+                        <p>Overall Attendance</p>
+                    </div>
                 </div>
                 <div class="stat-card blue">
                     <div class="stat-icon">🎯</div>
-                    <div class="stat-info"><h3>8.4</h3><p>Current CGPA</p></div>
+                    <div class="stat-info">
+                        <h3 th:text="${avgMarkPct + '%'}">0%</h3>
+                        <p>Avg Internal Marks</p>
+                    </div>
                 </div>
                 <div class="stat-card orange">
                     <div class="stat-icon">📖</div>
@@ -165,21 +178,26 @@
                     </div>
                 </div>
                 <div class="stat-card purple">
-                    <div class="stat-icon">🏆</div>
-                    <div class="stat-info"><h3>A+</h3><p>Grade</p></div>
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalMarksEntries != null ? totalMarksEntries : 0}">0</h3>
+                        <p>Assessment Records</p>
+                    </div>
                 </div>
             </div>
 
             <!-- TABS -->
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('courses', this)">📚 My Courses</button>
+                <button class="tab-btn active" onclick="switchTab('courses',    this)">📚 My Courses</button>
                 <button class="tab-btn"        onclick="switchTab('attendance', this)">📅 Attendance</button>
-                <button class="tab-btn"        onclick="switchTab('marks', this)">🎯 Marks</button>
+                <button class="tab-btn"        onclick="switchTab('marks',      this)">🎯 Internal Marks</button>
             </div>
 
-            <!-- TAB: Courses -->
+            <!-- ── TAB 1: Courses ── -->
             <div id="tab-courses" class="tab-content active">
-                <div class="section-title">📚 Courses — <span th:text="${student.department}"></span></div>
+                <div class="section-title">📚 Courses —
+                    <span th:text="${student.department}"></span>
+                </div>
                 <div class="table-card">
                     <table>
                         <thead>
@@ -195,7 +213,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:if="${#lists.isEmpty(courses)}">
+                        <tr th:if="${courses == null or #lists.isEmpty(courses)}">
                             <td colspan="8" class="empty-row">No courses found for your department.</td>
                         </tr>
                         <tr th:each="c, i : ${courses}">
@@ -203,60 +221,109 @@
                             <td><strong th:text="${c.courseCode}"></strong></td>
                             <td th:text="${c.courseName}"></td>
                             <td>
-                                <span th:if="${c.courseType=='Theory'}"    class="badge badge-theory">Theory</span>
-                                <span th:if="${c.courseType=='Practical'}" class="badge badge-practical">Practical</span>
-                                <span th:if="${c.courseType=='Elective'}"  class="badge badge-elective">Elective</span>
+                                <span th:if="${c.courseType == 'Theory'}"    class="badge badge-theory">Theory</span>
+                                <span th:if="${c.courseType == 'Practical'}" class="badge badge-practical">Practical</span>
+                                <span th:if="${c.courseType == 'Elective'}"  class="badge badge-elective">Elective</span>
+                                <span th:if="${c.courseType != 'Theory' and c.courseType != 'Practical' and c.courseType != 'Elective'}"
+                                      class="badge badge-type" th:text="${c.courseType}">Other</span>
                             </td>
                             <td th:text="${c.credits}"></td>
                             <td th:text="${c.semester}"></td>
                             <td th:text="${c.facultyName}"></td>
-                            <td><span class="badge badge-pass">Active</span></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${c.status == 'Active' ? 'badge-good' : 'badge-warning'}"
+                                      th:text="${c.status}">Active</span>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- TAB: Attendance -->
+            <!-- ── TAB 2: Attendance (real subject-wise from DB) ── -->
+            <!-- subjectSummary: Object[] = [subject, present, absent, late, total] -->
             <div id="tab-attendance" class="tab-content">
                 <div class="section-title">📅 Subject-wise Attendance</div>
+
+                <!-- Overall summary chips -->
+                <div style="display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap;">
+                    <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
+                        <div style="font-size:22px; font-weight:bold; color:#16a085;" th:text="${present}">0</div>
+                        <div style="font-size:12px; color:#888;">Present</div>
+                    </div>
+                    <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
+                        <div style="font-size:22px; font-weight:bold; color:#e55039;" th:text="${absent}">0</div>
+                        <div style="font-size:12px; color:#888;">Absent</div>
+                    </div>
+                    <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
+                        <div style="font-size:22px; font-weight:bold; color:#e67e22;" th:text="${late}">0</div>
+                        <div style="font-size:12px; color:#888;">Late</div>
+                    </div>
+                    <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
+                        <div style="font-size:22px; font-weight:bold; color:#0984e3;" th:text="${totalAtt}">0</div>
+                        <div style="font-size:12px; color:#888;">Total Classes</div>
+                    </div>
+                    <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
+                        <div style="font-size:22px; font-weight:bold;"
+                             th:style="'font-size:22px; font-weight:bold; color:' + (${attPct} >= 75 ? '#16a085' : (${attPct} >= 60 ? '#e67e22' : '#e55039'))"
+                             th:text="${attPct + '%'}">0%</div>
+                        <div style="font-size:12px; color:#888;">Overall %</div>
+                    </div>
+                </div>
+
                 <div class="table-card">
                     <table>
                         <thead>
                         <tr>
                             <th>#</th>
                             <th>Subject</th>
-                            <th>Total Classes</th>
-                            <th>Attended</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Late</th>
+                            <th>Total</th>
                             <th>Attendance %</th>
                             <th>Status</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:if="${#lists.isEmpty(courses)}">
-                            <td colspan="6" class="empty-row">No attendance data available.</td>
+                        <tr th:if="${subjectSummary == null or #lists.isEmpty(subjectSummary)}">
+                            <td colspan="8" class="empty-row">No attendance records found.</td>
                         </tr>
-                        <tr th:each="c, i : ${courses}">
+                        <!-- pct is a Double — no T(Double).parseDouble() needed -->
+                        <tr th:each="row, i : ${subjectSummary}"
+                            th:with="pct=${row[4] != null and row[4] > 0 ? (row[1] * 100.0 / row[4]) : 0.0}">
                             <td th:text="${i.count}"></td>
-                            <td th:text="${c.courseName}"></td>
-                            <td>50</td>
-                            <td>46</td>
+                            <td><strong th:text="${row[0]}">Subject</strong></td>
+                            <td style="color:#16a085; font-weight:bold;" th:text="${row[1]}">0</td>
+                            <td style="color:#e55039; font-weight:bold;" th:text="${row[2]}">0</td>
+                            <td style="color:#e67e22; font-weight:bold;" th:text="${row[3]}">0</td>
+                            <td th:text="${row[4]}">0</td>
                             <td>
                                 <div class="att-wrap">
                                     <div class="att-bar">
-                                        <div class="att-fill" style="width:92%; background:#16a085;"></div>
+                                        <div class="att-fill"
+                                             th:style="'width:' + ${pct} + '%; background:' + (${pct} >= 75 ? '#16a085' : (${pct} >= 60 ? '#e67e22' : '#e55039'))">
+                                        </div>
                                     </div>
-                                    <span class="att-pct" style="color:#16a085;">92%</span>
+                                    <span class="att-pct"
+                                          th:style="'color:' + (${pct} >= 75 ? '#16a085' : (${pct} >= 60 ? '#e67e22' : '#e55039'))"
+                                          th:text="${#numbers.formatDecimal(pct, 1, 1) + '%'}">0%</span>
                                 </div>
                             </td>
-                            <td><span class="badge badge-pass">✅ Good</span></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${pct >= 75 ? 'badge-good' : (pct >= 60 ? 'badge-warning' : 'badge-danger')}"
+                                      th:text="${pct >= 75 ? '✅ Good' : (pct >= 60 ? '⚠️ Low' : '❌ Danger')}">
+                                </span>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- TAB: Marks -->
+            <!-- ── TAB 3: Internal Marks (real from DB) ── -->
             <div id="tab-marks" class="tab-content">
                 <div class="section-title">🎯 Internal Assessment Marks</div>
                 <div class="table-card">
@@ -265,32 +332,56 @@
                         <tr>
                             <th>#</th>
                             <th>Subject</th>
-                            <th>IA-1 (25)</th>
-                            <th>IA-2 (25)</th>
-                            <th>Assignment (10)</th>
-                            <th>Total (60)</th>
+                            <th>Assessment Type</th>
+                            <th>Marks Obtained</th>
+                            <th>Total Marks</th>
+                            <th>Percentage</th>
+                            <th>Exam Date</th>
+                            <th>Remarks</th>
                             <th>Grade</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:if="${#lists.isEmpty(courses)}">
-                            <td colspan="7" class="empty-row">No marks data available.</td>
+                        <tr th:if="${marks == null or #lists.isEmpty(marks)}">
+                            <td colspan="9" class="empty-row">No internal marks records found.</td>
                         </tr>
-                        <tr th:each="c, i : ${courses}">
+                        <!-- pct is a Double — no T(Double).parseDouble() needed -->
+                        <tr th:each="m, i : ${marks}"
+                            th:with="pct=${m.totalMarks != null and m.totalMarks > 0 ? (m.marksObtained / m.totalMarks * 100) : 0.0}">
                             <td th:text="${i.count}"></td>
-                            <td th:text="${c.courseName}"></td>
-                            <td>21</td>
-                            <td>22</td>
-                            <td>9</td>
-                            <td><strong>52</strong></td>
-                            <td><span class="badge badge-pass">A</span></td>
+                            <td><strong th:text="${m.subject}">Subject</strong></td>
+                            <td>
+                                <span class="badge badge-type" th:text="${m.assessmentType}">Type</span>
+                            </td>
+                            <td style="font-weight:bold; color:#2d3436;" th:text="${m.marksObtained}">0</td>
+                            <td th:text="${m.totalMarks}">0</td>
+                            <td>
+                                <div class="mark-bar-wrap">
+                                    <div class="mark-bar">
+                                        <div class="mark-fill"
+                                             th:style="'width:' + ${pct} + '%; background:' + (${pct} >= 75 ? '#16a085' : (${pct} >= 50 ? '#e67e22' : '#e55039'))">
+                                        </div>
+                                    </div>
+                                    <span th:style="'min-width:42px; font-size:13px; font-weight:bold; color:' + (${pct} >= 75 ? '#16a085' : (${pct} >= 50 ? '#e67e22' : '#e55039'))"
+                                          th:text="${#numbers.formatDecimal(pct, 1, 1) + '%'}">0%</span>
+                                </div>
+                            </td>
+                            <td th:text="${m.examDate}">-</td>
+                            <td style="color:#888; font-size:13px;"
+                                th:text="${m.remarks != null and !m.remarks.isEmpty() ? m.remarks : '-'}">-</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${pct >= 75 ? 'badge-good' : (pct >= 50 ? 'badge-warning' : 'badge-danger')}"
+                                      th:text="${pct >= 90 ? 'O' : (pct >= 75 ? 'A' : (pct >= 60 ? 'B' : (pct >= 50 ? 'C' : 'F')))}">
+                                </span>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-        </div>
+        </div><!-- end th:if student != null -->
     </div>
 </div>
 

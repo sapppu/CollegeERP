@@ -59,7 +59,6 @@ com/college/erp/controller/finance/InventoryAssetController.class
 com/college/erp/controller/student/AcademicRecordsController.class
 com/college/erp/model/Research.class
 com/college/erp/model/LeaveApplication.class
-com/college/erp/controller/finance/FinanceFeeController.class
 com/college/erp/service/LeaveApplicationService.class
 com/college/erp/config/SecurityConfig.class
 com/college/erp/controller/admin/SystemSettingsLogsController.class
