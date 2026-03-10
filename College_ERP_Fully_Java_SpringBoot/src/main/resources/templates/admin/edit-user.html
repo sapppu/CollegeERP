@@ -1,99 +1,280 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Edit User</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
-        .sidebar { width: 250px; background: #1e3799; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
-        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); }
-        .sidebar-menu { flex: 1; padding: 15px 0; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
-        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; }
-        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); }
-        .main { margin-left: 250px; flex: 1; }
-        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-        .topbar h1 { font-size: 20px; color: #2d3436; }
-        .content { padding: 30px; }
-        .form-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); max-width: 550px; }
-        .form-card h2 { margin-bottom: 25px; color: #1e3799; font-size: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-        .form-group label { font-size: 13px; font-weight: 600; color: #636e72; }
-        .form-group input, .form-group select { padding: 10px 14px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
-        .form-group input:focus, .form-group select:focus { border-color: #1e3799; box-shadow: 0 0 0 3px rgba(30,55,153,0.1); }
-        .form-actions { display: flex; gap: 12px; margin-top: 10px; }
-        .btn { padding: 11px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #1e3799; color: white; }
-        .btn-secondary { background: #636e72; color: white; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #1e3799;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 25px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border-left-color: #74b9ff;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .main {
+            margin-left: 250px;
+            flex: 1;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .topbar h1 {
+            font-size: 20px;
+            color: #2d3436;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            max-width: 550px;
+        }
+
+        .form-card h2 {
+            margin-bottom: 25px;
+            color: #1e3799;
+            font-size: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #636e72;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 14px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #1e3799;
+            box-shadow: 0 0 0 3px rgba(30, 55, 153, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 11px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #1e3799;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #636e72;
+            color: white;
+        }
+
+        .error-msg {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 2px;
+            display: none;
+        }
+
+        .form-group input.invalid,
+        .form-group select.invalid {
+            border-color: #e53e3e !important;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="sidebar">
-    <div class="sidebar-brand">🎓 College ERP</div>
-    <div class="sidebar-menu">
-        <a href="/admin/dashboard" class="menu-item">🏠 Dashboard</a>
-        <a href="/admin/students" class="menu-item">🎓 Students</a>
-        <a href="/admin/faculty" class="menu-item">👨‍🏫 Faculty</a>
-        <a href="/admin/departmentmanagement" class="menu-item">🏢 Departments</a>
-        <a href="/admin/academiccalendar" class="menu-item">📅 Academic Calendar</a>
-        <a href="/admin/coursesyllabus" class="menu-item">📚 Course Syllabus</a>
-        <a href="/admin/feestructure" class="menu-item">💳 Fee Structure</a>
-        <a href="/admin/hrpayroll" class="menu-item">💼 HR &amp; Payroll</a>
-        <a href="/admin/expensebudget" class="menu-item">📈 Expense &amp; Budget</a>
-        <a href="/admin/scholarship" class="menu-item">🎖️ Scholarship</a>
-        <a href="/admin/hostelmanagement" class="menu-item">🏠 Hostel</a>
-        <a href="/admin/transportmanagement" class="menu-item">🚌 Transport</a>
-        <a href="/admin/inventoryasset" class="menu-item">📦 Inventory</a>
-        <a href="/admin/eventseminar" class="menu-item">🎤 Events &amp; Seminars</a>
-        <a href="/admin/alumni" class="menu-item">🤝 Alumni</a>
-        <a href="/admin/userrolepermission" class="menu-item active">🔐 User Roles</a>
-    </div>
-    <div class="sidebar-footer">
-        <a href="/logout">🚪 Logout</a>
-    </div>
-</div>
-
-<div class="main">
-    <div class="topbar">
-        <h1>✏️ Edit User</h1>
-        <a href="/admin/userrolepermission" style="text-decoration:none; color:#1e3799; font-size:14px;">⬅ Back to Users</a>
-    </div>
-    <div class="content">
-        <div class="form-card">
-            <h2>🔐 Edit User</h2>
-            <form action="/admin/update-user" method="post">
-                <input type="hidden" name="id" th:value="${user.id}" />
-
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" th:value="${user.username}" required />
-                </div>
-
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="text" name="password" th:value="${user.password}" required />
-                </div>
-
-                <div class="form-group">
-                    <label>Role</label>
-                    <select name="role" required>
-                        <option value="ADMIN"   th:selected="${user.role == 'ADMIN'}">ADMIN — Full system access</option>
-                        <option value="FACULTY" th:selected="${user.role == 'FACULTY'}">FACULTY — Faculty portal access</option>
-                        <option value="STUDENT" th:selected="${user.role == 'STUDENT'}">STUDENT — Student portal access</option>
-                    </select>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">💾 Update User</button>
-                    <a href="/admin/userrolepermission" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
+    <div class="sidebar">
+        <div class="sidebar-brand">🎓 College ERP</div>
+        <div class="sidebar-menu">
+            <a href="/admin/dashboard" class="menu-item">🏠 Dashboard</a>
+            <a href="/admin/students" class="menu-item">🎓 Students</a>
+            <a href="/admin/faculty" class="menu-item">👨‍🏫 Faculty</a>
+            <a href="/admin/departmentmanagement" class="menu-item">🏢 Departments</a>
+            <a href="/admin/academiccalendar" class="menu-item">📅 Academic Calendar</a>
+            <a href="/admin/coursesyllabus" class="menu-item">📚 Course Syllabus</a>
+            <a href="/admin/feestructure" class="menu-item">💳 Fee Structure</a>
+            <a href="/admin/hrpayroll" class="menu-item">💼 HR &amp; Payroll</a>
+            <a href="/admin/expensebudget" class="menu-item">📈 Expense &amp; Budget</a>
+            <a href="/admin/scholarship" class="menu-item">🎖️ Scholarship</a>
+            <a href="/admin/hostelmanagement" class="menu-item">🏠 Hostel</a>
+            <a href="/admin/transportmanagement" class="menu-item">🚌 Transport</a>
+            <a href="/admin/inventoryasset" class="menu-item">📦 Inventory</a>
+            <a href="/admin/eventseminar" class="menu-item">🎤 Events &amp; Seminars</a>
+            <a href="/admin/alumni" class="menu-item">🤝 Alumni</a>
+            <a href="/admin/userrolepermission" class="menu-item active">🔐 User Roles</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/logout">🚪 Logout</a>
         </div>
     </div>
-</div>
+
+    <div class="main">
+        <div class="topbar">
+            <h1>✏️ Edit User</h1>
+            <a href="/admin/userrolepermission" style="text-decoration:none; color:#1e3799; font-size:14px;">⬅ Back to
+                Users</a>
+        </div>
+        <div class="content">
+            <div class="form-card">
+                <h2>🔐 Edit User</h2>
+                <form action="/admin/update-user" method="post" id="editUserForm" novalidate>
+                    <input type="hidden" name="id" th:value="${user.id}" />
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" id="username" th:value="${user.username}" />
+                        <span class="error-msg" id="usernameErr"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" name="password" id="password" th:value="${user.password}" />
+                        <span class="error-msg" id="passwordErr"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select name="role" required>
+                            <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN — Full system access
+                            </option>
+                            <option value="FACULTY" th:selected="${user.role == 'FACULTY'}">FACULTY — Faculty portal
+                                access</option>
+                            <option value="STUDENT" th:selected="${user.role == 'STUDENT'}">STUDENT — Student portal
+                                access</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">💾 Update User</button>
+                        <a href="/admin/userrolepermission" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </body>
+<script>
+    (function () {
+        function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+        function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
+        document.getElementById('editUserForm').addEventListener('submit', function (ev) {
+            var valid = true;
+            ['username', 'password'].forEach(function (id) { ce(id, id + 'Err'); });
+            var u = document.getElementById('username').value.trim();
+            if (!u || u.length < 4) { se('username', 'usernameErr', 'Username must be at least 4 characters.'); valid = false; }
+            else if (!/^[A-Za-z0-9_]+$/.test(u)) { se('username', 'usernameErr', 'Username must be alphanumeric or underscore.'); valid = false; }
+            var p = document.getElementById('password').value;
+            if (p && p.length < 6) { se('password', 'passwordErr', 'Password must be at least 6 characters.'); valid = false; }
+            if (!valid) ev.preventDefault();
+        });
+    })();
+</script>
+
 </html>

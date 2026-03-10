@@ -1,95 +1,226 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Edit Student</title>
     <style>
-        body { font-family: Arial; background: #f4f6f9; margin: 0; }
-        .navbar { background: #38ada9; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .navbar a { color: white; text-decoration: none; font-weight: bold; }
-        .container { width: 600px; margin: 40px auto; background: white; padding: 35px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #38ada9; text-align: center; margin-bottom: 25px; }
-        .section-title { color: #38ada9; font-size: 15px; font-weight: bold; border-bottom: 2px solid #38ada9; padding-bottom: 5px; margin: 20px 0 15px; }
-        label { display: block; margin-bottom: 4px; font-weight: bold; color: #333; font-size: 14px; }
-        input, select { width: 100%; padding: 9px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        input:focus, select:focus { border-color: #38ada9; outline: none; }
-        .row { display: flex; gap: 20px; }
-        .row .field { flex: 1; }
-        button { background: #38ada9; color: white; padding: 11px 30px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; width: 100%; margin-top: 10px; }
-        button:hover { background: #78e08f; }
-        a.back { display: block; text-align: center; margin-top: 15px; color: #38ada9; text-decoration: none; }
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #38ada9;
+            padding: 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #38ada9;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: #38ada9;
+            font-size: 15px;
+            font-weight: bold;
+            border-bottom: 2px solid #38ada9;
+            padding-bottom: 5px;
+            margin: 20px 0 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 9px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #38ada9;
+            outline: none;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .row .field {
+            flex: 1;
+        }
+
+        button {
+            background: #38ada9;
+            color: white;
+            padding: 11px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #78e08f;
+        }
+
+        a.back {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #38ada9;
+            text-decoration: none;
+        }
+
+        .error-msg {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        input.invalid,
+        select.invalid {
+            border-color: #e53e3e !important;
+        }
     </style>
 </head>
+
 <body>
-<div class="navbar">
-    <h2>College ERP — Edit Student</h2>
-    <a href="/admin/students">⬅ Back to List</a>
-</div>
-<div class="container">
-    <h2>✏️ Edit Student</h2>
-    <form action="/admin/update-student" method="post">
-        <input type="hidden" name="id" th:value="${student.id}">
+    <div class="navbar">
+        <h2>College ERP — Edit Student</h2>
+        <a href="/admin/students">⬅ Back to List</a>
+    </div>
+    <div class="container">
+        <h2>✏️ Edit Student</h2>
+        <form action="/admin/update-student" method="post" id="editStudentForm" novalidate>
+            <input type="hidden" name="id" th:value="${student.id}">
 
-        <div class="section-title">Personal Details</div>
-        <div class="row">
-            <div class="field">
-                <label>Full Name</label>
-                <input type="text" name="name" th:value="${student.name}" required>
+            <div class="section-title">Personal Details</div>
+            <div class="row">
+                <div class="field">
+                    <label>Full Name</label>
+                    <input type="text" name="name" id="sName" th:value="${student.name}">
+                    <span class="error-msg" id="sNameErr"></span>
+                </div>
+                <div class="field">
+                    <label>Enrollment No</label>
+                    <input type="text" name="enrollmentNo" id="enrollmentNo" th:value="${student.enrollmentNo}">
+                    <span class="error-msg" id="enrollmentNoErr"></span>
+                </div>
             </div>
-            <div class="field">
-                <label>Enrollment No</label>
-                <input type="text" name="enrollmentNo" th:value="${student.enrollmentNo}">
+            <div class="row">
+                <div class="field">
+                    <label>Gender</label>
+                    <select name="gender">
+                        <option th:selected="${student.gender == 'Male'}" value="Male">Male</option>
+                        <option th:selected="${student.gender == 'Female'}" value="Female">Female</option>
+                        <option th:selected="${student.gender == 'Other'}" value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dob" th:value="${student.dob}">
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <label>Gender</label>
-                <select name="gender">
-                    <option th:selected="${student.gender == 'Male'}" value="Male">Male</option>
-                    <option th:selected="${student.gender == 'Female'}" value="Female">Female</option>
-                    <option th:selected="${student.gender == 'Other'}" value="Other">Other</option>
-                </select>
+            <div class="row">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email" id="email" th:value="${student.email}">
+                    <span class="error-msg" id="emailErr"></span>
+                </div>
+                <div class="field">
+                    <label>Phone</label>
+                    <input type="text" name="phone" id="phone" th:value="${student.phone}">
+                    <span class="error-msg" id="phoneErr"></span>
+                </div>
             </div>
-            <div class="field">
-                <label>Date of Birth</label>
-                <input type="date" name="dob" th:value="${student.dob}">
-            </div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <label>Email</label>
-                <input type="email" name="email" th:value="${student.email}" required>
-            </div>
-            <div class="field">
-                <label>Phone</label>
-                <input type="text" name="phone" th:value="${student.phone}">
-            </div>
-        </div>
-        <label>Address</label>
-        <input type="text" name="address" th:value="${student.address}">
+            <label>Address</label>
+            <input type="text" name="address" th:value="${student.address}">
 
-        <div class="section-title">Academic Details</div>
-        <div class="row">
-            <div class="field">
-                <label>Department</label>
-                <input type="text" name="department" th:value="${student.department}" required>
+            <div class="section-title">Academic Details</div>
+            <div class="row">
+                <div class="field">
+                    <label>Department</label>
+                    <input type="text" name="department" id="department" th:value="${student.department}">
+                    <span class="error-msg" id="departmentErr"></span>
+                </div>
+                <div class="field">
+                    <label>Year</label>
+                    <select name="year">
+                        <option th:selected="${student.year == 'FY'}" value="FY">FY</option>
+                        <option th:selected="${student.year == 'SY'}" value="SY">SY</option>
+                        <option th:selected="${student.year == 'TY'}" value="TY">TY</option>
+                    </select>
+                </div>
             </div>
-            <div class="field">
-                <label>Year</label>
-                <select name="year">
-                    <option th:selected="${student.year == 'FY'}" value="FY">FY</option>
-                    <option th:selected="${student.year == 'SY'}" value="SY">SY</option>
-                    <option th:selected="${student.year == 'TY'}" value="TY">TY</option>
-                </select>
-            </div>
-        </div>
 
-        <div class="section-title">Login Username</div>
-        <label>Username <small>(password change not available here)</small></label>
-        <input type="text" name="username" th:value="${student.username}" readonly>
+            <div class="section-title">Login Username</div>
+            <label>Username <small>(password change not available here)</small></label>
+            <input type="text" name="username" th:value="${student.username}" readonly>
 
-        <button type="submit">✅ Update Student</button>
-    </form>
-    <a class="back" href="/admin/students">Cancel</a>
-</div>
+            <button type="submit">✅ Update Student</button>
+        </form>
+        <a class="back" href="/admin/students">Cancel</a>
+    </div>
 </body>
+<script>
+    (function () {
+        function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+        function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
+        document.getElementById('editStudentForm').addEventListener('submit', function (ev) {
+            var valid = true;
+            ['sName', 'enrollmentNo', 'email', 'phone', 'department'].forEach(function (id) { ce(id, id + 'Err'); });
+            var n = document.getElementById('sName').value.trim();
+            if (!n || n.length < 2) { se('sName', 'sNameErr', 'Name must be at least 2 characters.'); valid = false; }
+            else if (!/^[A-Za-z\s.]+$/.test(n)) { se('sName', 'sNameErr', 'Name must contain only letters.'); valid = false; }
+            var en = document.getElementById('enrollmentNo').value.trim();
+            if (en && !/^[A-Za-z0-9]{4,15}$/.test(en)) { se('enrollmentNo', 'enrollmentNoErr', 'Enrollment No: 4-15 alphanumeric characters.'); valid = false; }
+            var em = document.getElementById('email').value.trim();
+            if (!em) { se('email', 'emailErr', 'Email is required.'); valid = false; }
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { se('email', 'emailErr', 'Enter a valid email address.'); valid = false; }
+            var ph = document.getElementById('phone').value.trim();
+            if (ph && !/^\d{10}$/.test(ph)) { se('phone', 'phoneErr', 'Phone must be exactly 10 digits.'); valid = false; }
+            if (!document.getElementById('department').value.trim()) { se('department', 'departmentErr', 'Department is required.'); valid = false; }
+            if (!valid) ev.preventDefault();
+        });
+    })();
+</script>
+
 </html>

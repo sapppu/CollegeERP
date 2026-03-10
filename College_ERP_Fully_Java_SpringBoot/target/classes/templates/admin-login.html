@@ -2,16 +2,60 @@
 <html>
 <head>
     <title>Admin Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); width: 360px; }
+        h2 { color: #1e3799; text-align: center; margin-bottom: 25px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 13px; }
+        input { width: 100%; padding: 10px; margin-bottom: 4px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #1e3799; outline: none; }
+        input.invalid { border-color: #e53e3e !important; }
+        .error-msg { color: #e53e3e; font-size: 12px; margin-bottom: 10px; display: none; }
+        button { background: #1e3799; color: white; padding: 11px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; width: 100%; margin-top: 8px; }
+        button:hover { background: #4a69bd; }
+    </style>
 </head>
-<body style="font-family:Arial;text-align:center;margin-top:100px;">
-<h2>Admin Login</h2>
+<body>
+<div class="login-card">
+    <h2>🎓 Admin Login</h2>
+    <form method="post" action="/login" id="loginForm" novalidate>
+        <label>Username</label>
+        <input type="text" name="username" id="username" placeholder="Enter username">
+        <span class="error-msg" id="usernameErr">Username is required.</span>
 
-<form method="post" action="/login">
-    <h2>Admin Login</h2>
-    Username: <input type="text" name="username"><br><br>
-    Password: <input type="password" name="password"><br><br>
-    <button type="submit">Login</button>
-</form>
+        <label>Password</label>
+        <input type="password" name="password" id="password" placeholder="Enter password">
+        <span class="error-msg" id="passwordErr">Password is required.</span>
 
+        <button type="submit">Login</button>
+    </form>
+</div>
+<script>
+    function showError(inputId, errId, msg) {
+        var el = document.getElementById(inputId);
+        var err = document.getElementById(errId);
+        el.classList.add('invalid');
+        err.textContent = msg;
+        err.style.display = 'block';
+        return false;
+    }
+    function clearError(inputId, errId) {
+        document.getElementById(inputId).classList.remove('invalid');
+        document.getElementById(errId).style.display = 'none';
+    }
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        var valid = true;
+        var username = document.getElementById('username').value.trim();
+        var password = document.getElementById('password').value.trim();
+
+        clearError('username', 'usernameErr');
+        clearError('password', 'passwordErr');
+
+        if (!username) { showError('username', 'usernameErr', 'Username is required.'); valid = false; }
+        if (!password) { showError('password', 'passwordErr', 'Password is required.'); valid = false; }
+
+        if (!valid) e.preventDefault();
+    });
+</script>
 </body>
 </html>

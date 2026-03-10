@@ -1,149 +1,393 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Edit Lesson Plan</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
-        .sidebar { width: 250px; background: #8e44ad; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
-        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
-        .sidebar-brand span { font-size: 26px; }
-        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
-        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #d7bde2; }
-        .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
-        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
-        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
-        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
-        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .topbar h1 { font-size: 20px; color: #8e44ad; }
-        .faculty-badge { background: #8e44ad; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
-        .content { padding: 30px; }
-        .form-card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); max-width: 650px; }
-        .form-card h2 { color: #8e44ad; margin-bottom: 25px; font-size: 18px; }
-        .section-title { color: #8e44ad; font-size: 14px; font-weight: bold; border-bottom: 2px solid #8e44ad; padding-bottom: 6px; margin: 20px 0 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 13px; }
-        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        input:focus, select:focus, textarea:focus { border-color: #8e44ad; outline: none; }
-        textarea { resize: vertical; height: 80px; }
-        .row { display: flex; gap: 20px; }
-        .row .field { flex: 1; }
-        .btn-row { display: flex; gap: 15px; margin-top: 10px; }
-        .btn-save { background: #8e44ad; color: white; padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-save:hover { background: #9b59b6; }
-        .btn-cancel { background: #dfe6e9; color: #555; padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
-        .btn-cancel:hover { background: #b2bec3; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #8e44ad;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 25px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand span {
+            font-size: 26px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px 20px 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border-left-color: #d7bde2;
+        }
+
+        .menu-item .icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .topbar h1 {
+            font-size: 20px;
+            color: #8e44ad;
+        }
+
+        .faculty-badge {
+            background: #8e44ad;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            max-width: 650px;
+        }
+
+        .form-card h2 {
+            color: #8e44ad;
+            margin-bottom: 25px;
+            font-size: 18px;
+        }
+
+        .section-title {
+            color: #8e44ad;
+            font-size: 14px;
+            font-weight: bold;
+            border-bottom: 2px solid #8e44ad;
+            padding-bottom: 6px;
+            margin: 20px 0 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+            font-size: 13px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #8e44ad;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .row .field {
+            flex: 1;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn-save {
+            background: #8e44ad;
+            color: white;
+            padding: 11px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-save:hover {
+            background: #9b59b6;
+        }
+
+        .btn-cancel {
+            background: #dfe6e9;
+            color: #555;
+            padding: 11px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-cancel:hover {
+            background: #b2bec3;
+        }
+
+        .invalid {
+            border-color: #e55039 !important;
+        }
+
+        .error-msg {
+            color: #e55039;
+            font-size: 11px;
+            margin-top: -10px;
+            margin-bottom: 8px;
+            display: none;
+        }
     </style>
 </head>
+
 <body>
-<div class="sidebar">
-    <div class="sidebar-brand"><span>🎓</span><div><div>College ERP</div><div style="font-size:11px;font-weight:normal;opacity:0.7;">Faculty Portal</div></div></div>
-    <nav class="sidebar-menu">
-        <div class="menu-label">Main</div>
-        <a href="/faculty/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
-        <div class="menu-label">Teaching</div>
-        <a href="/faculty/lessonplanning"           class="menu-item active"><span class="icon">🗒️</span> Lesson Planning</a>
-        <a href="/faculty/attendancemanagement"     class="menu-item"><span class="icon">📋</span> Attendance</a>
-        <a href="/faculty/internalassessment"       class="menu-item"><span class="icon">📊</span> Internal Assessment</a>
-        <a href="/faculty/examinationmanagement"    class="menu-item"><span class="icon">📝</span> Examinations</a>
-        <a href="/faculty/studentprogressanalytics" class="menu-item"><span class="icon">📈</span> Student Progress</a>
-        <div class="menu-label">Personal</div>
-        <a href="/faculty/facultyleave"             class="menu-item"><span class="icon">🏖️</span> My Leave</a>
-        <a href="/faculty/researchpublication"      class="menu-item"><span class="icon">🔬</span> Research</a>
-    </nav>
-    <div class="sidebar-footer"><a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a></div>
-</div>
-
-<div class="main">
-    <div class="topbar">
-        <h1>🗒️ Edit Lesson Plan</h1>
-        <span class="faculty-badge">✏️ Editing</span>
+    <div class="sidebar">
+        <div class="sidebar-brand"><span>🎓</span>
+            <div>
+                <div>College ERP</div>
+                <div style="font-size:11px;font-weight:normal;opacity:0.7;">Faculty Portal</div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-label">Main</div>
+            <a href="/faculty/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+            <div class="menu-label">Teaching</div>
+            <a href="/faculty/lessonplanning" class="menu-item active"><span class="icon">🗒️</span> Lesson Planning</a>
+            <a href="/faculty/attendancemanagement" class="menu-item"><span class="icon">📋</span> Attendance</a>
+            <a href="/faculty/internalassessment" class="menu-item"><span class="icon">📊</span> Internal Assessment</a>
+            <a href="/faculty/examinationmanagement" class="menu-item"><span class="icon">📝</span> Examinations</a>
+            <a href="/faculty/studentprogressanalytics" class="menu-item"><span class="icon">📈</span> Student
+                Progress</a>
+            <div class="menu-label">Personal</div>
+            <a href="/faculty/facultyleave" class="menu-item"><span class="icon">🏖️</span> My Leave</a>
+            <a href="/faculty/researchpublication" class="menu-item"><span class="icon">🔬</span> Research</a>
+        </nav>
+        <div class="sidebar-footer"><a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a></div>
     </div>
-    <div class="content">
-        <div class="form-card">
-            <h2>✏️ Edit Lesson Plan</h2>
-            <form action="/faculty/update-plan" method="post">
-                <input type="hidden" name="id" th:value="${plan.id}">
 
-                <div class="section-title">Plan Details</div>
-                <div class="row">
-                    <div class="field">
-                        <label>Subject</label>
-                        <input type="text" name="subject" th:value="${plan.subject}" required>
-                    </div>
-                    <div class="field">
-                        <label>Topic</label>
-                        <input type="text" name="topic" th:value="${plan.topic}" required>
-                    </div>
-                </div>
+    <div class="main">
+        <div class="topbar">
+            <h1>🗒️ Edit Lesson Plan</h1>
+            <span class="faculty-badge">✏️ Editing</span>
+        </div>
+        <div class="content">
+            <div class="form-card">
+                <h2>✏️ Edit Lesson Plan</h2>
+                <form action="/faculty/update-plan" method="post" id="editPlanForm" novalidate>
+                    <input type="hidden" name="id" th:value="${plan.id}">
 
-                <div class="row">
-                    <div class="field">
-                        <label>Department</label>
-                        <select name="department">
-                            <option th:each="d : ${departments}"
-                                    th:value="${d.name}"
-                                    th:text="${d.name}"
+                    <div class="section-title">Plan Details</div>
+                    <div class="row">
+                        <div class="field">
+                            <label>Subject</label>
+                            <input type="text" name="subject" id="editPlanSubject" th:value="${plan.subject}">
+                            <span class="error-msg" id="editPlanSubject-err"></span>
+                        </div>
+                        <div class="field">
+                            <label>Topic</label>
+                            <input type="text" name="topic" id="editPlanTopic" th:value="${plan.topic}">
+                            <span class="error-msg" id="editPlanTopic-err"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Department</label>
+                            <select name="department">
+                                <option th:each="d : ${departments}" th:value="${d.name}" th:text="${d.name}"
                                     th:selected="${plan.department == d.name}"></option>
-                        </select>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Year</label>
+                            <select name="year">
+                                <option value="FY" th:selected="${plan.year=='FY'}">FY</option>
+                                <option value="SY" th:selected="${plan.year=='SY'}">SY</option>
+                                <option value="TY" th:selected="${plan.year=='TY'}">TY</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label>Year</label>
-                        <select name="year">
-                            <option value="FY" th:selected="${plan.year=='FY'}">FY</option>
-                            <option value="SY" th:selected="${plan.year=='SY'}">SY</option>
-                            <option value="TY" th:selected="${plan.year=='TY'}">TY</option>
-                        </select>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Plan Date</label>
+                            <input type="date" name="planDate" id="editPlanDate" th:value="${plan.planDate}">
+                            <span class="error-msg" id="editPlanDate-err"></span>
+                        </div>
+                        <div class="field">
+                            <label>Duration</label>
+                            <select name="duration">
+                                <option value="1 Hour" th:selected="${plan.duration=='1 Hour'}">1 Hour</option>
+                                <option value="2 Hours" th:selected="${plan.duration=='2 Hours'}">2 Hours</option>
+                                <option value="3 Hours" th:selected="${plan.duration=='3 Hours'}">3 Hours</option>
+                                <option value="Half Day" th:selected="${plan.duration=='Half Day'}">Half Day</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="field">
-                        <label>Plan Date</label>
-                        <input type="date" name="planDate" th:value="${plan.planDate}">
+                    <label>Teaching Method</label>
+                    <select name="teachingMethod">
+                        <option value="Lecture" th:selected="${plan.teachingMethod=='Lecture'}">Lecture</option>
+                        <option value="Practical" th:selected="${plan.teachingMethod=='Practical'}">Practical</option>
+                        <option value="Discussion" th:selected="${plan.teachingMethod=='Discussion'}">Discussion
+                        </option>
+                        <option value="Demonstration" th:selected="${plan.teachingMethod=='Demonstration'}">
+                            Demonstration</option>
+                        <option value="Assignment" th:selected="${plan.teachingMethod=='Assignment'}">Assignment
+                        </option>
+                    </select>
+
+                    <label>Objectives</label>
+                    <textarea name="objectives" th:text="${plan.objectives}"></textarea>
+
+                    <label>Resources</label>
+                    <input type="text" name="resources" th:value="${plan.resources}">
+
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Planned" th:selected="${plan.status=='Planned'}">Planned</option>
+                        <option value="In Progress" th:selected="${plan.status=='In Progress'}">In Progress</option>
+                        <option value="Completed" th:selected="${plan.status=='Completed'}">Completed</option>
+                    </select>
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn-save">✅ Update Plan</button>
+                        <a href="/faculty/lessonplanning" class="btn-cancel">Cancel</a>
                     </div>
-                    <div class="field">
-                        <label>Duration</label>
-                        <select name="duration">
-                            <option value="1 Hour"   th:selected="${plan.duration=='1 Hour'}">1 Hour</option>
-                            <option value="2 Hours"  th:selected="${plan.duration=='2 Hours'}">2 Hours</option>
-                            <option value="3 Hours"  th:selected="${plan.duration=='3 Hours'}">3 Hours</option>
-                            <option value="Half Day" th:selected="${plan.duration=='Half Day'}">Half Day</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label>Teaching Method</label>
-                <select name="teachingMethod">
-                    <option value="Lecture"       th:selected="${plan.teachingMethod=='Lecture'}">Lecture</option>
-                    <option value="Practical"     th:selected="${plan.teachingMethod=='Practical'}">Practical</option>
-                    <option value="Discussion"    th:selected="${plan.teachingMethod=='Discussion'}">Discussion</option>
-                    <option value="Demonstration" th:selected="${plan.teachingMethod=='Demonstration'}">Demonstration</option>
-                    <option value="Assignment"    th:selected="${plan.teachingMethod=='Assignment'}">Assignment</option>
-                </select>
-
-                <label>Objectives</label>
-                <textarea name="objectives" th:text="${plan.objectives}"></textarea>
-
-                <label>Resources</label>
-                <input type="text" name="resources" th:value="${plan.resources}">
-
-                <label>Status</label>
-                <select name="status">
-                    <option value="Planned"     th:selected="${plan.status=='Planned'}">Planned</option>
-                    <option value="In Progress" th:selected="${plan.status=='In Progress'}">In Progress</option>
-                    <option value="Completed"   th:selected="${plan.status=='Completed'}">Completed</option>
-                </select>
-
-                <div class="btn-row">
-                    <button type="submit" class="btn-save">✅ Update Plan</button>
-                    <a href="/faculty/lessonplanning" class="btn-cancel">Cancel</a>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+    <script>
+        function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+        function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
+        document.getElementById('editPlanForm').addEventListener('submit', function (ev) {
+            var valid = true;
+            var s = document.getElementById('editPlanSubject').value.trim();
+            if (!s) { se('editPlanSubject', 'editPlanSubject-err', 'Subject is required.'); valid = false; } else ce('editPlanSubject', 'editPlanSubject-err');
+            var t = document.getElementById('editPlanTopic').value.trim();
+            if (!t) { se('editPlanTopic', 'editPlanTopic-err', 'Topic is required.'); valid = false; } else ce('editPlanTopic', 'editPlanTopic-err');
+            var d = document.getElementById('editPlanDate').value;
+            if (!d) { se('editPlanDate', 'editPlanDate-err', 'Plan date is required.'); valid = false; } else ce('editPlanDate', 'editPlanDate-err');
+            if (!valid) ev.preventDefault();
+        });
+    </script>
 </body>
+
 </html>

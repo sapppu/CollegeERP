@@ -1,46 +1,87 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>ERP Login</title>
   <style>
-    body{
-      font-family:Arial;
-      background:linear-gradient(to right,#1e3799,#4a69bd);
+    body {
+      font-family: Arial;
+      background: linear-gradient(to right, #1e3799, #4a69bd);
     }
-    .box{
-      width:350px;
-      background:white;
-      padding:30px;
-      margin:120px auto;
-      border-radius:10px;
-      text-align:center;
+
+    .box {
+      width: 350px;
+      background: white;
+      padding: 30px;
+      margin: 120px auto;
+      border-radius: 10px;
+      text-align: center;
     }
-    input{
-      width:90%;
-      padding:10px;
-      margin:10px;
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 6px auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
     }
-    button{
-      padding:10px 25px;
-      background:#1e3799;
-      color:white;
-      border:none;
-      border-radius:5px;
+
+    input.invalid {
+      border-color: #e53e3e !important;
+    }
+
+    .error-msg {
+      color: #e53e3e;
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: none;
+    }
+
+    button {
+      padding: 10px 25px;
+      background: #1e3799;
+      color: white;
+      border: none;
+      border-radius: 5px;
     }
   </style>
 </head>
+
 <body>
 
-<div class="box">
-  <h2>College ERP Login</h2>
+  <div class="box">
+    <h2>College ERP Login</h2>
 
-  <form method="post" action="/login">
-    <input type="text" name="username" placeholder="Username"><br>
-    <input type="password" name="password" placeholder="Password"><br>
-    <button type="submit">Login</button>
-  </form>
+    <form method="post" action="/login" id="loginForm" novalidate>
+      <input type="text" name="username" id="username" placeholder="Username">
+      <span class="error-msg" id="usernameErr">Username is required.</span>
+      <input type="password" name="password" id="password" placeholder="Password">
+      <span class="error-msg" id="passwordErr">Password is required.</span>
+      <button type="submit">Login</button>
+    </form>
 
-</div>
+  </div>
 
+  <script>
+    function showErr(id, eId, msg) {
+      document.getElementById(id).classList.add('invalid');
+      var e = document.getElementById(eId); e.textContent = msg; e.style.display = 'block';
+    }
+    function clearErr(id, eId) {
+      document.getElementById(id).classList.remove('invalid');
+      document.getElementById(eId).style.display = 'none';
+    }
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      var valid = true;
+      clearErr('username', 'usernameErr'); clearErr('password', 'passwordErr');
+      if (!document.getElementById('username').value.trim()) { showErr('username', 'usernameErr', 'Username is required.'); valid = false; }
+      if (!document.getElementById('password').value.trim()) { showErr('password', 'passwordErr', 'Password is required.'); valid = false; }
+      if (!valid) e.preventDefault();
+    });
+  </script>
 </body>
+
 </html>

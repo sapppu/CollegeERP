@@ -1,440 +1,1003 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Faculty Leave</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .sidebar { width: 250px; background: #8e44ad; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
-        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
-        .sidebar-brand span { font-size: 26px; }
-        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
-        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #d7bde2; }
-        .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
-        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
-        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            min-height: 100vh;
+        }
 
-        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
-        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 99; }
-        .topbar h1 { font-size: 20px; color: #8e44ad; }
-        .faculty-badge { background: #8e44ad; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
-        .content { padding: 30px; }
+        .sidebar {
+            width: 250px;
+            background: #8e44ad;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 25px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand span {
+            font-size: 26px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px 20px 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border-left-color: #d7bde2;
+        }
+
+        .menu-item .icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .topbar h1 {
+            font-size: 20px;
+            color: #8e44ad;
+        }
+
+        .faculty-badge {
+            background: #8e44ad;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
 
         /* STATS */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
-        .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 14px; border-left: 5px solid; transition: 0.2s; }
-        .stat-card:hover { transform: translateY(-3px); }
-        .stat-card.purple { border-color: #8e44ad; }
-        .stat-card.orange { border-color: #e67e22; }
-        .stat-card.green  { border-color: #00b894; }
-        .stat-card.red    { border-color: #e55039; }
-        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-        .stat-card.purple .stat-icon { background: #f3e5ff; }
-        .stat-card.orange .stat-icon { background: #fef3e2; }
-        .stat-card.green  .stat-icon { background: #e0faf4; }
-        .stat-card.red    .stat-icon { background: #fdecea; }
-        .stat-info h3 { font-size: 22px; font-weight: bold; color: #2d3436; }
-        .stat-info p  { font-size: 13px; color: #888; margin-top: 2px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-left: 5px solid;
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card.purple {
+            border-color: #8e44ad;
+        }
+
+        .stat-card.orange {
+            border-color: #e67e22;
+        }
+
+        .stat-card.green {
+            border-color: #00b894;
+        }
+
+        .stat-card.red {
+            border-color: #e55039;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-card.purple .stat-icon {
+            background: #f3e5ff;
+        }
+
+        .stat-card.orange .stat-icon {
+            background: #fef3e2;
+        }
+
+        .stat-card.green .stat-icon {
+            background: #e0faf4;
+        }
+
+        .stat-card.red .stat-icon {
+            background: #fdecea;
+        }
+
+        .stat-info h3 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+
+        .stat-info p {
+            font-size: 13px;
+            color: #888;
+            margin-top: 2px;
+        }
 
         /* TABS */
-        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: white; padding: 6px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); width: fit-content; }
-        .tab-btn { padding: 9px 22px; border-radius: 8px; border: none; background: transparent; font-size: 14px; cursor: pointer; color: #888; font-weight: 500; transition: 0.2s; }
-        .tab-btn.active { background: #8e44ad; color: white; font-weight: bold; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            width: fit-content;
+        }
 
-        .section-title { font-size: 15px; font-weight: bold; color: #2d3436; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .section-title::after { content: ''; flex: 1; height: 1px; background: #dfe6e9; margin-left: 10px; }
+        .tab-btn {
+            padding: 9px 22px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            cursor: pointer;
+            color: #888;
+            font-weight: 500;
+            transition: 0.2s;
+        }
 
-        .alert-success { background: #e0faf4; color: #00b894; border: 1px solid #b2dfdb; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 14px; font-weight: bold; }
+        .tab-btn.active {
+            background: #8e44ad;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #dfe6e9;
+            margin-left: 10px;
+        }
+
+        .alert-success {
+            background: #e0faf4;
+            color: #00b894;
+            border: 1px solid #b2dfdb;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
 
         /* PAGE LAYOUT */
-        .page-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+        .page-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
 
         /* LEAVE CARDS */
-        .leave-cards { display: flex; flex-direction: column; gap: 16px; }
-        .leave-card { background: white; border-radius: 14px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 5px solid; transition: 0.2s; }
-        .leave-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
-        .leave-card.pending   { border-left-color: #e67e22; }
-        .leave-card.approved  { border-left-color: #00b894; }
-        .leave-card.rejected  { border-left-color: #e55039; }
-        .leave-card.cancelled { border-left-color: #888; }
+        .leave-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-        .leave-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-        .leave-type { font-size: 17px; font-weight: bold; color: #2d3436; }
-        .leave-applied { font-size: 12px; color: #aaa; margin-top: 3px; }
+        .leave-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border-left: 5px solid;
+            transition: 0.2s;
+        }
 
-        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .badge-pending   { background: #fef3e2; color: #e67e22; }
-        .badge-approved  { background: #e0faf4; color: #00b894; }
-        .badge-rejected  { background: #fdecea; color: #e55039; }
-        .badge-cancelled { background: #f1f2f6; color: #888; }
+        .leave-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
 
-        .leave-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
-        .meta-item { display: flex; flex-direction: column; gap: 2px; }
-        .meta-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
-        .meta-value { font-size: 13px; color: #2d3436; font-weight: 600; }
+        .leave-card.pending {
+            border-left-color: #e67e22;
+        }
 
-        .leave-reason { background: #f8f9fa; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 14px; }
+        .leave-card.approved {
+            border-left-color: #00b894;
+        }
 
-        .admin-remarks { background: #eaf4ff; border-left: 3px solid #0984e3; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #444; margin-bottom: 14px; }
-        .admin-remarks span { font-weight: bold; color: #0984e3; }
+        .leave-card.rejected {
+            border-left-color: #e55039;
+        }
 
-        .leave-actions { display: flex; gap: 10px; }
-        .btn-cancel-leave { background: #e67e22; color: white; padding: 6px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; }
-        .btn-cancel-leave:hover { background: #d35400; }
-        .btn-del { background: #e55039; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; }
-        .btn-del:hover { background: #c0392b; }
+        .leave-card.cancelled {
+            border-left-color: #888;
+        }
+
+        .leave-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .leave-type {
+            font-size: 17px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+
+        .leave-applied {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 3px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-pending {
+            background: #fef3e2;
+            color: #e67e22;
+        }
+
+        .badge-approved {
+            background: #e0faf4;
+            color: #00b894;
+        }
+
+        .badge-rejected {
+            background: #fdecea;
+            color: #e55039;
+        }
+
+        .badge-cancelled {
+            background: #f1f2f6;
+            color: #888;
+        }
+
+        .leave-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 13px;
+            color: #2d3436;
+            font-weight: 600;
+        }
+
+        .leave-reason {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .admin-remarks {
+            background: #eaf4ff;
+            border-left: 3px solid #0984e3;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 14px;
+        }
+
+        .admin-remarks span {
+            font-weight: bold;
+            color: #0984e3;
+        }
+
+        .leave-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cancel-leave {
+            background: #e67e22;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .btn-cancel-leave:hover {
+            background: #d35400;
+        }
+
+        .btn-del {
+            background: #e55039;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .btn-del:hover {
+            background: #c0392b;
+        }
 
         /* EMPTY */
-        .empty-state { background: white; border-radius: 12px; padding: 50px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.06); color: #aaa; }
-        .empty-state .ei { font-size: 44px; margin-bottom: 12px; }
-        .empty-state p { font-size: 14px; }
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            color: #aaa;
+        }
+
+        .empty-state .ei {
+            font-size: 44px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
 
         /* FILTER */
-        .filter-card { background: white; border-radius: 12px; padding: 16px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 20px; display: flex; gap: 14px; align-items: flex-end; }
-        .filter-card label { font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 4px; }
-        .filter-card select { padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; min-width: 180px; }
-        .filter-card select:focus { border-color: #8e44ad; outline: none; }
+        .filter-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-end;
+        }
+
+        .filter-card label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .filter-card select {
+            padding: 9px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            min-width: 180px;
+        }
+
+        .filter-card select:focus {
+            border-color: #8e44ad;
+            outline: none;
+        }
 
         /* FORM */
-        .form-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-        .form-card h3 { font-size: 15px; font-weight: bold; color: #8e44ad; margin-bottom: 18px; border-bottom: 2px solid #f3e5ff; padding-bottom: 10px; }
-        label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 4px; }
-        input, select, textarea { width: 100%; padding: 9px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; margin-bottom: 13px; box-sizing: border-box; }
-        input:focus, select:focus, textarea:focus { border-color: #8e44ad; outline: none; }
-        textarea { resize: vertical; height: 80px; }
-        .btn-save { width: 100%; background: #8e44ad; color: white; padding: 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-save:hover { background: #9b59b6; }
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-card h3 {
+            font-size: 15px;
+            font-weight: bold;
+            color: #8e44ad;
+            margin-bottom: 18px;
+            border-bottom: 2px solid #f3e5ff;
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 13px;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #8e44ad;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .btn-save {
+            width: 100%;
+            background: #8e44ad;
+            color: white;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-save:hover {
+            background: #9b59b6;
+        }
 
         /* LEAVE BALANCE */
-        .balance-card { background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; border-radius: 14px; padding: 22px; margin-bottom: 20px; }
-        .balance-card h3 { font-size: 14px; font-weight: bold; opacity: 0.85; margin-bottom: 16px; }
-        .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .balance-item { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px; text-align: center; }
-        .balance-item h4 { font-size: 22px; font-weight: bold; }
-        .balance-item p  { font-size: 11px; opacity: 0.8; margin-top: 3px; }
+        .balance-card {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .balance-card h3 {
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0.85;
+            margin-bottom: 16px;
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .balance-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .balance-item h4 {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .balance-item p {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
 
         /* POLICY */
-        .policy-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-top: 18px; }
-        .policy-card h3 { font-size: 13px; font-weight: bold; color: #8e44ad; margin-bottom: 12px; }
-        .policy-item { display: flex; gap: 10px; font-size: 13px; color: #555; margin-bottom: 8px; align-items: flex-start; }
-        .policy-item span:first-child { flex-shrink: 0; }
+        .policy-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-top: 18px;
+        }
+
+        .policy-card h3 {
+            font-size: 13px;
+            font-weight: bold;
+            color: #8e44ad;
+            margin-bottom: 12px;
+        }
+
+        .policy-item {
+            display: flex;
+            gap: 10px;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 8px;
+            align-items: flex-start;
+        }
+
+        .policy-item span:first-child {
+            flex-shrink: 0;
+        }
+
+        .invalid {
+            border-color: #e55039 !important;
+        }
+
+        .error-msg {
+            color: #e55039;
+            font-size: 11px;
+            margin-top: -10px;
+            margin-bottom: 8px;
+            display: none;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="sidebar">
-    <div class="sidebar-brand"><span>🎓</span><div><div>College ERP</div><div style="font-size:11px;font-weight:normal;opacity:0.7;">Faculty Portal</div></div></div>
-    <nav class="sidebar-menu">
-        <div class="menu-label">Main</div>
-        <a href="/faculty/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
-        <div class="menu-label">Teaching</div>
-        <a href="/faculty/lessonplanning"           class="menu-item"><span class="icon">🗒️</span> Lesson Planning</a>
-        <a href="/faculty/attendancemanagement"     class="menu-item"><span class="icon">📋</span> Attendance</a>
-        <a href="/faculty/internalassessment"       class="menu-item"><span class="icon">📊</span> Internal Assessment</a>
-        <a href="/faculty/examinationmanagement"    class="menu-item"><span class="icon">📝</span> Examinations</a>
-        <a href="/faculty/studentprogressanalytics" class="menu-item"><span class="icon">📈</span> Student Progress</a>
-        <div class="menu-label">Personal</div>
-        <a href="/faculty/facultyleave"             class="menu-item active"><span class="icon">🏖️</span> My Leave</a>
-        <a href="/faculty/researchpublication"      class="menu-item"><span class="icon">🔬</span> Research</a>
-    </nav>
-    <div class="sidebar-footer"><a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a></div>
-</div>
-
-<div class="main">
-    <div class="topbar">
-        <h1>🏖️ My Leave</h1>
-        <span class="faculty-badge">👩‍🏫 Faculty</span>
+    <div class="sidebar">
+        <div class="sidebar-brand"><span>🎓</span>
+            <div>
+                <div>College ERP</div>
+                <div style="font-size:11px;font-weight:normal;opacity:0.7;">Faculty Portal</div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-label">Main</div>
+            <a href="/faculty/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+            <div class="menu-label">Teaching</div>
+            <a href="/faculty/lessonplanning" class="menu-item"><span class="icon">🗒️</span> Lesson Planning</a>
+            <a href="/faculty/attendancemanagement" class="menu-item"><span class="icon">📋</span> Attendance</a>
+            <a href="/faculty/internalassessment" class="menu-item"><span class="icon">📊</span> Internal Assessment</a>
+            <a href="/faculty/examinationmanagement" class="menu-item"><span class="icon">📝</span> Examinations</a>
+            <a href="/faculty/studentprogressanalytics" class="menu-item"><span class="icon">📈</span> Student
+                Progress</a>
+            <div class="menu-label">Personal</div>
+            <a href="/faculty/facultyleave" class="menu-item active"><span class="icon">🏖️</span> My Leave</a>
+            <a href="/faculty/researchpublication" class="menu-item"><span class="icon">🔬</span> Research</a>
+        </nav>
+        <div class="sidebar-footer"><a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a></div>
     </div>
 
-    <div class="content">
-
-        <div class="alert-success" th:if="${param.success}">✅ Leave application submitted successfully!</div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card purple">
-                <div class="stat-icon">📋</div>
-                <div class="stat-info"><h3 th:text="${totalLeaves}">0</h3><p>Total Applications</p></div>
-            </div>
-            <div class="stat-card orange">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-info"><h3 th:text="${pendingCount}">0</h3><p>Pending</p></div>
-            </div>
-            <div class="stat-card green">
-                <div class="stat-icon">✅</div>
-                <div class="stat-info"><h3 th:text="${approvedCount}">0</h3><p>Approved</p></div>
-            </div>
-            <div class="stat-card red">
-                <div class="stat-icon">❌</div>
-                <div class="stat-info"><h3 th:text="${rejectedCount}">0</h3><p>Rejected</p></div>
-            </div>
+    <div class="main">
+        <div class="topbar">
+            <h1>🏖️ My Leave</h1>
+            <span class="faculty-badge">👩‍🏫 Faculty</span>
         </div>
 
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('leaves', this)">📋 My Applications</button>
-            <button class="tab-btn"        onclick="switchTab('apply', this)">➕ Apply Leave</button>
-        </div>
+        <div class="content">
 
-        <!-- TAB: My Applications -->
-        <div id="tab-leaves" class="tab-content active">
+            <div class="alert-success" th:if="${param.success}">✅ Leave application submitted successfully!</div>
 
-            <div class="filter-card">
-                <div>
-                    <label>Filter by Status</label>
-                    <select onchange="window.location='/faculty/facultyleave?filterStatus='+this.value">
-                        <option value="">All Applications</option>
-                        <option value="Pending"   th:selected="${filterStatus=='Pending'}">⏳ Pending</option>
-                        <option value="Approved"  th:selected="${filterStatus=='Approved'}">✅ Approved</option>
-                        <option value="Rejected"  th:selected="${filterStatus=='Rejected'}">❌ Rejected</option>
-                        <option value="Cancelled" th:selected="${filterStatus=='Cancelled'}">🚫 Cancelled</option>
-                    </select>
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalLeaves}">0</h3>
+                        <p>Total Applications</p>
+                    </div>
                 </div>
-                <a href="/faculty/facultyleave"
-                   style="background:#dfe6e9;color:#555;padding:9px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:bold;align-self:flex-end;">
-                    Clear
-                </a>
+                <div class="stat-card orange">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <h3 th:text="${pendingCount}">0</h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${approvedCount}">0</h3>
+                        <p>Approved</p>
+                    </div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-info">
+                        <h3 th:text="${rejectedCount}">0</h3>
+                        <p>Rejected</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Filtered -->
-            <th:block th:if="${filteredLeaves != null}">
-                <div class="empty-state" th:if="${#lists.isEmpty(filteredLeaves)}">
-                    <div class="ei">🏖️</div>
-                    <p>No leave applications found for selected status.</p>
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('leaves', this)">📋 My Applications</button>
+                <button class="tab-btn" onclick="switchTab('apply', this)">➕ Apply Leave</button>
+            </div>
+
+            <!-- TAB: My Applications -->
+            <div id="tab-leaves" class="tab-content active">
+
+                <div class="filter-card">
+                    <div>
+                        <label>Filter by Status</label>
+                        <select onchange="window.location='/faculty/facultyleave?filterStatus='+this.value">
+                            <option value="">All Applications</option>
+                            <option value="Pending" th:selected="${filterStatus=='Pending'}">⏳ Pending</option>
+                            <option value="Approved" th:selected="${filterStatus=='Approved'}">✅ Approved</option>
+                            <option value="Rejected" th:selected="${filterStatus=='Rejected'}">❌ Rejected</option>
+                            <option value="Cancelled" th:selected="${filterStatus=='Cancelled'}">🚫 Cancelled</option>
+                        </select>
+                    </div>
+                    <a href="/faculty/facultyleave"
+                        style="background:#dfe6e9;color:#555;padding:9px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:bold;align-self:flex-end;">
+                        Clear
+                    </a>
                 </div>
-                <div class="leave-cards">
-                    <div th:each="l : ${filteredLeaves}"
-                         th:classappend="${l.status=='Pending'   ? 'leave-card pending'   :
+
+                <!-- Filtered -->
+                <th:block th:if="${filteredLeaves != null}">
+                    <div class="empty-state" th:if="${#lists.isEmpty(filteredLeaves)}">
+                        <div class="ei">🏖️</div>
+                        <p>No leave applications found for selected status.</p>
+                    </div>
+                    <div class="leave-cards">
+                        <div th:each="l : ${filteredLeaves}" th:classappend="${l.status=='Pending'   ? 'leave-card pending'   :
                                            l.status=='Approved'  ? 'leave-card approved'  :
                                            l.status=='Rejected'  ? 'leave-card rejected'  :
-                                                                    'leave-card cancelled'}"
-                         class="leave-card">
-                        <div class="leave-top">
-                            <div>
-                                <div class="leave-type" th:text="'🏖️ ' + ${l.leaveType}"></div>
-                                <div class="leave-applied" th:text="'Applied on: ' + ${l.appliedOn}"></div>
+                                                                    'leave-card cancelled'}" class="leave-card">
+                            <div class="leave-top">
+                                <div>
+                                    <div class="leave-type" th:text="'🏖️ ' + ${l.leaveType}"></div>
+                                    <div class="leave-applied" th:text="'Applied on: ' + ${l.appliedOn}"></div>
+                                </div>
+                                <span th:if="${l.status=='Pending'}" class="badge badge-pending">⏳ Pending</span>
+                                <span th:if="${l.status=='Approved'}" class="badge badge-approved">✅ Approved</span>
+                                <span th:if="${l.status=='Rejected'}" class="badge badge-rejected">❌ Rejected</span>
+                                <span th:if="${l.status=='Cancelled'}" class="badge badge-cancelled">🚫 Cancelled</span>
                             </div>
-                            <span th:if="${l.status=='Pending'}"   class="badge badge-pending">⏳ Pending</span>
-                            <span th:if="${l.status=='Approved'}"  class="badge badge-approved">✅ Approved</span>
-                            <span th:if="${l.status=='Rejected'}"  class="badge badge-rejected">❌ Rejected</span>
-                            <span th:if="${l.status=='Cancelled'}" class="badge badge-cancelled">🚫 Cancelled</span>
-                        </div>
-                        <div class="leave-meta">
-                            <div class="meta-item">
-                                <span class="meta-label">📅 From</span>
-                                <span class="meta-value" th:text="${l.fromDate}"></span>
+                            <div class="leave-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">📅 From</span>
+                                    <span class="meta-value" th:text="${l.fromDate}"></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">📅 To</span>
+                                    <span class="meta-value" th:text="${l.toDate}"></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">🗓️ Days</span>
+                                    <span class="meta-value" th:text="${l.totalDays}"></span>
+                                </div>
                             </div>
-                            <div class="meta-item">
-                                <span class="meta-label">📅 To</span>
-                                <span class="meta-value" th:text="${l.toDate}"></span>
+                            <div class="leave-reason" th:text="'📝 Reason: ' + ${l.reason}"></div>
+                            <div class="admin-remarks"
+                                th:if="${l.adminRemarks != null and !#strings.isEmpty(l.adminRemarks)}">
+                                <span>Admin Note:</span> <span th:text="${l.adminRemarks}"></span>
                             </div>
-                            <div class="meta-item">
-                                <span class="meta-label">🗓️ Days</span>
-                                <span class="meta-value" th:text="${l.totalDays}"></span>
+                            <div class="leave-actions">
+                                <a th:if="${l.status=='Pending'}" th:href="@{/faculty/cancel-leave/{id}(id=${l.id})}"
+                                    class="btn-cancel-leave"
+                                    onclick="return confirm('Cancel this leave application?')">🚫 Cancel</a>
+                                <a th:href="@{/faculty/delete-leave/{id}(id=${l.id})}" class="btn-del"
+                                    onclick="return confirm('Delete this application?')">🗑 Delete</a>
                             </div>
-                        </div>
-                        <div class="leave-reason" th:text="'📝 Reason: ' + ${l.reason}"></div>
-                        <div class="admin-remarks" th:if="${l.adminRemarks != null and !#strings.isEmpty(l.adminRemarks)}">
-                            <span>Admin Note:</span> <span th:text="${l.adminRemarks}"></span>
-                        </div>
-                        <div class="leave-actions">
-                            <a th:if="${l.status=='Pending'}"
-                               th:href="@{/faculty/cancel-leave/{id}(id=${l.id})}"
-                               class="btn-cancel-leave"
-                               onclick="return confirm('Cancel this leave application?')">🚫 Cancel</a>
-                            <a th:href="@{/faculty/delete-leave/{id}(id=${l.id})}"
-                               class="btn-del"
-                               onclick="return confirm('Delete this application?')">🗑 Delete</a>
                         </div>
                     </div>
-                </div>
-            </th:block>
+                </th:block>
 
-            <!-- All -->
-            <th:block th:if="${filteredLeaves == null}">
-                <div class="empty-state" th:if="${#lists.isEmpty(allLeaves)}">
-                    <div class="ei">🏖️</div>
-                    <p>No leave applications yet. Apply from the Apply Leave tab.</p>
-                </div>
-                <div class="leave-cards">
-                    <div th:each="l : ${allLeaves}"
-                         th:classappend="${l.status=='Pending'   ? 'leave-card pending'   :
+                <!-- All -->
+                <th:block th:if="${filteredLeaves == null}">
+                    <div class="empty-state" th:if="${#lists.isEmpty(allLeaves)}">
+                        <div class="ei">🏖️</div>
+                        <p>No leave applications yet. Apply from the Apply Leave tab.</p>
+                    </div>
+                    <div class="leave-cards">
+                        <div th:each="l : ${allLeaves}" th:classappend="${l.status=='Pending'   ? 'leave-card pending'   :
                                            l.status=='Approved'  ? 'leave-card approved'  :
                                            l.status=='Rejected'  ? 'leave-card rejected'  :
-                                                                    'leave-card cancelled'}"
-                         class="leave-card">
-                        <div class="leave-top">
-                            <div>
-                                <div class="leave-type" th:text="'🏖️ ' + ${l.leaveType}"></div>
-                                <div class="leave-applied" th:text="'Applied on: ' + ${l.appliedOn}"></div>
-                            </div>
-                            <span th:if="${l.status=='Pending'}"   class="badge badge-pending">⏳ Pending</span>
-                            <span th:if="${l.status=='Approved'}"  class="badge badge-approved">✅ Approved</span>
-                            <span th:if="${l.status=='Rejected'}"  class="badge badge-rejected">❌ Rejected</span>
-                            <span th:if="${l.status=='Cancelled'}" class="badge badge-cancelled">🚫 Cancelled</span>
-                        </div>
-                        <div class="leave-meta">
-                            <div class="meta-item">
-                                <span class="meta-label">📅 From</span>
-                                <span class="meta-value" th:text="${l.fromDate}"></span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">📅 To</span>
-                                <span class="meta-value" th:text="${l.toDate}"></span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">🗓️ Days</span>
-                                <span class="meta-value" th:text="${l.totalDays}"></span>
-                            </div>
-                        </div>
-                        <div class="leave-reason" th:text="'📝 Reason: ' + ${l.reason}"></div>
-                        <div class="admin-remarks" th:if="${l.adminRemarks != null and !#strings.isEmpty(l.adminRemarks)}">
-                            <span>Admin Note:</span> <span th:text="${l.adminRemarks}"></span>
-                        </div>
-                        <div class="leave-actions">
-                            <a th:if="${l.status=='Pending'}"
-                               th:href="@{/faculty/cancel-leave/{id}(id=${l.id})}"
-                               class="btn-cancel-leave"
-                               onclick="return confirm('Cancel this leave application?')">🚫 Cancel</a>
-                            <a th:href="@{/faculty/delete-leave/{id}(id=${l.id})}"
-                               class="btn-del"
-                               onclick="return confirm('Delete?')">🗑 Delete</a>
-                        </div>
-                    </div>
-                </div>
-            </th:block>
-        </div>
-
-        <!-- TAB: Apply Leave -->
-        <div id="tab-apply" class="tab-content">
-            <div class="page-grid">
-
-                <!-- Form -->
-                <div>
-                    <div class="section-title">➕ New Leave Application</div>
-                    <div class="form-card">
-                        <h3>🏖️ Apply for Leave</h3>
-                        <form action="/faculty/apply-leave" method="post">
-
-                            <label>Leave Type</label>
-                            <select name="leaveType" required>
-                                <option value="">-- Select Leave Type --</option>
-                                <option value="Casual Leave">Casual Leave</option>
-                                <option value="Medical Leave">Medical Leave</option>
-                                <option value="Earned Leave">Earned Leave</option>
-                                <option value="Maternity Leave">Maternity Leave</option>
-                                <option value="Paternity Leave">Paternity Leave</option>
-                                <option value="Study Leave">Study Leave</option>
-                                <option value="Compensatory Leave">Compensatory Leave</option>
-                                <option value="Emergency Leave">Emergency Leave</option>
-                                <option value="Other">Other</option>
-                            </select>
-
-                            <div style="display:flex;gap:16px;">
-                                <div style="flex:1;">
-                                    <label>From Date</label>
-                                    <input type="date" name="fromDate" id="fromDate"
-                                           th:value="${today}" required
-                                           onchange="calcDays()">
+                                                                    'leave-card cancelled'}" class="leave-card">
+                            <div class="leave-top">
+                                <div>
+                                    <div class="leave-type" th:text="'🏖️ ' + ${l.leaveType}"></div>
+                                    <div class="leave-applied" th:text="'Applied on: ' + ${l.appliedOn}"></div>
                                 </div>
-                                <div style="flex:1;">
-                                    <label>To Date</label>
-                                    <input type="date" name="toDate" id="toDate"
-                                           th:value="${today}" required
-                                           onchange="calcDays()">
+                                <span th:if="${l.status=='Pending'}" class="badge badge-pending">⏳ Pending</span>
+                                <span th:if="${l.status=='Approved'}" class="badge badge-approved">✅ Approved</span>
+                                <span th:if="${l.status=='Rejected'}" class="badge badge-rejected">❌ Rejected</span>
+                                <span th:if="${l.status=='Cancelled'}" class="badge badge-cancelled">🚫 Cancelled</span>
+                            </div>
+                            <div class="leave-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">📅 From</span>
+                                    <span class="meta-value" th:text="${l.fromDate}"></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">📅 To</span>
+                                    <span class="meta-value" th:text="${l.toDate}"></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">🗓️ Days</span>
+                                    <span class="meta-value" th:text="${l.totalDays}"></span>
                                 </div>
                             </div>
-
-                            <label>Total Days</label>
-                            <input type="text" name="totalDays" id="totalDays"
-                                   value="1" readonly style="background:#f8f9fa;font-weight:bold;color:#8e44ad;">
-
-                            <label>Reason for Leave</label>
-                            <textarea name="reason" placeholder="Please describe the reason for your leave application..." required></textarea>
-
-                            <button type="submit" class="btn-save">📤 Submit Application</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Sidebar: Balance + Policy -->
-                <div>
-                    <div class="balance-card">
-                        <h3>📊 Leave Balance (Indicative)</h3>
-                        <div class="balance-grid">
-                            <div class="balance-item">
-                                <h4>12</h4>
-                                <p>Casual Leave</p>
+                            <div class="leave-reason" th:text="'📝 Reason: ' + ${l.reason}"></div>
+                            <div class="admin-remarks"
+                                th:if="${l.adminRemarks != null and !#strings.isEmpty(l.adminRemarks)}">
+                                <span>Admin Note:</span> <span th:text="${l.adminRemarks}"></span>
                             </div>
-                            <div class="balance-item">
-                                <h4>10</h4>
-                                <p>Medical Leave</p>
-                            </div>
-                            <div class="balance-item">
-                                <h4>15</h4>
-                                <p>Earned Leave</p>
-                            </div>
-                            <div class="balance-item">
-                                <h4 th:text="${approvedCount}">0</h4>
-                                <p>Approved This Year</p>
+                            <div class="leave-actions">
+                                <a th:if="${l.status=='Pending'}" th:href="@{/faculty/cancel-leave/{id}(id=${l.id})}"
+                                    class="btn-cancel-leave"
+                                    onclick="return confirm('Cancel this leave application?')">🚫 Cancel</a>
+                                <a th:href="@{/faculty/delete-leave/{id}(id=${l.id})}" class="btn-del"
+                                    onclick="return confirm('Delete?')">🗑 Delete</a>
                             </div>
                         </div>
                     </div>
-
-                    <div class="policy-card">
-                        <h3>📋 Leave Policy Highlights</h3>
-                        <div class="policy-item">
-                            <span>📌</span>
-                            <span>Applications must be submitted at least 2 days in advance for planned leaves.</span>
-                        </div>
-                        <div class="policy-item">
-                            <span>📌</span>
-                            <span>Medical leave requires a medical certificate for leaves exceeding 3 days.</span>
-                        </div>
-                        <div class="policy-item">
-                            <span>📌</span>
-                            <span>Earned leaves can be carried forward up to a maximum of 30 days.</span>
-                        </div>
-                        <div class="policy-item">
-                            <span>📌</span>
-                            <span>Pending applications can be cancelled before admin approval.</span>
-                        </div>
-                        <div class="policy-item">
-                            <span>📌</span>
-                            <span>Emergency leave must be followed by documentation within 3 working days.</span>
-                        </div>
-                    </div>
-                </div>
-
+                </th:block>
             </div>
-        </div>
 
+            <!-- TAB: Apply Leave -->
+            <div id="tab-apply" class="tab-content">
+                <div class="page-grid">
+
+                    <!-- Form -->
+                    <div>
+                        <div class="section-title">➕ New Leave Application</div>
+                        <div class="form-card">
+                            <h3>🏖️ Apply for Leave</h3>
+                            <form action="/faculty/apply-leave" method="post" id="leaveForm" novalidate>
+
+                                <label>Leave Type</label>
+                                <select name="leaveType" id="leaveType">
+                                    <option value="">-- Select Leave Type --</option>
+                                    <option value="Casual Leave">Casual Leave</option>
+                                    <option value="Medical Leave">Medical Leave</option>
+                                    <option value="Earned Leave">Earned Leave</option>
+                                    <option value="Maternity Leave">Maternity Leave</option>
+                                    <option value="Paternity Leave">Paternity Leave</option>
+                                    <option value="Study Leave">Study Leave</option>
+                                    <option value="Compensatory Leave">Compensatory Leave</option>
+                                    <option value="Emergency Leave">Emergency Leave</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span class="error-msg" id="leaveType-err"></span>
+
+                                <div style="display:flex;gap:16px;">
+                                    <div style="flex:1;">
+                                        <label>From Date</label>
+                                        <input type="date" name="fromDate" id="fromDate" th:value="${today}" required
+                                            onchange="calcDays()">
+                                    </div>
+                                    <div style="flex:1;">
+                                        <label>To Date</label>
+                                        <input type="date" name="toDate" id="toDate" th:value="${today}" required
+                                            onchange="calcDays()">
+                                    </div>
+                                </div>
+
+                                <label>Total Days</label>
+                                <input type="text" name="totalDays" id="totalDays" value="1" readonly
+                                    style="background:#f8f9fa;font-weight:bold;color:#8e44ad;">
+
+                                <label>Reason for Leave</label>
+                                <textarea name="reason" id="leaveReason"
+                                    placeholder="Please describe the reason for your leave application..."></textarea>
+                                <span class="error-msg" id="leaveReason-err"></span>
+
+                                <button type="submit" class="btn-save">📤 Submit Application</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar: Balance + Policy -->
+                    <div>
+                        <div class="balance-card">
+                            <h3>📊 Leave Balance (Indicative)</h3>
+                            <div class="balance-grid">
+                                <div class="balance-item">
+                                    <h4>12</h4>
+                                    <p>Casual Leave</p>
+                                </div>
+                                <div class="balance-item">
+                                    <h4>10</h4>
+                                    <p>Medical Leave</p>
+                                </div>
+                                <div class="balance-item">
+                                    <h4>15</h4>
+                                    <p>Earned Leave</p>
+                                </div>
+                                <div class="balance-item">
+                                    <h4 th:text="${approvedCount}">0</h4>
+                                    <p>Approved This Year</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="policy-card">
+                            <h3>📋 Leave Policy Highlights</h3>
+                            <div class="policy-item">
+                                <span>📌</span>
+                                <span>Applications must be submitted at least 2 days in advance for planned
+                                    leaves.</span>
+                            </div>
+                            <div class="policy-item">
+                                <span>📌</span>
+                                <span>Medical leave requires a medical certificate for leaves exceeding 3 days.</span>
+                            </div>
+                            <div class="policy-item">
+                                <span>📌</span>
+                                <span>Earned leaves can be carried forward up to a maximum of 30 days.</span>
+                            </div>
+                            <div class="policy-item">
+                                <span>📌</span>
+                                <span>Pending applications can be cancelled before admin approval.</span>
+                            </div>
+                            <div class="policy-item">
+                                <span>📌</span>
+                                <span>Emergency leave must be followed by documentation within 3 working days.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </div>
-</div>
 
-<script>
-    function switchTab(name, btn) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + name).classList.add('active');
-        btn.classList.add('active');
-    }
-
-    function calcDays() {
-        const from = new Date(document.getElementById('fromDate').value);
-        const to   = new Date(document.getElementById('toDate').value);
-        if (from && to && to >= from) {
-            const diff = Math.round((to - from) / (1000 * 60 * 60 * 24)) + 1;
-            document.getElementById('totalDays').value = diff + (diff === 1 ? ' Day' : ' Days');
+    <script>
+        function switchTab(name, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            btn.classList.add('active');
         }
-    }
-</script>
+
+        function calcDays() {
+            const from = new Date(document.getElementById('fromDate').value);
+            const to = new Date(document.getElementById('toDate').value);
+            if (from && to && to >= from) {
+                const diff = Math.round((to - from) / (1000 * 60 * 60 * 24)) + 1;
+                document.getElementById('totalDays').value = diff + (diff === 1 ? ' Day' : ' Days');
+            }
+        }
+        function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+        function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
+        document.getElementById('leaveForm').addEventListener('submit', function (ev) {
+            var valid = true;
+            var lt = document.getElementById('leaveType').value;
+            if (!lt) { se('leaveType', 'leaveType-err', 'Please select a leave type.'); valid = false; } else ce('leaveType', 'leaveType-err');
+            var fd = document.getElementById('fromDate').value;
+            var td = document.getElementById('toDate').value;
+            if (!fd) { se('fromDate', 'fromDate-err', 'From date is required.'); valid = false; } else ce('fromDate', 'fromDate-err');
+            if (!td) { se('toDate', 'toDate-err', 'To date is required.'); valid = false; } else if (fd && td < fd) { se('toDate', 'toDate-err', 'To date must be on or after from date.'); valid = false; } else ce('toDate', 'toDate-err');
+            var reason = document.getElementById('leaveReason').value.trim();
+            if (!reason) { se('leaveReason', 'leaveReason-err', 'Reason is required.'); valid = false; } else if (reason.length < 10) { se('leaveReason', 'leaveReason-err', 'Please provide a more detailed reason (min 10 characters).'); valid = false; } else ce('leaveReason', 'leaveReason-err');
+            if (!valid) ev.preventDefault();
+        });
+    </script>
 
 </body>
+
 </html>

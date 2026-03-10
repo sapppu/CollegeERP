@@ -1,105 +1,260 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <title>Add Faculty</title>
   <style>
-    body { font-family: Arial; background: #f4f6f9; margin: 0; }
-    .navbar { background: #1e3799; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-    .navbar a { color: white; text-decoration: none; font-weight: bold; }
-    .container { width: 600px; margin: 40px auto; background: white; padding: 35px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    h2 { color: #1e3799; text-align: center; margin-bottom: 25px; }
-    .section-title { color: #1e3799; font-size: 15px; font-weight: bold; border-bottom: 2px solid #1e3799; padding-bottom: 5px; margin: 20px 0 15px; }
-    label { display: block; margin-bottom: 4px; font-weight: bold; color: #333; font-size: 14px; }
-    input, select { width: 100%; padding: 9px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    input:focus, select:focus { border-color: #1e3799; outline: none; }
-    .row { display: flex; gap: 20px; }
-    .row .field { flex: 1; }
-    button { background: #1e3799; color: white; padding: 11px 30px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; width: 100%; margin-top: 10px; }
-    button:hover { background: #4a69bd; }
-    a.back { display: block; text-align: center; margin-top: 15px; color: #1e3799; text-decoration: none; }
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      margin: 0;
+    }
+
+    .navbar {
+      background: #1e3799;
+      padding: 15px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 35px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #1e3799;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      color: #1e3799;
+      font-size: 15px;
+      font-weight: bold;
+      border-bottom: 2px solid #1e3799;
+      padding-bottom: 5px;
+      margin: 20px 0 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: bold;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 9px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #1e3799;
+      outline: none;
+    }
+
+    .row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .row .field {
+      flex: 1;
+    }
+
+    button {
+      background: #1e3799;
+      color: white;
+      padding: 11px 30px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #4a69bd;
+    }
+
+    a.back {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #1e3799;
+      text-decoration: none;
+    }
+
+    .error-msg {
+      color: #e53e3e;
+      font-size: 12px;
+      margin-top: -11px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    input.invalid,
+    select.invalid {
+      border-color: #e53e3e !important;
+    }
   </style>
 </head>
+
 <body>
-<div class="navbar">
-  <h2>College ERP — Add Faculty</h2>
-  <a href="/admin/dashboard">⬅ Back to Dashboard</a>
-</div>
-<div class="container">
-  <h2>➕ Add New Faculty</h2>
-  <form action="/admin/save-faculty" method="post">
+  <div class="navbar">
+    <h2>College ERP — Add Faculty</h2>
+    <a href="/admin/dashboard">⬅ Back to Dashboard</a>
+  </div>
+  <div class="container">
+    <h2>➕ Add New Faculty</h2>
+    <form action="/admin/save-faculty" method="post" id="facultyForm" novalidate>
 
-    <div class="section-title">Personal Details</div>
-    <div class="row">
-      <div class="field">
-        <label>Full Name</label>
-        <input type="text" name="name" placeholder="Enter full name" required>
+      <div class="section-title">Personal Details</div>
+      <div class="row">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" name="name" id="name" placeholder="Enter full name">
+          <span class="error-msg" id="nameErr"></span>
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select name="gender" id="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <span class="error-msg" id="genderErr"></span>
+        </div>
       </div>
-      <div class="field">
-        <label>Gender</label>
-        <select name="gender">
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
+      <div class="row">
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date" name="dob" id="dob">
+          <span class="error-msg" id="dobErr"></span>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="text" name="phone" id="phone" placeholder="Enter phone number">
+          <span class="error-msg" id="phoneErr"></span>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="field">
-        <label>Date of Birth</label>
-        <input type="date" name="dob">
+      <div class="row">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" id="email" placeholder="Enter email">
+          <span class="error-msg" id="emailErr"></span>
+        </div>
+        <div class="field">
+          <label>Address</label>
+          <input type="text" name="address" placeholder="Enter address">
+        </div>
       </div>
-      <div class="field">
-        <label>Phone</label>
-        <input type="text" name="phone" placeholder="Enter phone number">
-      </div>
-    </div>
-    <div class="row">
-      <div class="field">
-        <label>Email</label>
-        <input type="email" name="email" placeholder="Enter email" required>
-      </div>
-      <div class="field">
-        <label>Address</label>
-        <input type="text" name="address" placeholder="Enter address">
-      </div>
-    </div>
 
-    <div class="section-title">Professional Details</div>
-    <div class="row">
-      <div class="field">
-        <label>Department</label>
-        <select name="department" required>
-          <option value="">-- Select Department --</option>
-          <option th:each="dept : ${departments}"
-                  th:value="${dept.name}"
-                  th:text="${dept.name}">
-          </option>
-        </select>
+      <div class="section-title">Professional Details</div>
+      <div class="row">
+        <div class="field">
+          <label>Department</label>
+          <select name="department" id="department">
+            <option value="">-- Select Department --</option>
+            <option th:each="dept : ${departments}" th:value="${dept.name}" th:text="${dept.name}">
+            </option>
+          </select>
+          <span class="error-msg" id="departmentErr"></span>
+        </div>
+        <div class="field">
+          <label>Designation</label>
+          <input type="text" name="designation" placeholder="e.g. Assistant Professor">
+        </div>
       </div>
-      <div class="field">
-        <label>Designation</label>
-        <input type="text" name="designation" placeholder="e.g. Assistant Professor">
-      </div>
-    </div>
-    <label>Qualification</label>
-    <input type="text" name="qualification" placeholder="e.g. M.Tech, Ph.D">
+      <label>Qualification</label>
+      <input type="text" name="qualification" placeholder="e.g. M.Tech, Ph.D">
 
-    <div class="section-title">Login Credentials</div>
-    <div class="row">
-      <div class="field">
-        <label>Username</label>
-        <input type="text" name="username" placeholder="Assign username" required>
+      <div class="section-title">Login Credentials</div>
+      <div class="row">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" id="username" placeholder="Assign username">
+          <span class="error-msg" id="usernameErr"></span>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" id="password" placeholder="Assign password">
+          <span class="error-msg" id="passwordErr"></span>
+        </div>
       </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Assign password" required>
-      </div>
-    </div>
 
-    <button type="submit">💾 Save Faculty</button>
-  </form>
-  <a class="back" href="/admin/faculty">View All Faculty</a>
-</div>
+      <button type="submit">💾 Save Faculty</button>
+    </form>
+    <a class="back" href="/admin/faculty">View All Faculty</a>
+  </div>
+  <script>
+    (function () {
+      var form = document.getElementById('facultyForm');
+      function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+      function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
+      form.addEventListener('submit', function (ev) {
+        var valid = true;
+        ['name', 'gender', 'dob', 'phone', 'email', 'department', 'username', 'password'].forEach(function (id) { ce(id, id + 'Err'); });
+
+        var name = document.getElementById('name').value.trim();
+        if (!name || name.length < 2) { se('name', 'nameErr', 'Full name must be at least 2 characters.'); valid = false; }
+        else if (!/^[A-Za-z\s]+$/.test(name)) { se('name', 'nameErr', 'Name must contain only letters and spaces.'); valid = false; }
+
+        if (!document.getElementById('gender').value) { se('gender', 'genderErr', 'Please select a gender.'); valid = false; }
+
+        var dob = document.getElementById('dob').value;
+        if (!dob) { se('dob', 'dobErr', 'Date of birth is required.'); valid = false; }
+        else {
+          var d = new Date(dob), t = new Date();
+          var age = t.getFullYear() - d.getFullYear();
+          if (t.getMonth() - d.getMonth() < 0 || (t.getMonth() - d.getMonth() === 0 && t.getDate() < d.getDate())) age--;
+          if (d >= t) { se('dob', 'dobErr', 'Date of birth must be in the past.'); valid = false; }
+          else if (age < 18) { se('dob', 'dobErr', 'Faculty must be at least 18 years old.'); valid = false; }
+        }
+
+        var phone = document.getElementById('phone').value.trim();
+        if (phone && !/^\d{10}$/.test(phone)) { se('phone', 'phoneErr', 'Phone must be exactly 10 digits.'); valid = false; }
+
+        var email = document.getElementById('email').value.trim();
+        if (!email) { se('email', 'emailErr', 'Email is required.'); valid = false; }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { se('email', 'emailErr', 'Enter a valid email address.'); valid = false; }
+
+        if (!document.getElementById('department').value) { se('department', 'departmentErr', 'Please select a department.'); valid = false; }
+
+        var un = document.getElementById('username').value.trim();
+        if (!un || un.length < 4) { se('username', 'usernameErr', 'Username must be at least 4 characters.'); valid = false; }
+        else if (!/^[A-Za-z0-9_]+$/.test(un)) { se('username', 'usernameErr', 'Username: letters, digits, underscores only.'); valid = false; }
+
+        var pw = document.getElementById('password').value;
+        if (!pw || pw.length < 6) { se('password', 'passwordErr', 'Password must be at least 6 characters.'); valid = false; }
+
+        if (!valid) ev.preventDefault();
+      });
+    })();
+  </script>
 </body>
+
 </html>

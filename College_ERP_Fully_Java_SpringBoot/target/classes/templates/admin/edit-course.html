@@ -1,186 +1,431 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Edit Course</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .sidebar { width: 250px; background: #1e3799; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
-        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
-        .sidebar-brand span { font-size: 26px; }
-        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
-        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
-        .menu-item .icon { font-size: 18px; width: 22px; text-align: center; }
-        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.2s; }
-        .sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            min-height: 100vh;
+        }
 
-        .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
-        .topbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .topbar h1 { font-size: 20px; color: #38ada9; }
-        .admin-badge { background: #38ada9; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .sidebar {
+            width: 250px;
+            background: #1e3799;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
 
-        .content { padding: 30px; }
-        .form-card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); max-width: 700px; }
-        .form-card h2 { color: #38ada9; margin-bottom: 25px; font-size: 18px; }
-        .section-title { color: #38ada9; font-size: 14px; font-weight: bold; border-bottom: 2px solid #38ada9; padding-bottom: 6px; margin: 20px 0 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 13px; }
-        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        input:focus, select:focus, textarea:focus { border-color: #38ada9; outline: none; }
-        textarea { resize: vertical; height: 80px; }
-        .row { display: flex; gap: 20px; }
-        .row .field { flex: 1; }
-        .btn-row { display: flex; gap: 15px; margin-top: 10px; }
-        .btn-save { background: #38ada9; color: white; padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-save:hover { background: #00b894; }
-        .btn-cancel { background: #dfe6e9; color: #555; padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: 0.2s; }
-        .btn-cancel:hover { background: #b2bec3; }
+        .sidebar-brand {
+            padding: 25px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand span {
+            font-size: 26px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px 20px 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border-left-color: #74b9ff;
+        }
+
+        .menu-item .icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .topbar h1 {
+            font-size: 20px;
+            color: #38ada9;
+        }
+
+        .admin-badge {
+            background: #38ada9;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            max-width: 700px;
+        }
+
+        .form-card h2 {
+            color: #38ada9;
+            margin-bottom: 25px;
+            font-size: 18px;
+        }
+
+        .section-title {
+            color: #38ada9;
+            font-size: 14px;
+            font-weight: bold;
+            border-bottom: 2px solid #38ada9;
+            padding-bottom: 6px;
+            margin: 20px 0 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+            font-size: 13px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #38ada9;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .row .field {
+            flex: 1;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn-save {
+            background: #38ada9;
+            color: white;
+            padding: 11px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-save:hover {
+            background: #00b894;
+        }
+
+        .btn-cancel {
+            background: #dfe6e9;
+            color: #555;
+            padding: 11px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: #b2bec3;
+        }
+
+        .error-msg {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        input.invalid,
+        select.invalid {
+            border-color: #e53e3e !important;
+        }
     </style>
 </head>
+
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="sidebar-brand">
-        <span>🎓</span>
-        <div>
-            <div>College ERP</div>
-            <div style="font-size:11px;font-weight:normal;opacity:0.7;">Admin Panel</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <span>🎓</span>
+            <div>
+                <div>College ERP</div>
+                <div style="font-size:11px;font-weight:normal;opacity:0.7;">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-label">Main</div>
+            <a href="/admin/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+            <div class="menu-label">People</div>
+            <a href="/admin/students" class="menu-item"><span class="icon">👨‍🎓</span> Students</a>
+            <a href="/admin/faculty" class="menu-item"><span class="icon">👩‍🏫</span> Faculty</a>
+            <div class="menu-label">Academic</div>
+            <a href="/admin/departmentmanagement" class="menu-item"><span class="icon">🏫</span> Departments</a>
+            <a href="/admin/academiccalendar" class="menu-item"><span class="icon">📅</span> Academic Calendar</a>
+            <a href="/admin/coursesyllabus" class="menu-item active"><span class="icon">📚</span> Course Syllabus</a>
+            <div class="menu-label">Finance</div>
+            <a href="/admin/feestructure" class="menu-item"><span class="icon">💰</span> Fee Structure</a>
+            <a href="/admin/expensebudget" class="menu-item"><span class="icon">📈</span> Expense & Budget</a>
+            <a href="/admin/scholarship" class="menu-item"><span class="icon">🎖️</span> Scholarship</a>
+            <div class="menu-label">Administration</div>
+            <a href="/admin/hrpayroll" class="menu-item"><span class="icon">💼</span> HR & Payroll</a>
+            <a href="/admin/hostelmanagement" class="menu-item"><span class="icon">🏠</span> Hostel</a>
+            <a href="/admin/transportmanagement" class="menu-item"><span class="icon">🚌</span> Transport</a>
+            <a href="/admin/inventoryasset" class="menu-item"><span class="icon">📦</span> Inventory</a>
+            <a href="/admin/eventseminar" class="menu-item"><span class="icon">🎤</span> Events & Seminars</a>
+            <a href="/admin/alumni" class="menu-item"><span class="icon">🤝</span> Alumni</a>
+            <div class="menu-label">System</div>
+            <a href="/admin/userrolepermission" class="menu-item"><span class="icon">🔐</span> Roles & Permissions</a>
+            <a href="/admin/systemsettingslogs" class="menu-item"><span class="icon">⚙️</span> Settings & Logs</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a>
         </div>
     </div>
-    <nav class="sidebar-menu">
-        <div class="menu-label">Main</div>
-        <a href="/admin/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
-        <div class="menu-label">People</div>
-        <a href="/admin/students" class="menu-item"><span class="icon">👨‍🎓</span> Students</a>
-        <a href="/admin/faculty" class="menu-item"><span class="icon">👩‍🏫</span> Faculty</a>
-        <div class="menu-label">Academic</div>
-        <a href="/admin/departmentmanagement" class="menu-item"><span class="icon">🏫</span> Departments</a>
-        <a href="/admin/academiccalendar" class="menu-item"><span class="icon">📅</span> Academic Calendar</a>
-        <a href="/admin/coursesyllabus" class="menu-item active"><span class="icon">📚</span> Course Syllabus</a>
-        <div class="menu-label">Finance</div>
-        <a href="/admin/feestructure" class="menu-item"><span class="icon">💰</span> Fee Structure</a>
-        <a href="/admin/expensebudget" class="menu-item"><span class="icon">📈</span> Expense & Budget</a>
-        <a href="/admin/scholarship" class="menu-item"><span class="icon">🎖️</span> Scholarship</a>
-        <div class="menu-label">Administration</div>
-        <a href="/admin/hrpayroll" class="menu-item"><span class="icon">💼</span> HR & Payroll</a>
-        <a href="/admin/hostelmanagement" class="menu-item"><span class="icon">🏠</span> Hostel</a>
-        <a href="/admin/transportmanagement" class="menu-item"><span class="icon">🚌</span> Transport</a>
-        <a href="/admin/inventoryasset" class="menu-item"><span class="icon">📦</span> Inventory</a>
-        <a href="/admin/eventseminar" class="menu-item"><span class="icon">🎤</span> Events & Seminars</a>
-        <a href="/admin/alumni" class="menu-item"><span class="icon">🤝</span> Alumni</a>
-        <div class="menu-label">System</div>
-        <a href="/admin/userrolepermission" class="menu-item"><span class="icon">🔐</span> Roles & Permissions</a>
-        <a href="/admin/systemsettingslogs" class="menu-item"><span class="icon">⚙️</span> Settings & Logs</a>
-    </nav>
-    <div class="sidebar-footer">
-        <a href="/logout"><span style="font-size:18px;">🚪</span> Logout</a>
-    </div>
-</div>
 
-<!-- MAIN -->
-<div class="main">
-    <div class="topbar">
-        <h1>📚 Edit Course</h1>
-        <span class="admin-badge">✏️ Editing</span>
-    </div>
+    <!-- MAIN -->
+    <div class="main">
+        <div class="topbar">
+            <h1>📚 Edit Course</h1>
+            <span class="admin-badge">✏️ Editing</span>
+        </div>
 
-    <div class="content">
-        <div class="form-card">
-            <h2>✏️ Edit Course</h2>
+        <div class="content">
+            <div class="form-card">
+                <h2>✏️ Edit Course</h2>
 
-            <form action="/admin/update-course" method="post">
-                <input type="hidden" name="id" th:value="${course.id}">
+                <form action="/admin/update-course" method="post" id="editCourseForm" novalidate>
+                    <input type="hidden" name="id" th:value="${course.id}">
 
-                <div class="section-title">Course Details</div>
-                <div class="row">
-                    <div class="field">
-                        <label>Course Code</label>
-                        <input type="text" name="courseCode" th:value="${course.courseCode}" required>
+                    <div class="section-title">Course Details</div>
+                    <div class="row">
+                        <div class="field">
+                            <label>Course Code</label>
+                            <input type="text" name="courseCode" id="courseCode" th:value="${course.courseCode}">
+                            <span class="error-msg" id="courseCodeErr"></span>
+                        </div>
+                        <div class="field">
+                            <label>Course Name</label>
+                            <input type="text" name="courseName" id="courseName" th:value="${course.courseName}">
+                            <span class="error-msg" id="courseNameErr"></span>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label>Course Name</label>
-                        <input type="text" name="courseName" th:value="${course.courseName}" required>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="field">
-                        <label>Department</label>
-                        <select name="department">
-                            <option th:each="d : ${departments}"
-                                    th:value="${d.name}"
-                                    th:text="${d.name}"
+                    <div class="row">
+                        <div class="field">
+                            <label>Department</label>
+                            <select name="department">
+                                <option th:each="d : ${departments}" th:value="${d.name}" th:text="${d.name}"
                                     th:selected="${course.department == d.name}"></option>
-                        </select>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Course Type</label>
+                            <select name="courseType">
+                                <option value="Theory" th:selected="${course.courseType == 'Theory'}">Theory</option>
+                                <option value="Practical" th:selected="${course.courseType == 'Practical'}">Practical
+                                </option>
+                                <option value="Elective" th:selected="${course.courseType == 'Elective'}">Elective
+                                </option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label>Course Type</label>
-                        <select name="courseType">
-                            <option value="Theory"    th:selected="${course.courseType == 'Theory'}">Theory</option>
-                            <option value="Practical" th:selected="${course.courseType == 'Practical'}">Practical</option>
-                            <option value="Elective"  th:selected="${course.courseType == 'Elective'}">Elective</option>
-                        </select>
+
+                    <div class="section-title">Schedule & Credits</div>
+                    <div class="row">
+                        <div class="field">
+                            <label>Year</label>
+                            <select name="year">
+                                <option value="FY" th:selected="${course.year == 'FY'}">FY</option>
+                                <option value="SY" th:selected="${course.year == 'SY'}">SY</option>
+                                <option value="TY" th:selected="${course.year == 'TY'}">TY</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Semester</label>
+                            <select name="semester">
+                                <option value="Semester 1" th:selected="${course.semester == 'Semester 1'}">Semester 1
+                                </option>
+                                <option value="Semester 2" th:selected="${course.semester == 'Semester 2'}">Semester 2
+                                </option>
+                                <option value="Semester 3" th:selected="${course.semester == 'Semester 3'}">Semester 3
+                                </option>
+                                <option value="Semester 4" th:selected="${course.semester == 'Semester 4'}">Semester 4
+                                </option>
+                                <option value="Semester 5" th:selected="${course.semester == 'Semester 5'}">Semester 5
+                                </option>
+                                <option value="Semester 6" th:selected="${course.semester == 'Semester 6'}">Semester 6
+                                </option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Credits</label>
+                            <input type="number" name="credits" id="credits" th:value="${course.credits}" min="1"
+                                max="10">
+                            <span class="error-msg" id="creditsErr"></span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="section-title">Schedule & Credits</div>
-                <div class="row">
-                    <div class="field">
-                        <label>Year</label>
-                        <select name="year">
-                            <option value="FY" th:selected="${course.year == 'FY'}">FY</option>
-                            <option value="SY" th:selected="${course.year == 'SY'}">SY</option>
-                            <option value="TY" th:selected="${course.year == 'TY'}">TY</option>
-                        </select>
+                    <div class="section-title">Faculty & Description</div>
+                    <label>Assigned Faculty</label>
+                    <select name="facultyName">
+                        <option value="">Select Faculty</option>
+                        <option th:each="f : ${facultyList}" th:value="${f.name}"
+                            th:text="${f.name} + ' — ' + ${f.department}" th:selected="${course.facultyName == f.name}">
+                        </option>
+                    </select>
+
+                    <label>Description / Syllabus Overview</label>
+                    <textarea name="description" th:text="${course.description}"></textarea>
+
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Active" th:selected="${course.status == 'Active'}">Active</option>
+                        <option value="Inactive" th:selected="${course.status == 'Inactive'}">Inactive</option>
+                    </select>
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn-save">✅ Update Course</button>
+                        <a href="/admin/coursesyllabus" class="btn-cancel">Cancel</a>
                     </div>
-                    <div class="field">
-                        <label>Semester</label>
-                        <select name="semester">
-                            <option value="Semester 1" th:selected="${course.semester == 'Semester 1'}">Semester 1</option>
-                            <option value="Semester 2" th:selected="${course.semester == 'Semester 2'}">Semester 2</option>
-                            <option value="Semester 3" th:selected="${course.semester == 'Semester 3'}">Semester 3</option>
-                            <option value="Semester 4" th:selected="${course.semester == 'Semester 4'}">Semester 4</option>
-                            <option value="Semester 5" th:selected="${course.semester == 'Semester 5'}">Semester 5</option>
-                            <option value="Semester 6" th:selected="${course.semester == 'Semester 6'}">Semester 6</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>Credits</label>
-                        <input type="number" name="credits" th:value="${course.credits}" min="1" max="10">
-                    </div>
-                </div>
 
-                <div class="section-title">Faculty & Description</div>
-                <label>Assigned Faculty</label>
-                <select name="facultyName">
-                    <option value="">Select Faculty</option>
-                    <option th:each="f : ${facultyList}"
-                            th:value="${f.name}"
-                            th:text="${f.name} + ' — ' + ${f.department}"
-                            th:selected="${course.facultyName == f.name}"></option>
-                </select>
-
-                <label>Description / Syllabus Overview</label>
-                <textarea name="description" th:text="${course.description}"></textarea>
-
-                <label>Status</label>
-                <select name="status">
-                    <option value="Active"   th:selected="${course.status == 'Active'}">Active</option>
-                    <option value="Inactive" th:selected="${course.status == 'Inactive'}">Inactive</option>
-                </select>
-
-                <div class="btn-row">
-                    <button type="submit" class="btn-save">✅ Update Course</button>
-                    <a href="/admin/coursesyllabus" class="btn-cancel">Cancel</a>
-                </div>
-
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
+<script>
+    (function () {
+        function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+        function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
+        document.getElementById('editCourseForm').addEventListener('submit', function (ev) {
+            var valid = true;
+            ['courseCode', 'courseName', 'credits'].forEach(function (id) { ce(id, id + 'Err'); });
+            var cc = document.getElementById('courseCode').value.trim();
+            if (!cc || cc.length < 2) { se('courseCode', 'courseCodeErr', 'Course code must be at least 2 characters.'); valid = false; }
+            else if (!/^[A-Za-z0-9\-]+$/.test(cc)) { se('courseCode', 'courseCodeErr', 'Course code must be alphanumeric.'); valid = false; }
+            if (!document.getElementById('courseName').value.trim()) { se('courseName', 'courseNameErr', 'Course name is required.'); valid = false; }
+            var cr = parseInt(document.getElementById('credits').value);
+            if (document.getElementById('credits').value && (isNaN(cr) || cr < 1 || cr > 10)) { se('credits', 'creditsErr', 'Credits must be between 1 and 10.'); valid = false; }
+            if (!valid) ev.preventDefault();
+        });
+    })();
+</script>
+
 </html>
