@@ -1,6 +1,7 @@
 package com.college.erp.controller.faculty;
 
 import com.college.erp.model.Attendance;
+import com.college.erp.model.Course;
 import com.college.erp.model.Faculty;
 import com.college.erp.model.Student;
 import com.college.erp.repository.CourseRepository;
@@ -38,6 +39,7 @@ public class AttendanceManagementController {
                                  @RequestParam(required = false) String subject,
                                  @RequestParam(required = false) String date,
                                  Model model) {
+
         String username = auth.getName();
         Faculty faculty = facultyRepo.findByUsername(username);
         model.addAttribute("faculty", faculty);
@@ -46,13 +48,22 @@ public class AttendanceManagementController {
         model.addAttribute("allRecords",   allRecords);
         model.addAttribute("totalRecords", allRecords.size());
 
-        // FIX: faculty-side counts now use countFacultyPresent / countFacultyAbsent
         model.addAttribute("presentCount", attendanceService.countFacultyPresent(username));
         model.addAttribute("absentCount",  attendanceService.countFacultyAbsent(username));
 
-        model.addAttribute("subjects", attendanceService.getSubjects(username));
-        model.addAttribute("dates",    attendanceService.getDates(username));
+        // ✅ FIX: fetch only courses where facultyName matches this faculty's name
+        //    NOT findByDepartment() which returns ALL department subjects
+        List<Course> myCourses = (faculty != null)
+                ? courseRepo.findByFacultyName(faculty.getName())
+                : List.of();
 
+        // Used in both the Mark tab dropdown AND the View tab filter dropdown
+        model.addAttribute("courses", myCourses);
+
+        // Distinct dates from this faculty's own attendance records
+        model.addAttribute("dates", attendanceService.getDates(username));
+
+        // Filtered records
         if (subject != null && !subject.isBlank()) {
             model.addAttribute("filteredRecords",
                     attendanceService.getByFacultyAndSubject(username, subject));
@@ -63,15 +74,14 @@ public class AttendanceManagementController {
             model.addAttribute("filterDate", date);
         }
 
-        List<Student> students = faculty != null
+        // Students in same department as faculty
+        List<Student> students = (faculty != null)
                 ? studentRepo.findAll().stream()
                 .filter(s -> faculty.getDepartment().equals(s.getDepartment()))
                 .toList()
                 : List.of();
 
         model.addAttribute("students", students);
-        model.addAttribute("courses",
-                faculty != null ? courseRepo.findByDepartment(faculty.getDepartment()) : List.of());
         model.addAttribute("today", LocalDate.now().toString());
 
         return "faculty/attendance-management";
@@ -83,10 +93,17 @@ public class AttendanceManagementController {
                                  @RequestParam String attendanceDate,
                                  @RequestParam List<String> usernames,
                                  @RequestParam List<String> statuses) {
+
         String username = auth.getName();
         Faculty faculty = facultyRepo.findByUsername(username);
 
-        for (int i = 0; i < usernames.size(); i++) {
+        if (usernames == null || statuses == null) {
+            return "redirect:/faculty/attendancemanagement?error";
+        }
+
+        int count = Math.min(usernames.size(), statuses.size());
+
+        for (int i = 0; i < count; i++) {
             String stuUsername = usernames.get(i);
             Student student = studentRepo.findAll().stream()
                     .filter(s -> stuUsername.equals(s.getUsername()))

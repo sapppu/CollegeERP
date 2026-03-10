@@ -47,7 +47,6 @@ public class InternalAssessmentController {
         model.addAttribute("avgMarks",     markService.getAvgMarks(username));
         model.addAttribute("subjects",     markService.getSubjects(username));
 
-        // Filtered
         if (filterSubject != null && !filterSubject.isBlank()) {
             model.addAttribute("filteredMarks",
                     markService.getByFacultyAndSubject(username, filterSubject));
@@ -58,7 +57,6 @@ public class InternalAssessmentController {
             model.addAttribute("filterType", filterType);
         }
 
-        // Students in dept for bulk upload
         List<Student> students = faculty != null
                 ? studentRepo.findAll().stream()
                 .filter(s -> faculty.getDepartment().equals(s.getDepartment()))
@@ -83,7 +81,14 @@ public class InternalAssessmentController {
         String username = auth.getName();
         Faculty faculty = facultyRepo.findByUsername(username);
 
-        for (int i = 0; i < usernames.size(); i++) {
+        // ✅ FIX: guard against null or mismatched list sizes
+        if (usernames == null || marksObtained == null) {
+            return "redirect:/faculty/internalassessment?error";
+        }
+
+        int count = Math.min(usernames.size(), marksObtained.size());
+
+        for (int i = 0; i < count; i++) {
             String stuUsername = usernames.get(i);
             Student student = studentRepo.findAll().stream()
                     .filter(s -> stuUsername.equals(s.getUsername()))
@@ -100,10 +105,12 @@ public class InternalAssessmentController {
             mark.setMarksObtained(marksObtained.get(i));
             mark.setTotalMarks(totalMarks);
             mark.setExamDate(examDate);
+            // ✅ FIX: safe access on optional remarks list
             mark.setRemarks(remarks != null && i < remarks.size() ? remarks.get(i) : "");
             mark.setFacultyUsername(username);
             markService.save(mark);
         }
+
         return "redirect:/faculty/internalassessment?success";
     }
 

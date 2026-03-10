@@ -5,6 +5,7 @@ import com.college.erp.model.User;
 import com.college.erp.repository.StudentRepository;
 import com.college.erp.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminStudentService {
@@ -17,6 +18,7 @@ public class AdminStudentService {
         this.userRepo = userRepo;
     }
 
+    @Transactional
     public void saveStudentWithUser(Student student, String password) {
         User user = new User();
         user.setUsername(student.getUsername());
@@ -26,12 +28,15 @@ public class AdminStudentService {
         studentRepo.save(student);
     }
 
+    @Transactional
     public void updateStudent(Student student) {
         studentRepo.save(student);
     }
 
+    @Transactional
     public void deleteStudent(Long id) {
-        Student student = studentRepo.findById(id).get();
+        Student student = studentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
         userRepo.findByUsername(student.getUsername())
                 .ifPresent(userRepo::delete);
         studentRepo.deleteById(id);

@@ -1,6 +1,7 @@
 package com.college.erp.controller.admin;
 
 import com.college.erp.model.Faculty;
+import com.college.erp.repository.DepartmentRepository;
 import com.college.erp.repository.FacultyRepository;
 import com.college.erp.service.AdminFacultyService;
 import org.springframework.stereotype.Controller;
@@ -10,16 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AdminFacultyController {
 
-    private final FacultyRepository facultyRepo;
-    private final AdminFacultyService facultyService;
+    private final FacultyRepository    facultyRepo;
+    private final AdminFacultyService  facultyService;
+    private final DepartmentRepository deptRepo;
 
-    public AdminFacultyController(FacultyRepository facultyRepo, AdminFacultyService facultyService) {
-        this.facultyRepo = facultyRepo;
+    public AdminFacultyController(FacultyRepository    facultyRepo,
+                                  AdminFacultyService  facultyService,
+                                  DepartmentRepository deptRepo) {
+        this.facultyRepo    = facultyRepo;
         this.facultyService = facultyService;
+        this.deptRepo       = deptRepo;
     }
 
     @GetMapping("/admin/add-faculty")
-    public String addFacultyPage() {
+    public String addFacultyPage(Model model) {
+        model.addAttribute("departments", deptRepo.findAll()); // ✅ FIX #6
         return "admin/add-faculty";
     }
 
@@ -37,7 +43,10 @@ public class AdminFacultyController {
 
     @GetMapping("/admin/edit-faculty/{id}")
     public String editFaculty(@PathVariable Long id, Model model) {
-        model.addAttribute("faculty", facultyRepo.findById(id).get());
+        model.addAttribute("faculty",
+                facultyRepo.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Faculty not found: " + id)));
+        model.addAttribute("departments", deptRepo.findAll());
         return "admin/edit-faculty";
     }
 

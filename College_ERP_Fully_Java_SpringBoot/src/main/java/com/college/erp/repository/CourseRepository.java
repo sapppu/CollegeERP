@@ -8,4 +8,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByDepartment(String department);
     List<Course> findByStatus(String status);
     List<Course> findByCourseType(String courseType);
+
+    // ✅ ADD THIS
+    List<Course> findByFacultyName(String facultyName);
 }

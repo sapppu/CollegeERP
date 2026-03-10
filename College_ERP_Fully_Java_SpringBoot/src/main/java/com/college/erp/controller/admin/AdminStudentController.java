@@ -1,6 +1,7 @@
 package com.college.erp.controller.admin;
 
 import com.college.erp.model.Student;
+import com.college.erp.repository.DepartmentRepository;
 import com.college.erp.repository.StudentRepository;
 import com.college.erp.service.AdminStudentService;
 import org.springframework.stereotype.Controller;
@@ -10,16 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AdminStudentController {
 
-    private final StudentRepository studentRepo;
-    private final AdminStudentService studentService;
+    private final StudentRepository    studentRepo;
+    private final AdminStudentService  studentService;
+    private final DepartmentRepository deptRepo;
 
-    public AdminStudentController(StudentRepository studentRepo, AdminStudentService studentService) {
-        this.studentRepo = studentRepo;
+    public AdminStudentController(StudentRepository    studentRepo,
+                                  AdminStudentService  studentService,
+                                  DepartmentRepository deptRepo) {
+        this.studentRepo    = studentRepo;
         this.studentService = studentService;
+        this.deptRepo       = deptRepo;
     }
 
     @GetMapping("/admin/add-student")
-    public String addStudentPage() {
+    public String addStudentPage(Model model) {
+        model.addAttribute("departments", deptRepo.findAll()); // ✅ FIX #6
         return "admin/add-student";
     }
 
@@ -37,7 +43,10 @@ public class AdminStudentController {
 
     @GetMapping("/admin/edit-student/{id}")
     public String editStudent(@PathVariable Long id, Model model) {
-        model.addAttribute("student", studentRepo.findById(id).get());
+        model.addAttribute("student",
+                studentRepo.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Student not found: " + id)));
+        model.addAttribute("departments", deptRepo.findAll());
         return "admin/edit-student";
     }
 

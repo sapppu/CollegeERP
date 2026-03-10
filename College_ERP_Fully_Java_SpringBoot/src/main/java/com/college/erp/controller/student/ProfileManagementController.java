@@ -31,9 +31,11 @@ public class ProfileManagementController {
                                 @RequestParam String email) {
         String username = auth.getName();
         Student student = studentRepo.findByUsername(username);
+        if (student == null) return "redirect:/student/profilemanagement?error";
         student.setPhone(phone);
         student.setAddress(address);
         student.setEmail(email);
+        studentRepo.save(student);
         studentRepo.save(student);
         return "redirect:/student/profilemanagement?success";
     }

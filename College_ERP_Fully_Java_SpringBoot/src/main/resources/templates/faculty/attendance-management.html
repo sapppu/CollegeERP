@@ -62,6 +62,7 @@
         .empty-row { text-align: center; color: #aaa; padding: 30px; font-size: 14px; }
         .status-radio { display: flex; gap: 10px; }
         .status-radio label { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: normal; color: #555; cursor: pointer; padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd; transition: 0.2s; }
+        .status-radio label:has(input:checked) { border-color: #8e44ad; background: #f3e5ff; color: #8e44ad; font-weight: bold; }
         .status-radio input[type=radio] { accent-color: #8e44ad; }
         .filter-card { background: white; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 20px; }
         .table-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow-x: auto; }
@@ -145,10 +146,10 @@
                         <label>Subject / Course</label>
                         <select id="subjectSelect">
                             <option value="">-- Select Subject --</option>
+                            <!-- courses = faculty's assigned courses only -->
                             <option th:each="c : ${courses}"
                                     th:value="${c.courseName}"
                                     th:text="${c.courseName}"></option>
-                            <option value="Other">Other</option>
                         </select>
                     </div>
                     <div class="field">
@@ -180,7 +181,7 @@
                             </table>
                         </div>
 
-                        <div style="margin-top:20px;display:flex;gap:14px;">
+                        <div style="margin-top:20px;display:flex;gap:14px;flex-wrap:wrap;">
                             <button type="submit" class="btn-mark">💾 Submit Attendance</button>
                             <button type="button" class="btn-mark"
                                     style="background:#dfe6e9;color:#555;"
@@ -188,6 +189,9 @@
                             <button type="button" class="btn-mark"
                                     style="background:#fdecea;color:#e55039;"
                                     onclick="markAll('Absent')">❌ All Absent</button>
+                            <button type="button" class="btn-mark"
+                                    style="background:#fef3e2;color:#e67e22;"
+                                    onclick="markAll('Late')">⏰ All Late</button>
                         </div>
                     </form>
                 </div>
@@ -200,24 +204,31 @@
 
             <div class="filter-card">
                 <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">
+
+                    <!-- ✅ FIX: use ${courses} (faculty's assigned subjects) not ${subjects} (all subjects in DB) -->
                     <div style="display:flex;flex-direction:column;gap:5px;">
                         <label style="font-size:12px;font-weight:bold;color:#555;">Filter by Subject</label>
                         <select onchange="window.location='/faculty/attendancemanagement?subject='+this.value"
                                 style="padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;min-width:180px;">
                             <option value="">All Subjects</option>
-                            <option th:each="s : ${subjects}" th:value="${s}" th:text="${s}"
-                                    th:selected="${filterSubject == s}"></option>
+                            <option th:each="c : ${courses}"
+                                    th:value="${c.courseName}"
+                                    th:text="${c.courseName}"
+                                    th:selected="${filterSubject == c.courseName}"></option>
                         </select>
                     </div>
+
                     <div style="display:flex;flex-direction:column;gap:5px;">
                         <label style="font-size:12px;font-weight:bold;color:#555;">Filter by Date</label>
                         <select onchange="window.location='/faculty/attendancemanagement?date='+this.value"
                                 style="padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;min-width:180px;">
                             <option value="">All Dates</option>
+                            <!-- dates = distinct dates from this faculty's records only -->
                             <option th:each="d : ${dates}" th:value="${d}" th:text="${d}"
                                     th:selected="${filterDate == d}"></option>
                         </select>
                     </div>
+
                     <a href="/faculty/attendancemanagement"
                        style="background:#dfe6e9;color:#555;padding:9px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:bold;align-self:flex-end;">
                         Clear
@@ -313,38 +324,56 @@
         document.getElementById('hidDate').value    = date;
 
         const tbody = document.getElementById('attTableBody');
-        tbody.innerHTML = '';
-
-        students.forEach((s, i) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${i + 1}</td>
-                    <td>
-                        <input type="hidden" name="usernames" value="${s.username || ''}">
-                        ${s.username || 'N/A'}
-                    </td>
-                    <td><strong>${s.name}</strong></td>
-                    <td>${s.year || ''}</td>
-                    <td>
-                        <div class="status-radio">
-                            <label><input type="radio" name="statuses" value="Present" checked> ✅ Present</label>
-                            <label><input type="radio" name="statuses" value="Absent"> ❌ Absent</label>
-                            <label><input type="radio" name="statuses" value="Late"> ⏰ Late</label>
-                        </div>
-                    </td>
-                </tr>`;
-        });
 
         if (students.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px;">No students found.</td></tr>';
+        } else {
+            let rows = '';
+            students.forEach((s, i) => {
+                rows += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>
+                            <input type="hidden" name="usernames" value="${s.username || ''}">
+                            ${s.username || 'N/A'}
+                        </td>
+                        <td><strong>${s.name}</strong></td>
+                        <td>${s.year || ''}</td>
+                        <td>
+                            <input type="hidden" name="statuses" id="statusVal_${i}" value="Present">
+                            <div class="status-radio">
+                                <label>
+                                    <input type="radio" name="status_${i}" value="Present"
+                                           onchange="document.getElementById('statusVal_${i}').value=this.value"
+                                           checked> ✅ Present
+                                </label>
+                                <label>
+                                    <input type="radio" name="status_${i}" value="Absent"
+                                           onchange="document.getElementById('statusVal_${i}').value=this.value">
+                                    ❌ Absent
+                                </label>
+                                <label>
+                                    <input type="radio" name="status_${i}" value="Late"
+                                           onchange="document.getElementById('statusVal_${i}').value=this.value">
+                                    ⏰ Late
+                                </label>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+            tbody.innerHTML = rows;
         }
 
         document.getElementById('attendanceFormDiv').style.display = 'block';
     }
 
     function markAll(status) {
-        document.querySelectorAll('#attTableBody input[type=radio]').forEach(r => {
-            if (r.value === status) r.checked = true;
+        students.forEach((s, i) => {
+            const radio = document.querySelector(`input[name="status_${i}"][value="${status}"]`);
+            if (radio) {
+                radio.checked = true;
+                document.getElementById(`statusVal_${i}`).value = status;
+            }
         });
     }
 </script>

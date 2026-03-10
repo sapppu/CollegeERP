@@ -20,9 +20,9 @@ public class AdminUserController {
     public String viewUsers(Model model) {
         model.addAttribute("list", userService.getAll());
         model.addAttribute("totalRecords", userService.countTotal());
-        model.addAttribute("adminCount", userService.countByRole("ADMIN"));
-        model.addAttribute("facultyCount", userService.countByRole("FACULTY"));
-        model.addAttribute("studentCount", userService.countByRole("STUDENT"));
+        model.addAttribute("adminCount",   userService.countByRole("ROLE_ADMIN"));
+        model.addAttribute("facultyCount", userService.countByRole("ROLE_FACULTY"));
+        model.addAttribute("studentCount", userService.countByRole("ROLE_STUDENT"));
         return "admin/user-role-permission";
     }
 

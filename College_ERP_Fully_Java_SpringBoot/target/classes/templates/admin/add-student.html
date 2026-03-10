@@ -71,7 +71,13 @@
         <div class="row">
             <div class="field">
                 <label>Department</label>
-                <input type="text" name="department" placeholder="e.g. Computer Science" required>
+                <select name="department" required>
+                    <option value="">-- Select Department --</option>
+                    <option th:each="dept : ${departments}"
+                            th:value="${dept.name}"
+                            th:text="${dept.name}">
+                    </option>
+                </select>
             </div>
             <div class="field">
                 <label>Year</label>
@@ -82,7 +88,6 @@
                 </select>
             </div>
         </div>
-
         <div class="section-title">Login Credentials</div>
         <div class="row">
             <div class="field">
