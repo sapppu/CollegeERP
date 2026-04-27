@@ -119,6 +119,33 @@
     select.invalid {
       border-color: #e53e3e !important;
     }
+    .tab-switcher { display:flex; gap:0; margin-bottom:28px; border-radius:10px; overflow:hidden; border:2px solid #1e3799; }
+    .tab-btn { flex:1; padding:14px 0; text-align:center; font-size:15px; font-weight:bold; cursor:pointer; border:none; background:white; color:#1e3799; transition:all 0.25s ease; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .tab-btn:first-child { border-right:1px solid #1e3799; }
+    .tab-btn.active { background:#1e3799; color:white; }
+    .tab-btn:hover:not(.active) { background:#eaf0ff; }
+    .tab-content { display:none; } .tab-content.active { display:block; animation:fadeIn 0.3s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .upload-zone { border:2px dashed #b0c4de; border-radius:12px; padding:40px 20px; text-align:center; background:#f8faff; cursor:pointer; transition:all 0.3s ease; margin-bottom:20px; }
+    .upload-zone:hover,.upload-zone.drag-over { border-color:#1e3799; background:#eaf0ff; }
+    .upload-zone .upload-icon { font-size:48px; margin-bottom:12px; }
+    .upload-zone p { color:#666; font-size:14px; margin:4px 0; }
+    .upload-zone .browse-link { color:#1e3799; font-weight:bold; text-decoration:underline; cursor:pointer; }
+    .file-info { display:none; align-items:center; gap:12px; background:#eaf0ff; padding:12px 16px; border-radius:8px; margin-bottom:20px; }
+    .file-info .file-icon { font-size:28px; } .file-info .file-name { font-weight:bold; color:#1e3799; font-size:14px; } .file-info .file-size { color:#888; font-size:12px; }
+    .file-info .remove-file { margin-left:auto; cursor:pointer; color:#e53e3e; font-size:18px; font-weight:bold; border:none; background:none; padding:0; width:auto; }
+    .template-info { background:#fffcf0; border:1px solid #f0e6c0; border-radius:8px; padding:16px; margin-bottom:20px; }
+    .template-info h4 { color:#b8860b; margin:0 0 8px; font-size:14px; }
+    .template-info code { display:block; background:#fff; border:1px solid #e8dcc0; border-radius:4px; padding:8px 12px; font-size:12px; color:#555; overflow-x:auto; white-space:nowrap; }
+    .template-info p { font-size:12px; color:#888; margin:8px 0 0; }
+    .alert { padding:14px 18px; border-radius:8px; margin-bottom:20px; font-size:14px; display:flex; align-items:flex-start; gap:10px; }
+    .alert-success { background:#e0faf4; border:1px solid #00b894; color:#00755a; }
+    .alert-error { background:#fdecea; border:1px solid #e55039; color:#c0392b; }
+    .alert-warning { background:#fef3e2; border:1px solid #e67e22; color:#b8650a; }
+    .error-list { max-height:180px; overflow-y:auto; margin-top:8px; padding-left:18px; font-size:13px; }
+    .error-list li { margin-bottom:4px; }
+    .download-template-btn { background:#00b894; margin-top:15px; }
+    .download-template-btn:hover { background:#00a381; }
   </style>
 </head>
 
@@ -129,6 +156,14 @@
   </div>
   <div class="container">
     <h2>➕ Add New Faculty</h2>
+
+    <div class="tab-switcher">
+      <button type="button" class="tab-btn active" onclick="switchTab('manual')" id="tabManual">✏️ Manual Entry</button>
+      <button type="button" class="tab-btn" onclick="switchTab('import')" id="tabImport">📥 Import from Excel</button>
+    </div>
+
+    <!-- TAB 1: MANUAL ENTRY -->
+    <div id="manualTab" class="tab-content active">
     <form action="/admin/save-faculty" method="post" id="facultyForm" novalidate>
 
       <div class="section-title">Personal Details</div>
@@ -208,9 +243,67 @@
 
       <button type="submit">💾 Save Faculty</button>
     </form>
+    </div>
+
+    <!-- TAB 2: EXCEL IMPORT -->
+    <div id="importTab" class="tab-content">
+      <div th:if="${importSuccess != null}" class="alert alert-success"><span>✅</span><div><strong th:text="'Successfully imported ' + ${importSuccess} + ' of ' + ${importTotal} + ' faculty members.'"></strong></div></div>
+      <div th:if="${importError != null}" class="alert alert-error"><span>❌</span><div th:text="${importError}"></div></div>
+      <div th:if="${importErrors != null}" class="alert alert-warning"><span>⚠️</span><div><strong th:text="${importFailed} + ' rows had errors:'"></strong><ul class="error-list"><li th:each="err : ${importErrors}" th:text="${err}"></li></ul></div></div>
+
+      <div class="template-info">
+        <h4>📋 Required Excel Format (Header Row)</h4>
+        <code>Name | Email | Phone | Gender | DOB | Address | Department | Designation | Qualification | Username | Password</code>
+        <p>The first row must be the header. Supported formats: <b>.xlsx</b> and <b>.xls</b></p>
+      </div>
+
+      <form action="/admin/import-faculty" method="post" enctype="multipart/form-data" id="importForm">
+        <div class="upload-zone" id="uploadZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+          <div class="upload-icon">📂</div>
+          <p><strong>Drag & drop your Excel file here</strong></p>
+          <p>or <span class="browse-link" onclick="document.getElementById('excelFile').click()">browse files</span></p>
+          <p style="color:#aaa;font-size:12px;margin-top:8px;">Supports .xlsx and .xls</p>
+        </div>
+        <input type="file" name="file" id="excelFile" accept=".xlsx,.xls" style="display:none" onchange="handleFileSelect(this)">
+        <div class="file-info" id="fileInfo"><span class="file-icon">📄</span><div><div class="file-name" id="fileName"></div><div class="file-size" id="fileSize"></div></div><button type="button" class="remove-file" onclick="removeFile()">✕</button></div>
+        <button type="submit" id="importBtn" disabled style="opacity:0.5;cursor:not-allowed;">📤 Upload & Import Faculty</button>
+      </form>
+      <button class="download-template-btn" onclick="downloadTemplate()" style="margin-top:15px;">📥 Download Sample Template</button>
+    </div>
+
     <a class="back" href="/admin/faculty">View All Faculty</a>
   </div>
   <script>
+    function switchTab(tab) {
+      document.getElementById('manualTab').classList.toggle('active', tab==='manual');
+      document.getElementById('importTab').classList.toggle('active', tab==='import');
+      document.getElementById('tabManual').classList.toggle('active', tab==='manual');
+      document.getElementById('tabImport').classList.toggle('active', tab==='import');
+    }
+    (function(){ var m=document.querySelector('#importTab .alert'); if(m) switchTab('import'); })();
+
+    function handleFileSelect(input){ if(input.files.length>0) showFile(input.files[0]); }
+    function handleDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
+    function handleDragLeave(e){ document.getElementById('uploadZone').classList.remove('drag-over'); }
+    function handleDrop(e){
+      e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over');
+      var f=e.dataTransfer.files; if(f.length>0){ var file=f[0]; if(file.name.endsWith('.xlsx')||file.name.endsWith('.xls')){ document.getElementById('excelFile').files=f; showFile(file); } else alert('Please upload a .xlsx or .xls file.'); }
+    }
+    function showFile(file){
+      document.getElementById('uploadZone').style.display='none'; document.getElementById('fileInfo').style.display='flex';
+      document.getElementById('fileName').textContent=file.name; document.getElementById('fileSize').textContent=(file.size/1024).toFixed(1)+' KB';
+      var btn=document.getElementById('importBtn'); btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer';
+    }
+    function removeFile(){
+      document.getElementById('excelFile').value=''; document.getElementById('uploadZone').style.display=''; document.getElementById('fileInfo').style.display='none';
+      var btn=document.getElementById('importBtn'); btn.disabled=true; btn.style.opacity='0.5'; btn.style.cursor='not-allowed';
+    }
+    function downloadTemplate(){
+      var h=['Name','Email','Phone','Gender','DOB','Address','Department','Designation','Qualification','Username','Password'];
+      var s=['Dr. Jane Doe','jane@example.com','9876543210','Female','1985-03-10','Pune, MH','Computer Science','Assistant Professor','Ph.D','jane2024','pass1234'];
+      var csv=h.join(',')+"\n"+s.join(',')+"\n"; var blob=new Blob([csv],{type:'text/csv'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='faculty_import_template.csv'; a.click();
+    }
+
     (function () {
       var form = document.getElementById('facultyForm');
       function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
@@ -218,39 +311,24 @@
       form.addEventListener('submit', function (ev) {
         var valid = true;
         ['name', 'gender', 'dob', 'phone', 'email', 'department', 'username', 'password'].forEach(function (id) { ce(id, id + 'Err'); });
-
         var name = document.getElementById('name').value.trim();
         if (!name || name.length < 2) { se('name', 'nameErr', 'Full name must be at least 2 characters.'); valid = false; }
         else if (!/^[A-Za-z\s]+$/.test(name)) { se('name', 'nameErr', 'Name must contain only letters and spaces.'); valid = false; }
-
         if (!document.getElementById('gender').value) { se('gender', 'genderErr', 'Please select a gender.'); valid = false; }
-
         var dob = document.getElementById('dob').value;
         if (!dob) { se('dob', 'dobErr', 'Date of birth is required.'); valid = false; }
-        else {
-          var d = new Date(dob), t = new Date();
-          var age = t.getFullYear() - d.getFullYear();
-          if (t.getMonth() - d.getMonth() < 0 || (t.getMonth() - d.getMonth() === 0 && t.getDate() < d.getDate())) age--;
-          if (d >= t) { se('dob', 'dobErr', 'Date of birth must be in the past.'); valid = false; }
-          else if (age < 18) { se('dob', 'dobErr', 'Faculty must be at least 18 years old.'); valid = false; }
-        }
-
+        else { var d=new Date(dob),t=new Date(); var age=t.getFullYear()-d.getFullYear(); if(t.getMonth()-d.getMonth()<0||(t.getMonth()-d.getMonth()===0&&t.getDate()<d.getDate())) age--; if(d>=t){se('dob','dobErr','Date of birth must be in the past.'); valid=false;} else if(age<18){se('dob','dobErr','Faculty must be at least 18 years old.'); valid=false;} }
         var phone = document.getElementById('phone').value.trim();
         if (phone && !/^\d{10}$/.test(phone)) { se('phone', 'phoneErr', 'Phone must be exactly 10 digits.'); valid = false; }
-
         var email = document.getElementById('email').value.trim();
         if (!email) { se('email', 'emailErr', 'Email is required.'); valid = false; }
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { se('email', 'emailErr', 'Enter a valid email address.'); valid = false; }
-
         if (!document.getElementById('department').value) { se('department', 'departmentErr', 'Please select a department.'); valid = false; }
-
         var un = document.getElementById('username').value.trim();
         if (!un || un.length < 4) { se('username', 'usernameErr', 'Username must be at least 4 characters.'); valid = false; }
         else if (!/^[A-Za-z0-9_]+$/.test(un)) { se('username', 'usernameErr', 'Username: letters, digits, underscores only.'); valid = false; }
-
         var pw = document.getElementById('password').value;
         if (!pw || pw.length < 6) { se('password', 'passwordErr', 'Password must be at least 6 characters.'); valid = false; }
-
         if (!valid) ev.preventDefault();
       });
     })();

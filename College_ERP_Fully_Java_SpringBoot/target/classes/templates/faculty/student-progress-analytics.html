@@ -351,14 +351,14 @@
                             <td th:text="${i.count}"></td>
                             <td><strong th:text="${m.subject}"></strong></td>
                             <td th:text="${m.assessmentType}"></td>
-                            <td th:text="${m.marksObtained} + ' / ' + ${m.totalMarks}"></td>
+                            <td th:text="${(m.marksObtained != null ? m.marksObtained : 0)} + ' / ' + ${(m.totalMarks != null ? m.totalMarks : 0)}"></td>
                             <td>
-                                    <span th:with="pct=${m.totalMarks > 0 ? #numbers.formatDecimal(m.marksObtained * 100 / m.totalMarks, 1, 1) : 0}"
+                                    <span th:with="pct=${m.totalMarks != null and m.totalMarks > 0 and m.marksObtained != null ? (m.marksObtained * 100 / m.totalMarks) : 0.0}"
                                           th:classappend="${pct >= 75 ? 'pct-high' : pct >= 50 ? 'pct-mid' : 'pct-low'}"
-                                          th:text="${pct} + '%'"></span>
+                                          th:text="${#numbers.formatDecimal(pct, 1, 1)} + '%'"></span>
                             </td>
                             <td>
-                                    <span th:with="pct=${m.totalMarks > 0 ? (m.marksObtained * 100 / m.totalMarks) : 0}"
+                                    <span th:with="pct=${m.totalMarks != null and m.totalMarks > 0 and m.marksObtained != null ? (m.marksObtained * 100 / m.totalMarks) : 0.0}"
                                           th:classappend="${pct >= 90 ? 'grade grade-o' : pct >= 75 ? 'grade grade-a' : pct >= 60 ? 'grade grade-b' : pct >= 50 ? 'grade grade-c' : 'grade grade-f'}"
                                           class="grade"
                                           th:text="${pct >= 90 ? 'O' : pct >= 75 ? 'A' : pct >= 60 ? 'B' : pct >= 50 ? 'C' : 'F'}"></span>

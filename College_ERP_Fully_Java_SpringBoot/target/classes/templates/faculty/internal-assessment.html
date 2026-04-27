@@ -319,22 +319,22 @@
                             <td th:text="${m.studentUsername}"></td>
                             <td th:text="${m.subject}"></td>
                             <td>
-                                    <span th:classappend="${m.assessmentType.contains('Unit') ? 'badge-type type-ut' :
+                                    <span th:classappend="${m.assessmentType != null and m.assessmentType.contains('Unit') ? 'badge-type type-ut' :
                                                             m.assessmentType == 'Quiz'        ? 'badge-type type-quiz' :
                                                             m.assessmentType == 'Internal Assessment' ? 'badge-type type-ia' :
                                                             'badge-type type-other'}"
                                           class="badge-type"
                                           th:text="${m.assessmentType}"></span>
                             </td>
-                            <td th:text="${m.marksObtained} + ' / ' + ${m.totalMarks}"></td>
+                            <td th:text="${(m.marksObtained != null ? m.marksObtained : 0)} + ' / ' + ${(m.totalMarks != null ? m.totalMarks : 0)}"></td>
                             <td>
-                                    <span th:with="pct=${m.totalMarks > 0 ? #numbers.formatDecimal(m.marksObtained * 100 / m.totalMarks, 1, 1) : 0}"
+                                    <span th:with="pct=${m.totalMarks != null and m.totalMarks > 0 and m.marksObtained != null ? (m.marksObtained * 100 / m.totalMarks) : 0.0}"
                                           th:classappend="${pct >= 75 ? 'pct-badge pct-high' : pct >= 50 ? 'pct-badge pct-mid' : 'pct-badge pct-low'}"
                                           class="pct-badge"
-                                          th:text="${pct} + '%'"></span>
+                                          th:text="${#numbers.formatDecimal(pct, 1, 1)} + '%'"></span>
                             </td>
                             <td>
-                                    <span th:with="pct=${m.totalMarks > 0 ? (m.marksObtained * 100 / m.totalMarks) : 0}"
+                                    <span th:with="pct=${m.totalMarks != null and m.totalMarks > 0 and m.marksObtained != null ? (m.marksObtained * 100 / m.totalMarks) : 0.0}"
                                           th:classappend="${pct >= 90 ? 'grade grade-o' : pct >= 75 ? 'grade grade-a' : pct >= 60 ? 'grade grade-b' : pct >= 50 ? 'grade grade-c' : 'grade grade-f'}"
                                           class="grade"
                                           th:text="${pct >= 90 ? 'O' : pct >= 75 ? 'A' : pct >= 60 ? 'B' : pct >= 50 ? 'C' : 'F'}"></span>
@@ -360,22 +360,22 @@
                             <td th:text="${m.studentUsername}"></td>
                             <td th:text="${m.subject}"></td>
                             <td>
-                                    <span th:classappend="${m.assessmentType.contains('Unit') ? 'badge-type type-ut' :
+                                    <span th:classappend="${m.assessmentType != null and m.assessmentType.contains('Unit') ? 'badge-type type-ut' :
                                                             m.assessmentType == 'Quiz'        ? 'badge-type type-quiz' :
                                                             m.assessmentType == 'Internal Assessment' ? 'badge-type type-ia' :
                                                             'badge-type type-other'}"
                                           class="badge-type"
                                           th:text="${m.assessmentType}"></span>
                             </td>
-                            <td th:text="${m.marksObtained} + ' / ' + ${m.totalMarks}"></td>
+                            <td th:text="${(m.marksObtained != null ? m.marksObtained : 0)} + ' / ' + ${(m.totalMarks != null ? m.totalMarks : 0)}"></td>
                             <td>
-                                    <span th:with="pct=${m.totalMarks > 0 ? #numbers.formatDecimal(m.marksObtained * 100 / m.totalMarks, 1, 1) : 0}"
+                                    <span th:with="pct=${m.totalMarks != null and m.totalMarks > 0 and m.marksObtained != null ? (m.marksObtained * 100 / m.totalMarks) : 0.0}"
                                           th:classappend="${pct >= 75 ? 'pct-badge pct-high' : pct >= 50 ? 'pct-badge pct-mid' : 'pct-badge pct-low'}"
                                           class="pct-badge"
-                                          th:text="${pct} + '%'"></span>
+                                          th:text="${#numbers.formatDecimal(pct, 1, 1)} + '%'"></span>
                             </td>
                             <td>
-                                    <span th:with="pct=${m.totalMarks > 0 ? (m.marksObtained * 100 / m.totalMarks) : 0}"
+                                    <span th:with="pct=${m.totalMarks != null and m.totalMarks > 0 and m.marksObtained != null ? (m.marksObtained * 100 / m.totalMarks) : 0.0}"
                                           th:classappend="${pct >= 90 ? 'grade grade-o' : pct >= 75 ? 'grade grade-a' : pct >= 60 ? 'grade grade-b' : pct >= 50 ? 'grade grade-c' : 'grade grade-f'}"
                                           class="grade"
                                           th:text="${pct >= 90 ? 'O' : pct >= 75 ? 'A' : pct >= 60 ? 'B' : pct >= 50 ? 'C' : 'F'}"></span>

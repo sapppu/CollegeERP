@@ -95,7 +95,7 @@ public class StudentProgressAnalyticsController {
 
                 double avgMark = markList.isEmpty() ? 0.0
                         : Math.round(markList.stream()
-                        .mapToDouble(m -> m.getTotalMarks() > 0
+                        .mapToDouble(m -> m.getTotalMarks() != null && m.getTotalMarks() > 0 && m.getMarksObtained() != null
                                 ? m.getMarksObtained() / m.getTotalMarks() * 100
                                 : 0)
                         .average().orElse(0.0) * 10) / 10.0;

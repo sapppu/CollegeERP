@@ -142,7 +142,10 @@
     <div class="card">
       <div class="card-header">
         <h2>Expense Records</h2>
-        <a href="/admin/add-expense" class="btn btn-primary">+ Add Expense</a>
+        <div style="display:flex; gap:12px;">
+            <a href="/admin/export-expenses" class="btn btn-success" style="background:#00b894; color:white;">📥 Export Excel</a>
+            <a href="/admin/add-expense" class="btn btn-primary">+ Add Expense</a>
+        </div>
       </div>
       <table>
         <thead>

@@ -8,12 +8,16 @@ import com.college.erp.repository.CourseRepository;
 import com.college.erp.repository.FacultyRepository;
 import com.college.erp.repository.StudentRepository;
 import com.college.erp.service.AttendanceService;
+import com.college.erp.service.ExcelService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -23,15 +27,18 @@ public class AttendanceManagementController {
     private final FacultyRepository facultyRepo;
     private final StudentRepository studentRepo;
     private final CourseRepository  courseRepo;
+    private final ExcelService      excelService;
 
     public AttendanceManagementController(AttendanceService attendanceService,
                                           FacultyRepository facultyRepo,
                                           StudentRepository studentRepo,
-                                          CourseRepository  courseRepo) {
+                                          CourseRepository  courseRepo,
+                                          ExcelService      excelService) {
         this.attendanceService = attendanceService;
         this.facultyRepo       = facultyRepo;
         this.studentRepo       = studentRepo;
         this.courseRepo        = courseRepo;
+        this.excelService      = excelService;
     }
 
     @GetMapping("/faculty/attendancemanagement")
@@ -51,19 +58,13 @@ public class AttendanceManagementController {
         model.addAttribute("presentCount", attendanceService.countFacultyPresent(username));
         model.addAttribute("absentCount",  attendanceService.countFacultyAbsent(username));
 
-        // ✅ FIX: fetch only courses where facultyName matches this faculty's name
-        //    NOT findByDepartment() which returns ALL department subjects
         List<Course> myCourses = (faculty != null)
                 ? courseRepo.findByFacultyName(faculty.getName())
                 : List.of();
 
-        // Used in both the Mark tab dropdown AND the View tab filter dropdown
         model.addAttribute("courses", myCourses);
-
-        // Distinct dates from this faculty's own attendance records
         model.addAttribute("dates", attendanceService.getDates(username));
 
-        // Filtered records
         if (subject != null && !subject.isBlank()) {
             model.addAttribute("filteredRecords",
                     attendanceService.getByFacultyAndSubject(username, subject));
@@ -74,7 +75,6 @@ public class AttendanceManagementController {
             model.addAttribute("filterDate", date);
         }
 
-        // Students in same department as faculty
         List<Student> students = (faculty != null)
                 ? studentRepo.findAll().stream()
                 .filter(s -> faculty.getDepartment().equals(s.getDepartment()))
@@ -129,5 +129,18 @@ public class AttendanceManagementController {
     public String deleteAttendance(@PathVariable Long id) {
         attendanceService.delete(id);
         return "redirect:/faculty/attendancemanagement";
+    }
+
+    // ── EXPORT ──────────────────────────────────────────────────────────
+
+    @GetMapping("/faculty/export-attendance")
+    public void exportAttendance(Authentication auth, HttpServletResponse response) throws IOException {
+        String username = auth.getName();
+        String[] headers = {"ID", "Student Username", "Student Name", "Department", "Year", "Subject", "Date", "Status"};
+        List<Object[]> rows = new ArrayList<>();
+        for (Attendance a : attendanceService.getByFaculty(username)) {
+            rows.add(new Object[]{a.getId(), a.getStudentUsername(), a.getStudentName(), a.getDepartment(), a.getYear(), a.getSubject(), a.getDate(), a.getStatus()});
+        }
+        excelService.exportToExcel(response, "attendance", "Attendance", headers, rows);
     }
 }

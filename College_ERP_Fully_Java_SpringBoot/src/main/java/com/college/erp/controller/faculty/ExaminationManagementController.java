@@ -5,10 +5,16 @@ import com.college.erp.model.Faculty;
 import com.college.erp.repository.DepartmentRepository;
 import com.college.erp.repository.FacultyRepository;
 import com.college.erp.service.ExamService;
+import com.college.erp.service.ExcelService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ExaminationManagementController {
@@ -16,13 +22,16 @@ public class ExaminationManagementController {
     private final ExamService        examService;
     private final FacultyRepository  facultyRepo;
     private final DepartmentRepository deptRepo;
+    private final ExcelService       excelService;
 
     public ExaminationManagementController(ExamService examService,
                                            FacultyRepository facultyRepo,
-                                           DepartmentRepository deptRepo) {
+                                           DepartmentRepository deptRepo,
+                                           ExcelService excelService) {
         this.examService  = examService;
         this.facultyRepo  = facultyRepo;
         this.deptRepo     = deptRepo;
+        this.excelService = excelService;
     }
 
     @GetMapping("/faculty/examinationmanagement")
@@ -80,5 +89,18 @@ public class ExaminationManagementController {
     public String deleteExam(@PathVariable Long id) {
         examService.delete(id);
         return "redirect:/faculty/examinationmanagement";
+    }
+
+    // ── EXPORT ──────────────────────────────────────────────────────────
+
+    @GetMapping("/faculty/export-exams")
+    public void exportExams(Authentication auth, HttpServletResponse response) throws IOException {
+        String username = auth.getName();
+        String[] headers = {"ID", "Exam Title", "Subject", "Exam Type", "Department", "Year", "Semester", "Exam Date", "Start Time", "Duration", "Total Marks", "Passing Marks", "Venue", "Status"};
+        List<Object[]> rows = new ArrayList<>();
+        for (Exam e : examService.getByFaculty(username)) {
+            rows.add(new Object[]{e.getId(), e.getExamTitle(), e.getSubject(), e.getExamType(), e.getDepartment(), e.getYear(), e.getSemester(), e.getExamDate(), e.getStartTime(), e.getDuration(), e.getTotalMarks(), e.getPassingMarks(), e.getVenue(), e.getStatus()});
+        }
+        excelService.exportToExcel(response, "exams", "Exams", headers, rows);
     }
 }

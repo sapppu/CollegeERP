@@ -56,6 +56,7 @@ com/college/erp/model/Book.class
 com/college/erp/service/PlacementDriveService.class
 com/college/erp/service/AdminUserService.class
 com/college/erp/controller/finance/InventoryAssetController.class
+com/college/erp/service/AdminStudentService$1.class
 com/college/erp/controller/student/AcademicRecordsController.class
 com/college/erp/model/Research.class
 com/college/erp/model/LeaveApplication.class
@@ -71,6 +72,7 @@ com/college/erp/repository/AlumniRepository.class
 com/college/erp/model/Payroll.class
 com/college/erp/controller/student/LibraryManagementController.class
 com/college/erp/controller/admin/SuperAdminDashboardController.class
+com/college/erp/service/ExcelService$1.class
 com/college/erp/controller/faculty/StudentProgressAnalyticsController.class
 com/college/erp/repository/ResearchRepository.class
 com/college/erp/service/AdminFacultyService.class
