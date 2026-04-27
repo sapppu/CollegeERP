@@ -1,0 +1,37 @@
+I want to create a CET-REgistration-App with jsp only no css with session,request,response,out,application,exception
+
+page 1- cet registration
+2 buttons- Newreg and Adminlogin
+
+Stud-reg-no (auto generate serially)
+password
+
+2buttons-home and login
+
+after login
+page2-cet menu with one test hyperlink
+start test
+
+agter clicking
+test page open
+
+with 2 questions
+1)a=12,b=13,res=a+b res=?
+2)a=11,b=22,c=b/a c=?
+
+submit button
+
+after submit it will go inside database having name,regno,course,DOB,marks
+
+
+then new registration from page one must have-
+new page Student Reg
+
+name,COurse with dropdown,dob,
+register button
+
+
+similarly admin login must have students details page with a table contaning Sr,no,name,course,dob,marks of students
+
+
+
