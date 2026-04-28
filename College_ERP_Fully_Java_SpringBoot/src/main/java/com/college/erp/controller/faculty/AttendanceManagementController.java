@@ -143,4 +143,55 @@ public class AttendanceManagementController {
         }
         excelService.exportToExcel(response, "attendance", "Attendance", headers, rows);
     }
+
+    /**
+     * Date-wise (and optionally subject-wise) attendance export.
+     * Columns: Enrollment No, Student Name, Status
+     */
+    @GetMapping("/faculty/export-attendance-datewise")
+    public void exportAttendanceDatewise(Authentication auth,
+                                         @RequestParam(required = false) String date,
+                                         @RequestParam(required = false) String subject,
+                                         HttpServletResponse response) throws IOException {
+
+        String username = auth.getName();
+
+        // Determine the records to export based on filters
+        List<Attendance> records;
+        String fileLabel;
+
+        if (subject != null && !subject.isBlank() && date != null && !date.isBlank()) {
+            // Both subject and date filter
+            records = attendanceService.getByFacultyAndSubject(username, subject).stream()
+                    .filter(a -> date.equals(a.getDate()))
+                    .toList();
+            fileLabel = "attendance_" + subject.replaceAll("\\s+", "_") + "_" + date;
+        } else if (date != null && !date.isBlank()) {
+            records = attendanceService.getByFacultyAndDate(username, date);
+            fileLabel = "attendance_" + date;
+        } else if (subject != null && !subject.isBlank()) {
+            records = attendanceService.getByFacultyAndSubject(username, subject);
+            fileLabel = "attendance_" + subject.replaceAll("\\s+", "_");
+        } else {
+            records = attendanceService.getByFaculty(username);
+            fileLabel = "attendance_all";
+        }
+
+        // Build a lookup map: studentUsername → enrollmentNo
+        java.util.Map<String, String> enrollmentMap = new java.util.HashMap<>();
+        for (Student s : studentRepo.findAll()) {
+            if (s.getUsername() != null) {
+                enrollmentMap.put(s.getUsername(), s.getEnrollmentNo() != null ? s.getEnrollmentNo() : "");
+            }
+        }
+
+        String[] headers = {"Enrollment No", "Student Name", "Subject", "Date", "Status"};
+        List<Object[]> rows = new ArrayList<>();
+        for (Attendance a : records) {
+            String enrollNo = enrollmentMap.getOrDefault(a.getStudentUsername(), "");
+            rows.add(new Object[]{enrollNo, a.getStudentName(), a.getSubject(), a.getDate(), a.getStatus()});
+        }
+
+        excelService.exportToExcel(response, fileLabel, "Attendance", headers, rows);
+    }
 }
