@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "jetro": {
+      "type": "stdio",
+      "command": "/home/sappu/.jetro/runtime/node-linux-x64",
+      "args": [
+        "/home/sappu/.jetro/mcp-server/index.js"
+      ],
+      "env": {
+        "JET_WORKSPACE": "/home/sappu/IdeaProjects/sql-playground",
+        "JET_API_URL": "https://api.jetro.ai",
+        "PATH": "/home/sappu/.jetro/runtime:/home/sappu/.local/bin:/home/sappu/anaconda3/bin:/home/sappu/anaconda3/condabin:/home/sappu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/sappu/.lmstudio/bin:/home/sappu/.lmstudio/bin:/home/sappu/.lmstudio/bin"
+      }
+    }
+  }
+}
