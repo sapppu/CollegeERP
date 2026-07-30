@@ -1,0 +1,22 @@
+# Optional: Render Blueprint — https://render.com/docs/blueprint-spec
+# Repo root on GitHub may be the parent folder; set rootDir to College_ERP_Fully_Java_SpringBoot in the dashboard if needed.
+
+services:
+  - type: web
+    name: college-erp
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /login
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_JDBC_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: APP_UPLOAD_DIR
+        value: /tmp/uploads/profiles

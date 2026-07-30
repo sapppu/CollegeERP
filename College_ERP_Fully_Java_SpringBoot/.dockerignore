@@ -1,0 +1,6 @@
+target/
+.git/
+.idea/
+uploads/
+*.iml
+.DS_Store
