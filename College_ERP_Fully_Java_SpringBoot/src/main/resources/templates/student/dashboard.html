@@ -29,7 +29,10 @@
 
         /* Welcome Banner */
         .welcome-banner { background: linear-gradient(135deg, #16a085, #1abc9c); color: white; border-radius: 14px; padding: 22px 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 14px rgba(22,160,133,0.3); }
-        .welcome-avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; flex-shrink: 0; }
+        .welcome-avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; flex-shrink: 0; overflow: hidden; }
+        .welcome-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .topbar-avatar { width: 36px; height: 36px; border-radius: 50%; background: #16a085; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .topbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .welcome-info h2 { font-size: 19px; font-weight: bold; }
         .welcome-info p  { font-size: 13px; opacity: 0.85; margin-top: 4px; }
         .welcome-chips { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; }
@@ -125,6 +128,10 @@
         <h1>Student Dashboard</h1>
         <div class="topbar-right">
             <span class="date-label" id="dateLabel"></span>
+            <div class="topbar-avatar" th:if="${student != null}">
+                <img th:if="${profilePictureUrl != null}" th:src="${profilePictureUrl}" alt="Profile">
+                <span th:if="${profilePictureUrl == null}" th:text="${#strings.substring(student.name, 0, 1)}">S</span>
+            </div>
             <span class="student-badge" th:text="${student != null ? '👨‍🎓 ' + student.name : '👨‍🎓 Student'}">👨‍🎓 Student</span>
         </div>
     </div>
@@ -138,7 +145,10 @@
 
         <!-- Welcome Banner -->
         <div class="welcome-banner" th:if="${student != null}">
-            <div class="welcome-avatar" th:text="${#strings.substring(student.name, 0, 1)}">S</div>
+            <div class="welcome-avatar">
+                <img th:if="${profilePictureUrl != null}" th:src="${profilePictureUrl}" alt="Profile">
+                <span th:if="${profilePictureUrl == null}" th:text="${#strings.substring(student.name, 0, 1)}">S</span>
+            </div>
             <div class="welcome-info">
                 <h2 th:text="'Welcome back, ' + ${student.name} + '!'">Welcome!</h2>
                 <p th:text="${student.department} + ' · ' + ${student.year} + ' · Enrollment: ' + ${student.enrollmentNo}">Dept · Year</p>

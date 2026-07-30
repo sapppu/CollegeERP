@@ -1,86 +1,389 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>ERP Login</title>
+  <meta charset="UTF-8">
+  <title>College ERP — Login</title>
   <style>
-    body {
-      font-family: Arial;
-      background: linear-gradient(to right, #1e3799, #4a69bd);
+    :root {
+      --admin: #1e3799;
+      --student: #16a085;
+      --faculty: #8e44ad;
+      --accent: var(--admin);
     }
 
-    .box {
-      width: 350px;
-      background: white;
-      padding: 30px;
-      margin: 120px auto;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 6px auto;
-      display: block;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+    * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    input.invalid {
-      border-color: #e53e3e !important;
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* All three portal colors visible at once */
+    .bg-tri {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(125deg,
+          var(--admin) 0%,
+          var(--admin) 28%,
+          var(--student) 42%,
+          var(--student) 58%,
+          var(--faculty) 72%,
+          var(--faculty) 100%);
+    }
+
+    .bg-tri::before,
+    .bg-tri::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.45;
+      animation: drift 14s ease-in-out infinite alternate;
+    }
+
+    .bg-tri::before {
+      width: 55vmin;
+      height: 55vmin;
+      background: var(--student);
+      top: -10%;
+      left: -5%;
+    }
+
+    .bg-tri::after {
+      width: 50vmin;
+      height: 50vmin;
+      background: var(--faculty);
+      bottom: -15%;
+      right: -8%;
+      animation-delay: -6s;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translate(0, 0) scale(1);
+      }
+
+      to {
+        transform: translate(4%, 6%) scale(1.08);
+      }
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: min(400px, 92vw);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 38px 36px 32px;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+      transition: box-shadow 0.35s ease;
+    }
+
+    body.role-admin .login-card {
+      box-shadow: 0 20px 50px rgba(30, 55, 153, 0.35);
+    }
+
+    body.role-student .login-card {
+      box-shadow: 0 20px 50px rgba(22, 160, 133, 0.35);
+    }
+
+    body.role-faculty .login-card {
+      box-shadow: 0 20px 50px rgba(142, 68, 173, 0.35);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .brand span {
+      font-size: 42px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      color: #2d3436;
+      font-weight: 700;
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: #636e72;
+      margin-top: 6px;
+    }
+
+    .role-strip {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 22px;
+      height: 6px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .role-strip span {
+      flex: 1;
+      transition: flex 0.35s ease, opacity 0.35s ease;
+    }
+
+    .role-strip .c-admin {
+      background: var(--admin);
+    }
+
+    .role-strip .c-student {
+      background: var(--student);
+    }
+
+    .role-strip .c-faculty {
+      background: var(--faculty);
+    }
+
+    body.role-admin .role-strip .c-admin {
+      flex: 2.2;
+    }
+
+    body.role-student .role-strip .c-student {
+      flex: 2.2;
+    }
+
+    body.role-faculty .role-strip .c-faculty {
+      flex: 2.2;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 11px 12px;
+      margin-bottom: 4px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    input.invalid,
+    select.invalid {
+      border-color: #e55039 !important;
+    }
+
+    .field {
+      margin-bottom: 14px;
     }
 
     .error-msg {
-      color: #e53e3e;
+      color: #e55039;
       font-size: 12px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: none;
     }
 
-    button {
-      padding: 10px 25px;
-      background: #1e3799;
-      color: white;
+    .alert {
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .alert-error {
+      background: #fdecea;
+      color: #c0392b;
+      border: 1px solid #f5c6cb;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      background: var(--accent);
+      transition: background 0.3s ease, transform 0.15s ease;
+    }
+
+    button[type="submit"]:hover {
+      filter: brightness(1.08);
+    }
+
+    button[type="submit"]:active {
+      transform: scale(0.98);
+    }
+
+    .back-home {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: #636e72;
+      text-decoration: none;
+    }
+
+    .back-home:hover {
+      color: var(--accent);
     }
   </style>
 </head>
 
 <body>
+  <div class="bg-tri" aria-hidden="true"></div>
 
-  <div class="box">
-    <h2>College ERP Login</h2>
+  <div class="login-card">
+    <div class="brand">
+      <span>🎓</span>
+      <h1>College ERP</h1>
+      <p>Sign in with your portal role</p>
+    </div>
+
+    <div class="role-strip" aria-hidden="true">
+      <span class="c-admin" title="Admin"></span>
+      <span class="c-student" title="Student"></span>
+      <span class="c-faculty" title="Faculty"></span>
+    </div>
+
+    <div class="alert alert-error" id="serverError"></div>
 
     <form method="post" action="/login" id="loginForm" novalidate>
-      <input type="text" name="username" id="username" placeholder="Username">
-      <span class="error-msg" id="usernameErr">Username is required.</span>
-      <input type="password" name="password" id="password" placeholder="Password">
-      <span class="error-msg" id="passwordErr">Password is required.</span>
-      <button type="submit">Login</button>
+      <div class="field">
+        <label for="role">Role</label>
+        <select name="role" id="role" required>
+          <option value="">— Select role —</option>
+          <option value="ADMIN">👨‍💼 Admin</option>
+          <option value="STUDENT">👨‍🎓 Student</option>
+          <option value="FACULTY">👩‍🏫 Faculty</option>
+        </select>
+        <span class="error-msg" id="roleErr">Please select your role.</span>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" placeholder="Enter username" autocomplete="username">
+        <span class="error-msg" id="usernameErr">Username is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Enter password"
+          autocomplete="current-password">
+        <span class="error-msg" id="passwordErr">Password is required.</span>
+      </div>
+
+      <button type="submit" id="submitBtn">Login</button>
     </form>
 
+    <a href="/" class="back-home">← Back to home</a>
   </div>
 
   <script>
-    function showErr(id, eId, msg) {
-      document.getElementById(id).classList.add('invalid');
-      var e = document.getElementById(eId); e.textContent = msg; e.style.display = 'block';
+    const roleColors = {
+      ADMIN: '#1e3799',
+      STUDENT: '#16a085',
+      FACULTY: '#8e44ad'
+    };
+
+    const roleSelect = document.getElementById('role');
+
+    function applyRoleTheme() {
+      const v = roleSelect.value;
+      document.body.classList.remove('role-admin', 'role-student', 'role-faculty');
+      if (v === 'ADMIN') {
+        document.body.classList.add('role-admin');
+        document.documentElement.style.setProperty('--accent', roleColors.ADMIN);
+      } else if (v === 'STUDENT') {
+        document.body.classList.add('role-student');
+        document.documentElement.style.setProperty('--accent', roleColors.STUDENT);
+      } else if (v === 'FACULTY') {
+        document.body.classList.add('role-faculty');
+        document.documentElement.style.setProperty('--accent', roleColors.FACULTY);
+      } else {
+        document.documentElement.style.setProperty('--accent', roleColors.ADMIN);
+      }
     }
-    function clearErr(id, eId) {
-      document.getElementById(id).classList.remove('invalid');
-      document.getElementById(eId).style.display = 'none';
+
+    roleSelect.addEventListener('change', applyRoleTheme);
+
+    function showErr(inputId, errId, msg) {
+      const el = document.getElementById(inputId);
+      if (el) el.classList.add('invalid');
+      const e = document.getElementById(errId);
+      if (e) { e.textContent = msg; e.style.display = 'block'; }
     }
+
+    function clearErr(inputId, errId) {
+      const el = document.getElementById(inputId);
+      if (el) el.classList.remove('invalid');
+      const e = document.getElementById(errId);
+      if (e) e.style.display = 'none';
+    }
+
     document.getElementById('loginForm').addEventListener('submit', function (e) {
-      var valid = true;
-      clearErr('username', 'usernameErr'); clearErr('password', 'passwordErr');
-      if (!document.getElementById('username').value.trim()) { showErr('username', 'usernameErr', 'Username is required.'); valid = false; }
-      if (!document.getElementById('password').value.trim()) { showErr('password', 'passwordErr', 'Password is required.'); valid = false; }
+      let valid = true;
+      clearErr('role', 'roleErr');
+      clearErr('username', 'usernameErr');
+      clearErr('password', 'passwordErr');
+
+      if (!roleSelect.value) { showErr('role', 'roleErr', 'Please select your role.'); valid = false; }
+      if (!document.getElementById('username').value.trim()) {
+        showErr('username', 'usernameErr', 'Username is required.'); valid = false;
+      }
+      if (!document.getElementById('password').value.trim()) {
+        showErr('password', 'passwordErr', 'Password is required.'); valid = false;
+      }
       if (!valid) e.preventDefault();
     });
+
+    (function showServerMessages() {
+      const params = new URLSearchParams(window.location.search);
+      const box = document.getElementById('serverError');
+      if (params.get('error') === 'role') {
+        box.textContent = 'Selected role does not match this account. Choose the correct role and try again.';
+        box.style.display = 'block';
+      } else if (params.has('error')) {
+        box.textContent = 'Invalid username or password.';
+        box.style.display = 'block';
+      }
+      if (params.get('logout') !== null) {
+        box.textContent = 'You have been logged out successfully.';
+        box.style.display = 'block';
+        box.style.background = '#e0faf4';
+        box.style.color = '#00b894';
+        box.style.borderColor = '#b2dfdb';
+      }
+    })();
   </script>
 </body>
 

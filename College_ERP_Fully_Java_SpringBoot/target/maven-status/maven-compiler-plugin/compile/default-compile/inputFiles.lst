@@ -27,6 +27,7 @@
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/InventoryAssetService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/admin/AcademicCalendarController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/model/Book.java
+/home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/config/WebMvcConfig.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/admin/SuperAdminDashboardController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/model/Exam.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/admin/AdminFacultyController.java
@@ -38,6 +39,7 @@
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/DepartmentService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/student/StudentAttendanceController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/repository/FacultyRepository.java
+/home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/faculty/FacultyProfileController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/SystemLogService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/BookService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/repository/LessonPlanRepository.java
@@ -46,6 +48,7 @@
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/AdminStudentService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/model/FeeStructure.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/HomeController.java
+/home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/AccountSettingsService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/admin/HRPayrollController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/model/EventSeminar.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/ResearchService.java
@@ -109,5 +112,6 @@
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/CollegeErpApplication.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/admin/AdminStudentController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/model/Payroll.java
+/home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/controller/admin/AdminProfileController.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/service/TransportService.java
 /home/sappu/IdeaProjects/College_ERP_Fully_Java_SpringBoot/src/main/java/com/college/erp/repository/InternalMarkRepository.java

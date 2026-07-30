@@ -51,11 +51,10 @@ public class StudentProgressAnalyticsController {
 
         // Dept-level stats
         long totalAttRec = students.stream()
-                .mapToLong(s -> attendanceService.getByUsername(s.getUsername()).size())
+                .mapToLong(s -> attendanceService.countCountableClasses(s.getUsername()))
                 .sum();
         long totalPresent = students.stream()
-                .mapToLong(s -> attendanceService.getByUsername(s.getUsername()).stream()
-                        .filter(a -> "Present".equals(a.getStatus())).count())
+                .mapToLong(s -> attendanceService.countPresent(s.getUsername()))
                 .sum();
         double deptAttPct = totalAttRec > 0
                 ? Math.round((totalPresent * 100.0 / totalAttRec) * 10) / 10.0
@@ -79,8 +78,8 @@ public class StudentProgressAnalyticsController {
 
                 long present = attList.stream().filter(a -> "Present".equals(a.getStatus())).count();
                 long absent  = attList.stream().filter(a -> "Absent".equals(a.getStatus())).count();
-                long late    = attList.stream().filter(a -> "Late".equals(a.getStatus())).count();
-                long total   = attList.size();
+                long classwork = attList.stream().filter(a -> "Classwork".equals(a.getStatus())).count();
+                long total   = present + absent;
                 double attPct = total > 0
                         ? Math.round((present * 100.0 / total) * 10) / 10.0
                         : 0.0;
@@ -89,7 +88,7 @@ public class StudentProgressAnalyticsController {
                 model.addAttribute("markList",  markList);
                 model.addAttribute("present",   present);
                 model.addAttribute("absent",    absent);
-                model.addAttribute("late",      late);
+                model.addAttribute("classwork", classwork);
                 model.addAttribute("totalAtt",  total);
                 model.addAttribute("attPct",    attPct);
 

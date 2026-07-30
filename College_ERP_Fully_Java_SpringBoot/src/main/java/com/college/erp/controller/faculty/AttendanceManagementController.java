@@ -63,16 +63,20 @@ public class AttendanceManagementController {
                 : List.of();
 
         model.addAttribute("courses", myCourses);
-        model.addAttribute("dates", attendanceService.getDates(username));
+        List<String> dates = attendanceService.getDates(username);
+        model.addAttribute("dates", dates);
 
+        String viewDate = (date != null && !date.isBlank()) ? date
+                : (!dates.isEmpty() ? dates.get(0) : null);
         if (subject != null && !subject.isBlank()) {
-            model.addAttribute("filteredRecords",
-                    attendanceService.getByFacultyAndSubject(username, subject));
             model.addAttribute("filterSubject", subject);
-        } else if (date != null && !date.isBlank()) {
-            model.addAttribute("filteredRecords",
-                    attendanceService.getByFacultyAndDate(username, date));
-            model.addAttribute("filterDate", date);
+        }
+        if (viewDate != null) {
+            model.addAttribute("filterDate", viewDate);
+            model.addAttribute("viewRecords",
+                    attendanceService.getByFacultyForView(username, viewDate, subject));
+        } else {
+            model.addAttribute("viewRecords", List.<Attendance>of());
         }
 
         List<Student> students = (faculty != null)
@@ -110,7 +114,9 @@ public class AttendanceManagementController {
                     .findFirst().orElse(null);
             if (student == null) continue;
 
-            Attendance att = new Attendance();
+            Attendance att = attendanceService
+                    .findExisting(stuUsername, subject, attendanceDate, username)
+                    .orElseGet(Attendance::new);
             att.setStudentUsername(stuUsername);
             att.setStudentName(student.getName());
             att.setDepartment(faculty != null ? faculty.getDepartment() : "");
@@ -156,25 +162,17 @@ public class AttendanceManagementController {
 
         String username = auth.getName();
 
-        // Determine the records to export based on filters
-        List<Attendance> records;
-        String fileLabel;
+        if (date == null || date.isBlank()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().write("Select a date before exporting attendance.");
+            return;
+        }
 
-        if (subject != null && !subject.isBlank() && date != null && !date.isBlank()) {
-            // Both subject and date filter
-            records = attendanceService.getByFacultyAndSubject(username, subject).stream()
-                    .filter(a -> date.equals(a.getDate()))
-                    .toList();
-            fileLabel = "attendance_" + subject.replaceAll("\\s+", "_") + "_" + date;
-        } else if (date != null && !date.isBlank()) {
-            records = attendanceService.getByFacultyAndDate(username, date);
-            fileLabel = "attendance_" + date;
-        } else if (subject != null && !subject.isBlank()) {
-            records = attendanceService.getByFacultyAndSubject(username, subject);
-            fileLabel = "attendance_" + subject.replaceAll("\\s+", "_");
-        } else {
-            records = attendanceService.getByFaculty(username);
-            fileLabel = "attendance_all";
+        List<Attendance> records = attendanceService.getByFacultyForView(username, date, subject);
+        String fileLabel = "attendance_" + date;
+        if (subject != null && !subject.isBlank()) {
+            fileLabel += "_" + subject.replaceAll("\\s+", "_");
         }
 
         // Build a lookup map: studentUsername → enrollmentNo

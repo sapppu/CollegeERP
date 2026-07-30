@@ -1,103 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <title>College ERP System</title>
-
     <style>
-        body{
-            font-family: Arial, Helvetica, sans-serif;
-            background: linear-gradient(to right,#1e3799,#4a69bd);
-            margin:0;
-            color:white;
-            text-align:center;
+        :root {
+            --admin: #1e3799;
+            --student: #16a085;
+            --faculty: #8e44ad;
         }
 
-        .container{
-            margin-top:120px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        h1{
-            font-size:40px;
-            margin-bottom:10px;
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        h2{
-            font-weight:normal;
-            margin-bottom:40px;
+        .bg-tri {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(125deg,
+                    var(--admin) 0%,
+                    var(--admin) 28%,
+                    var(--student) 42%,
+                    var(--student) 58%,
+                    var(--faculty) 72%,
+                    var(--faculty) 100%);
         }
 
-        .card-box{
-            display:flex;
-            justify-content:center;
-            gap:40px;
-            flex-wrap:wrap;
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 24px;
+            max-width: 520px;
         }
 
-        .card{
-            background:white;
-            color:#1e3799;
-            width:220px;
-            padding:25px;
-            border-radius:12px;
-            box-shadow:0 8px 20px rgba(0,0,0,0.2);
-            text-decoration:none;
-            transition:0.3s;
+        h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
         }
 
-        .card:hover{
-            transform:translateY(-8px);
-            background:#f1f2f6;
+        p {
+            font-size: 17px;
+            opacity: 0.95;
+            margin-bottom: 36px;
+            line-height: 1.5;
         }
 
-        .emoji{
-            font-size:50px;
+        .role-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 32px;
         }
 
-        .role{
-            font-size:22px;
-            font-weight:bold;
-            margin-top:10px;
+        .role-dots span {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .footer{
-            position:fixed;
-            bottom:10px;
-            width:100%;
-            font-size:14px;
-            opacity:0.8;
+        .role-dots .d-admin {
+            background: var(--admin);
+        }
+
+        .role-dots .d-student {
+            background: var(--student);
+        }
+
+        .role-dots .d-faculty {
+            background: var(--faculty);
+        }
+
+        .btn-login {
+            display: inline-block;
+            background: white;
+            color: #2d3436;
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 14px;
+            width: 100%;
+            font-size: 13px;
+            opacity: 0.85;
+            z-index: 1;
         }
     </style>
 </head>
 
 <body>
+    <div class="bg-tri" aria-hidden="true"></div>
 
-<div class="container">
-    <h1>🎓 College ERP System</h1>
-    <h2>Select Your Role to Continue</h2>
+    <div class="content">
+        <h1>🎓 College ERP</h1>
+        <p>One portal for Admin, Student, and Faculty — choose your role when you sign in.</p>
 
-    <div class="card-box">
+        <div class="role-dots" aria-hidden="true">
+            <span class="d-admin" title="Admin"></span>
+            <span class="d-student" title="Student"></span>
+            <span class="d-faculty" title="Faculty"></span>
+        </div>
 
-        <a href="/login" class="card">
-            <div class="emoji">👨‍💼</div>
-            <div class="role">Admin Login</div>
-        </a>
-
-        <a href="/login" class="card">
-            <div class="emoji">👨‍🎓</div>
-            <div class="role">Student Login</div>
-        </a>
-
-        <a href="/login" class="card">
-            <div class="emoji">👩‍🏫</div>
-            <div class="role">Faculty Login</div>
-        </a>
-
+        <a href="/login" class="btn-login">Sign in</a>
     </div>
-</div>
 
-<div class="footer">
-    College ERP © 2026
-</div>
-
+    <div class="footer">College ERP © 2026</div>
 </body>
+
 </html>

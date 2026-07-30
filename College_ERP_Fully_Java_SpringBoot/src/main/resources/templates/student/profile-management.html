@@ -3,6 +3,8 @@
 
 <head>
     <title>My Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <link rel="stylesheet" href="/css/profile-photo-crop.css">
     <style>
         * {
             margin: 0;
@@ -166,6 +168,57 @@
             color: white;
             font-weight: bold;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .btn-secondary {
+            background: #dfe6e9;
+            color: #555;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-danger-outline {
+            background: #fdecea;
+            color: #e55039;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cards-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        .alert-error {
+            background: #fdecea;
+            color: #c0392b;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .profile-name h2 {
@@ -225,6 +278,12 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
@@ -366,9 +425,30 @@
 
         <div class="content">
 
-            <!-- Success Alert -->
-            <div class="alert-success" th:if="${param.success}">
+            <!-- Success / error alerts -->
+            <div class="alert-success" th:if="${param.success != null and param.success[0] == 'profile'}">
                 ✅ Profile updated successfully!
+            </div>
+            <div class="alert-success" th:if="${param.pwd != null and param.pwd[0] == 'success'}">
+                ✅ Password changed successfully!
+            </div>
+            <div class="alert-success" th:if="${param.photo != null and (param.photo[0] == 'success' or param.photo[0] == 'removed')}">
+                ✅ Profile picture updated.
+            </div>
+            <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'wrong'}">
+                Old password is incorrect.
+            </div>
+            <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'mismatch'}">
+                New password and confirmation do not match.
+            </div>
+            <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'short'}">
+                Password must be at least 4 characters.
+            </div>
+            <div class="alert-error" th:if="${param.photo != null and param.photo[0] == 'type'}">
+                Please upload a JPG, PNG, WebP, or GIF image.
+            </div>
+            <div class="alert-error" th:if="${param.photo != null and param.photo[0] == 'size'}">
+                Image must be 2 MB or smaller.
             </div>
 
             <!-- No Profile Found -->
@@ -378,7 +458,10 @@
 
             <!-- Profile Header -->
             <div class="profile-header" th:if="${student != null}">
-                <div class="avatar" th:text="${#strings.substring(student.name, 0, 1)}">S</div>
+                <div class="avatar">
+                    <img th:if="${profilePictureUrl != null}" th:src="${profilePictureUrl}" alt="Profile photo">
+                    <span th:if="${profilePictureUrl == null}" th:text="${#strings.substring(student.name, 0, 1)}">S</span>
+                </div>
                 <div class="profile-name">
                     <h2 th:text="${student.name}">Student Name</h2>
                     <p th:text="${student.email}">email@example.com</p>
@@ -386,6 +469,13 @@
                         <span class="p-badge green" th:text="${student.department}">Department</span>
                         <span class="p-badge blue" th:text="'Year: ' + ${student.year}">Year</span>
                         <span class="p-badge orange" th:text="'Enroll: ' + ${student.enrollmentNo}">Enrollment</span>
+                    </div>
+                    <div class="photo-actions">
+                        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                        <button type="button" class="btn-secondary" onclick="document.getElementById('photoInput').click()">📷 Choose &amp; crop photo</button>
+                        <form th:if="${profilePictureUrl != null}" action="/student/remove-profile-picture" method="post" onsubmit="return confirm('Remove profile picture?');" style="display:inline;">
+                            <button type="submit" class="btn-danger-outline">🗑️ Remove Photo</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -454,6 +544,24 @@
                     </form>
                 </div>
 
+                <div class="card">
+                    <div class="card-title">🔒 Change Password</div>
+                    <form action="/student/changepassword" method="post" id="passwordForm" novalidate>
+                        <label>Current Password</label>
+                        <input type="password" name="oldPassword" id="oldPassword" placeholder="Enter current password" autocomplete="current-password">
+
+                        <label>New Password</label>
+                        <input type="password" name="newPassword" id="newPassword" placeholder="At least 4 characters" autocomplete="new-password">
+                        <span class="error-msg" id="newPassword-err"></span>
+
+                        <label>Confirm New Password</label>
+                        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Re-enter new password" autocomplete="new-password">
+                        <span class="error-msg" id="confirmPassword-err"></span>
+
+                        <button type="submit" class="btn-save" style="margin-top:4px;">🔑 Update Password</button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
@@ -461,7 +569,8 @@
     <script>
         function se(id, eid, msg) { var el = document.getElementById(id); if (el) el.classList.add('invalid'); var e = document.getElementById(eid); if (e) { e.textContent = msg; e.style.display = 'block'; } }
         function ce(id, eid) { var el = document.getElementById(id); if (el) el.classList.remove('invalid'); var e = document.getElementById(eid); if (e) e.style.display = 'none'; }
-        document.getElementById('profileForm').addEventListener('submit', function (ev) {
+        var profileForm = document.getElementById('profileForm');
+        if (profileForm) profileForm.addEventListener('submit', function (ev) {
             var valid = true;
             var email = document.getElementById('profEmail').value.trim();
             var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -472,6 +581,29 @@
             if (phone !== '' && !/^\d{10}$/.test(phone)) { se('profPhone', 'profPhone-err', 'Phone number must be exactly 10 digits.'); valid = false; }
             else ce('profPhone', 'profPhone-err');
             if (!valid) ev.preventDefault();
+        });
+
+        var passwordForm = document.getElementById('passwordForm');
+        if (passwordForm) passwordForm.addEventListener('submit', function (ev) {
+            var valid = true;
+            var oldP = document.getElementById('oldPassword').value;
+            var newP = document.getElementById('newPassword').value;
+            var confirmP = document.getElementById('confirmPassword').value;
+            ce('newPassword', 'newPassword-err');
+            ce('confirmPassword', 'confirmPassword-err');
+            if (!oldP.trim()) { valid = false; alert('Current password is required.'); }
+            if (newP.length < 4) { se('newPassword', 'newPassword-err', 'At least 4 characters required.'); valid = false; }
+            if (newP !== confirmP) { se('confirmPassword', 'confirmPassword-err', 'Passwords do not match.'); valid = false; }
+            if (!valid) ev.preventDefault();
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+    <script src="/js/profile-photo-crop.js"></script>
+    <script>
+        initProfilePhotoCrop({
+            fileInputId: 'photoInput',
+            uploadUrl: '/student/upload-profile-picture',
+            accentColor: '#16a085'
         });
     </script>
 </body>

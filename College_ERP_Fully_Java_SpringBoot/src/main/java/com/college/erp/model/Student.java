@@ -20,6 +20,7 @@ public class Student {
     private String year;
     private String enrollmentNo;
     private String username;
+    private String profilePicture;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -53,4 +54,7 @@ public class Student {
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
+
+    public String getProfilePicture() { return profilePicture; }
+    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
 }

@@ -12,6 +12,10 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByMarkedBy(String markedBy);
     List<Attendance> findByMarkedByAndSubject(String markedBy, String subject);
     List<Attendance> findByMarkedByAndDate(String markedBy, String date);
+    List<Attendance> findByMarkedByAndDateAndSubject(String markedBy, String date, String subject);
+
+    java.util.Optional<Attendance> findFirstByStudentUsernameAndSubjectAndDateAndMarkedBy(
+            String studentUsername, String subject, String date, String markedBy);
 
     @Query("SELECT DISTINCT a.subject FROM Attendance a WHERE a.markedBy = :username")
     List<String> findDistinctSubjectsByFaculty(String username);
@@ -29,11 +33,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     List<Attendance> findByStudentUsername(String studentUsername);
 
+    /** Row: subject, present, absent, classwork, countableTotal (Present + Absent only) */
     @Query("SELECT a.subject, " +
             "SUM(CASE WHEN a.status = 'Present' THEN 1 ELSE 0 END), " +
             "SUM(CASE WHEN a.status = 'Absent'  THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN a.status = 'Late'    THEN 1 ELSE 0 END), " +
-            "COUNT(a) " +
+            "SUM(CASE WHEN a.status = 'Classwork' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN a.status IN ('Present', 'Absent') THEN 1 ELSE 0 END) " +
             "FROM Attendance a WHERE a.studentUsername = :username GROUP BY a.subject")
     List<Object[]> findSubjectSummaryByUsername(String username);
 }

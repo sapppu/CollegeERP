@@ -177,6 +177,34 @@
             font-size: 26px;
             font-weight: bold;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .welcome-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .topbar-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #8e44ad;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .topbar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .welcome-info h2 {
@@ -487,6 +515,7 @@
                 Progress</a>
 
             <div class="menu-label">Personal</div>
+            <a href="/faculty/profilemanagement" class="menu-item"><span class="icon">👤</span> My Profile</a>
             <a href="/faculty/facultyleave" class="menu-item"><span class="icon">🏖️</span> My Leave</a>
             <a href="/faculty/researchpublication" class="menu-item"><span class="icon">🔬</span> Research &amp;
                 Publication</a>
@@ -501,6 +530,10 @@
             <h1>Faculty Dashboard</h1>
             <div class="topbar-right">
                 <span class="date-label" id="dateLabel"></span>
+                <div class="topbar-avatar" th:if="${faculty != null}">
+                    <img th:if="${profilePictureUrl != null}" th:src="${profilePictureUrl}" alt="Profile">
+                    <span th:if="${profilePictureUrl == null}" th:text="${#strings.substring(faculty.name, 0, 1)}">F</span>
+                </div>
                 <span class="faculty-badge"
                     th:text="${faculty != null ? '👩‍🏫 ' + faculty.name : '👩‍🏫 Faculty'}">👩‍🏫 Faculty</span>
             </div>
@@ -510,7 +543,10 @@
 
             <!-- Welcome Banner -->
             <div class="welcome-banner" th:if="${faculty != null}">
-                <div class="welcome-avatar" th:text="${#strings.substring(faculty.name, 0, 1)}">F</div>
+                <div class="welcome-avatar">
+                    <img th:if="${profilePictureUrl != null}" th:src="${profilePictureUrl}" alt="Profile">
+                    <span th:if="${profilePictureUrl == null}" th:text="${#strings.substring(faculty.name, 0, 1)}">F</span>
+                </div>
                 <div class="welcome-info">
                     <h2 th:text="'Welcome, ' + ${faculty.name} + '!'">Welcome!</h2>
                     <p

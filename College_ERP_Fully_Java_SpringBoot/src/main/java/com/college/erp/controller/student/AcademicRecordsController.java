@@ -41,22 +41,21 @@ public class AcademicRecordsController {
                     courseRepo.findByDepartment(student.getDepartment()));
 
             // ── Tab 2: Attendance (real subject-wise summary) ─────────────────
-            // Object[] per row = [subject, present, absent, late, total]
+            // Object[] per row = [subject, present, absent, classwork, countableTotal]
             var subjectSummary = attendanceService.getSubjectSummary(username);
             model.addAttribute("subjectSummary", subjectSummary);
 
-            // Overall attendance %
             long present = attendanceService.countPresent(username);
             long absent  = attendanceService.countAbsent(username);
-            long late    = attendanceService.countLate(username);
-            long total   = present + absent + late;
+            long classwork = attendanceService.countClasswork(username);
+            long total   = attendanceService.countCountableClasses(username);
             double attPct = total > 0
                     ? Math.round((present * 100.0 / total) * 10.0) / 10.0
                     : 0.0;
             model.addAttribute("attPct",   attPct);
             model.addAttribute("present",  present);
             model.addAttribute("absent",   absent);
-            model.addAttribute("late",     late);
+            model.addAttribute("classwork", classwork);
             model.addAttribute("totalAtt", total);
 
             // ── Tab 3: Internal Marks (real from DB) ──────────────────────────

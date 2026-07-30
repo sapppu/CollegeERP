@@ -29,8 +29,8 @@ public class StudentAttendanceController {
 
         long present = attendanceService.countPresent(username);
         long absent  = attendanceService.countAbsent(username);
-        long late    = attendanceService.countLate(username);
-        long total   = present + absent + late;
+        long classwork = attendanceService.countClasswork(username);
+        long total   = attendanceService.countCountableClasses(username);
 
         double percentage = total > 0
                 ? Math.round((present * 100.0 / total) * 10.0) / 10.0
@@ -41,7 +41,7 @@ public class StudentAttendanceController {
 
         model.addAttribute("present",         present);
         model.addAttribute("absent",          absent);
-        model.addAttribute("late",            late);
+        model.addAttribute("classwork",       classwork);
         model.addAttribute("total",           total);
         model.addAttribute("percentage",      percentage);
         model.addAttribute("attendanceColor", attendanceColor);

@@ -59,8 +59,23 @@ public class AttendanceService {
         return repo.countByStudentUsernameAndStatus(studentUsername, "Absent");
     }
 
-    public long countLate(String studentUsername) {
-        return repo.countByStudentUsernameAndStatus(studentUsername, "Late");
+    public long countClasswork(String studentUsername) {
+        return repo.countByStudentUsernameAndStatus(studentUsername, "Classwork");
+    }
+
+    /** Classes that count toward attendance % (Present + Absent only). */
+    public long countCountableClasses(String studentUsername) {
+        return countPresent(studentUsername) + countAbsent(studentUsername);
+    }
+
+    public List<Attendance> getByFacultyForView(String username, String date, String subject) {
+        if (date == null || date.isBlank()) {
+            return List.of();
+        }
+        if (subject != null && !subject.isBlank()) {
+            return repo.findByMarkedByAndDateAndSubject(username, date, subject);
+        }
+        return repo.findByMarkedByAndDate(username, date);
     }
 
     public List<Attendance> getByUsername(String studentUsername) {
@@ -69,5 +84,11 @@ public class AttendanceService {
 
     public List<Object[]> getSubjectSummary(String studentUsername) {
         return repo.findSubjectSummaryByUsername(studentUsername);
+    }
+
+    public java.util.Optional<Attendance> findExisting(String studentUsername, String subject,
+                                                       String date, String markedBy) {
+        return repo.findFirstByStudentUsernameAndSubjectAndDateAndMarkedBy(
+                studentUsername, subject, date, markedBy);
     }
 }

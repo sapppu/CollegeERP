@@ -68,7 +68,7 @@
         .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         .badge-present { background: #e0faf4; color: #00b894; }
         .badge-absent  { background: #fdecea; color: #e55039; }
-        .badge-late    { background: #fef3e2; color: #e67e22; }
+        .badge-classwork { background: #eaf4ff; color: #0984e3; }
         .empty-msg { text-align: center; color: #aaa; padding: 40px; font-size: 14px; }
         .filter-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px; flex-wrap: wrap; }
         .filter-row label { font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 4px; }
@@ -128,7 +128,7 @@
             </div>
             <div class="stat-card orange">
                 <div class="stat-icon">⏰</div>
-                <div class="stat-info"><h3 th:text="${late}">0</h3><p>Late</p></div>
+                <div class="stat-info"><h3 th:text="${classwork}">0</h3><p>Classwork</p></div>
             </div>
             <div class="stat-card blue">
                 <div class="stat-icon">📅</div>
@@ -159,7 +159,7 @@
 
                 <!-- ✅ FIX: subjectSummary is List<Object[]>, not a Map.
                      Use #lists.isEmpty() instead of #maps.isEmpty().
-                     Each Object[] row = [subject, present, absent, late, total] -->
+                     Each Object[] row = [subject, present, absent, classwork, countableTotal] -->
                 <div th:if="${#lists.isEmpty(subjectSummary)}" class="empty-msg">
                     No attendance records found yet.
                 </div>
@@ -167,7 +167,7 @@
                 <!-- ✅ FIX: iterate as list, access columns by index [0]..[4] -->
                 <div th:each="row : ${subjectSummary}" class="subject-row">
                     <div class="subject-row-top">
-                        <!-- row[0]=subject, row[1]=present, row[2]=absent, row[3]=late, row[4]=total -->
+                        <!-- row[0]=subject, row[1]=present, row[2]=absent, row[3]=classwork, row[4]=countableTotal -->
                         <span class="subject-name" th:text="${row[0]}"></span>
                         <span class="subject-pct"
                               th:with="pct=${row[4] != null and row[4] > 0 ? #numbers.formatDecimal(row[1] * 100.0 / row[4], 1, 1) : '0.0'}"
@@ -181,7 +181,7 @@
                         </div>
                     </div>
                     <div style="font-size:12px;color:#888;margin-top:4px;"
-                         th:text="'Present: ' + ${row[1]} + '  |  Absent: ' + ${row[2]} + '  |  Late: ' + ${row[3]} + '  |  Total: ' + ${row[4]}">
+                         th:text="'Present: ' + ${row[1]} + '  |  Absent: ' + ${row[2]} + '  |  Classwork: ' + ${row[3]} + '  |  Counted classes: ' + ${row[4]}">
                     </div>
                 </div>
             </div>
@@ -252,7 +252,8 @@
                             <td>
                                 <span th:if="${r.status == 'Present'}" class="badge badge-present">✅ Present</span>
                                 <span th:if="${r.status == 'Absent'}"  class="badge badge-absent">❌ Absent</span>
-                                <span th:if="${r.status == 'Late'}"    class="badge badge-late">⏰ Late</span>
+                                <span th:if="${r.status == 'Classwork'}" class="badge badge-classwork">📚 Classwork</span>
+                                <span th:if="${r.status == 'Late'}"    class="badge badge-classwork">📚 Classwork</span>
                             </td>
                             <td th:text="${r.markedBy}"></td>
                         </tr>
@@ -294,7 +295,8 @@
                             <td>
                                 <span th:if="${r.status == 'Present'}" class="badge badge-present">✅ Present</span>
                                 <span th:if="${r.status == 'Absent'}"  class="badge badge-absent">❌ Absent</span>
-                                <span th:if="${r.status == 'Late'}"    class="badge badge-late">⏰ Late</span>
+                                <span th:if="${r.status == 'Classwork'}" class="badge badge-classwork">📚 Classwork</span>
+                                <span th:if="${r.status == 'Late'}"    class="badge badge-classwork">📚 Classwork</span>
                             </td>
                             <td th:text="${r.markedBy}"></td>
                         </tr>
@@ -322,7 +324,8 @@
                             <td>
                                 <span th:if="${r.status == 'Present'}" class="badge badge-present">✅ Present</span>
                                 <span th:if="${r.status == 'Absent'}"  class="badge badge-absent">❌ Absent</span>
-                                <span th:if="${r.status == 'Late'}"    class="badge badge-late">⏰ Late</span>
+                                <span th:if="${r.status == 'Classwork'}" class="badge badge-classwork">📚 Classwork</span>
+                                <span th:if="${r.status == 'Late'}"    class="badge badge-classwork">📚 Classwork</span>
                             </td>
                             <td th:text="${r.markedBy}"></td>
                         </tr>

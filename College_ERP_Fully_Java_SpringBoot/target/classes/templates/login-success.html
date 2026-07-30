@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome — College ERP</title>
+  <style>
+    :root {
+      --admin: #1e3799;
+      --student: #16a085;
+      --faculty: #8e44ad;
+      --role-color: var(--admin);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bg-base {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(125deg,
+          var(--admin) 0%,
+          var(--admin) 28%,
+          var(--student) 42%,
+          var(--student) 58%,
+          var(--faculty) 72%,
+          var(--faculty) 100%);
+    }
+
+    .bg-role {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background: var(--role-color);
+      opacity: 0;
+      animation: roleFadeIn 1.35s ease forwards;
+    }
+
+    @keyframes roleFadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .welcome {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 24px;
+      opacity: 0;
+      animation: textFadeIn 0.8s ease 0.55s forwards;
+    }
+
+    @keyframes textFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .welcome .icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+
+    .welcome h1 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      font-size: 15px;
+      opacity: 0.92;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255, 255, 255, 0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      margin-top: 28px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-base" aria-hidden="true"></div>
+  <div class="bg-role" id="bgRole" aria-hidden="true"></div>
+
+  <div class="welcome">
+    <div class="icon" id="welcomeIcon">🎓</div>
+    <h1 id="welcomeTitle">Welcome</h1>
+    <p id="welcomeSub">Opening your portal…</p>
+    <div class="spinner" aria-hidden="true"></div>
+  </div>
+
+  <script>
+    const meta = {
+      admin: {
+        color: '#1e3799',
+        icon: '👨‍💼',
+        title: 'Welcome, Admin',
+        url: '/admin/dashboard'
+      },
+      student: {
+        color: '#16a085',
+        icon: '👨‍🎓',
+        title: 'Welcome, Student',
+        url: '/student/studentdashboard'
+      },
+      faculty: {
+        color: '#8e44ad',
+        icon: '👩‍🏫',
+        title: 'Welcome, Faculty',
+        url: '/faculty/dashboard'
+      }
+    };
+
+    const role = (new URLSearchParams(window.location.search).get('role') || 'admin').toLowerCase();
+    const cfg = meta[role] || meta.admin;
+
+    document.documentElement.style.setProperty('--role-color', cfg.color);
+    document.getElementById('welcomeIcon').textContent = cfg.icon;
+    document.getElementById('welcomeTitle').textContent = cfg.title;
+
+    setTimeout(function () {
+      window.location.href = cfg.url;
+    }, 1600);
+  </script>
+</body>
+
+</html>

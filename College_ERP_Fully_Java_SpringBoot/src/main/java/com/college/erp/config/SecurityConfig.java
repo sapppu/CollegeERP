@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -59,20 +60,32 @@ public class SecurityConfig {
                             boolean isFaculty = authorities.stream()
                                     .anyMatch(a -> a.getAuthority().equals("ROLE_FACULTY"));
 
-                            if (isAdmin) {
-                                response.sendRedirect("/admin/dashboard");
-                            } else if (isStudent) {
-                                response.sendRedirect("/student/studentdashboard");
-                            } else if (isFaculty) {
-                                response.sendRedirect("/faculty/dashboard");
+                            String actualRole = isAdmin ? "ADMIN"
+                                    : isStudent ? "STUDENT"
+                                    : isFaculty ? "FACULTY" : "";
+
+                            String selectedRole = request.getParameter("role");
+                            if (selectedRole != null && !selectedRole.isBlank()
+                                    && !selectedRole.equalsIgnoreCase(actualRole)) {
+                                new SecurityContextLogoutHandler().logout(request, response, authentication);
+                                response.sendRedirect("/login?error=role");
+                                return;
                             }
+
+                            String roleKey = switch (actualRole) {
+                                case "ADMIN" -> "admin";
+                                case "STUDENT" -> "student";
+                                case "FACULTY" -> "faculty";
+                                default -> "admin";
+                            };
+                            response.sendRedirect("/login-success?role=" + roleKey);
                         })
 
                         .permitAll()
                 )
 
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
 

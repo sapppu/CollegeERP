@@ -3,6 +3,7 @@ package com.college.erp.controller.faculty;
 import com.college.erp.model.Faculty;
 import com.college.erp.repository.FacultyRepository;
 import com.college.erp.repository.StudentRepository;
+import com.college.erp.service.AccountSettingsService;
 import com.college.erp.service.AttendanceService;
 import com.college.erp.service.ExamService;
 import com.college.erp.service.LeaveApplicationService;
@@ -23,19 +24,22 @@ public class FacultyDashboardController {
     private final LessonPlanService       planService;
     private final ExamService             examService;
     private final LeaveApplicationService leaveService;
+    private final AccountSettingsService  accountSettings;
 
     public FacultyDashboardController(FacultyRepository       facultyRepo,
                                       StudentRepository        studentRepo,
                                       AttendanceService        attendanceService,
                                       LessonPlanService        planService,
                                       ExamService              examService,
-                                      LeaveApplicationService  leaveService) {
+                                      LeaveApplicationService  leaveService,
+                                      AccountSettingsService   accountSettings) {
         this.facultyRepo       = facultyRepo;
         this.studentRepo       = studentRepo;
         this.attendanceService = attendanceService;
         this.planService       = planService;
         this.examService       = examService;
         this.leaveService      = leaveService;
+        this.accountSettings   = accountSettings;
     }
 
     @GetMapping("/faculty/dashboard")
@@ -44,6 +48,10 @@ public class FacultyDashboardController {
         String  username = auth.getName();
         Faculty faculty  = facultyRepo.findByUsername(username);
         model.addAttribute("faculty", faculty);
+        if (faculty != null && faculty.getProfilePicture() != null) {
+            model.addAttribute("profilePictureUrl",
+                    accountSettings.publicUrl(faculty.getProfilePicture()));
+        }
 
         if (faculty != null) {
 

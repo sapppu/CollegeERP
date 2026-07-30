@@ -4,6 +4,7 @@ import com.college.erp.model.Student;
 import com.college.erp.repository.CourseRepository;
 import com.college.erp.repository.FeeStructureRepository;
 import com.college.erp.repository.StudentRepository;
+import com.college.erp.service.AccountSettingsService;
 import com.college.erp.service.AttendanceService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,15 +18,18 @@ public class StudentDashboardController {
     private final AttendanceService      attendanceService;
     private final CourseRepository       courseRepo;
     private final FeeStructureRepository feeRepo;
+    private final AccountSettingsService accountSettings;
 
     public StudentDashboardController(StudentRepository      studentRepo,
                                       AttendanceService      attendanceService,
                                       CourseRepository       courseRepo,
-                                      FeeStructureRepository feeRepo) {
+                                      FeeStructureRepository feeRepo,
+                                      AccountSettingsService accountSettings) {
         this.studentRepo       = studentRepo;
         this.attendanceService = attendanceService;
         this.courseRepo        = courseRepo;
         this.feeRepo           = feeRepo;
+        this.accountSettings   = accountSettings;
     }
 
     @GetMapping("/student/studentdashboard")
@@ -34,14 +38,18 @@ public class StudentDashboardController {
         String  username = auth.getName();
         Student student  = studentRepo.findByUsername(username);
         model.addAttribute("student", student);
+        if (student != null && student.getProfilePicture() != null) {
+            model.addAttribute("profilePictureUrl",
+                    accountSettings.publicUrl(student.getProfilePicture()));
+        }
 
         if (student != null) {
 
             // Attendance %
             long present = attendanceService.countPresent(username);
             long absent  = attendanceService.countAbsent(username);
-            long late    = attendanceService.countLate(username);
-            long total   = present + absent + late;
+            long classwork = attendanceService.countClasswork(username);
+            long total   = attendanceService.countCountableClasses(username);
             double attPct = total > 0
                     ? Math.round((present * 100.0 / total) * 10.0) / 10.0
                     : 0.0;

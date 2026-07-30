@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <link rel="stylesheet" href="/css/profile-photo-crop.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background: #8e44ad; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; }
+        .sidebar-menu { flex: 1; padding: 15px 0; overflow-y: auto; }
+        .menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #d7bde2; }
+        .menu-item .icon { width: 22px; text-align: center; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { color: rgba(255,255,255,0.8); text-decoration: none; display: flex; gap: 10px; padding: 10px; border-radius: 8px; }
+        .main { margin-left: 250px; flex: 1; }
+        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; }
+        .topbar h1 { font-size: 20px; color: #8e44ad; }
+        .faculty-badge { background: #8e44ad; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .content { padding: 30px; }
+        .profile-header { background: white; border-radius: 14px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; gap: 28px; align-items: center; margin-bottom: 24px; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #8e44ad, #9b59b6); display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+        .btn-secondary { background: #f3e5ff; color: #8e44ad; padding: 8px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-danger-outline { background: #fdecea; color: #e55039; padding: 8px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        @media (max-width: 900px) { .cards-grid { grid-template-columns: 1fr; } }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .card-title { font-size: 15px; font-weight: bold; border-bottom: 2px solid #f1f2f6; padding-bottom: 12px; margin-bottom: 18px; }
+        .info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #f8f9fa; font-size: 14px; }
+        .info-label { color: #888; }
+        .info-value { font-weight: bold; color: #2d3436; }
+        label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+        input:focus { border-color: #8e44ad; outline: none; }
+        .btn-save { background: #8e44ad; color: white; padding: 11px; border: none; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
+        .alert-success { background: #f3e5ff; color: #8e44ad; border: 1px solid #e1bee7; border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; font-weight: bold; font-size: 14px; }
+        .alert-error { background: #fdecea; color: #c0392b; border: 1px solid #f5c6cb; border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; font-weight: bold; font-size: 14px; }
+        .no-profile { text-align: center; padding: 50px; color: #aaa; }
+        .error-msg { color: #e55039; font-size: 11px; margin-top: -12px; margin-bottom: 10px; display: none; }
+        .invalid { border-color: #e55039 !important; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-brand"><span>🎓</span><div><div>College ERP</div><div style="font-size:11px;opacity:0.7;">Faculty Portal</div></div></div>
+    <nav class="sidebar-menu">
+        <div class="menu-label">Main</div>
+        <a href="/faculty/dashboard" class="menu-item"><span class="icon">📊</span> Dashboard</a>
+        <div class="menu-label">Teaching</div>
+        <a href="/faculty/lessonplanning" class="menu-item"><span class="icon">🗒️</span> Lesson Planning</a>
+        <a href="/faculty/attendancemanagement" class="menu-item"><span class="icon">📋</span> Attendance</a>
+        <a href="/faculty/internalassessment" class="menu-item"><span class="icon">📊</span> Internal Assessment</a>
+        <a href="/faculty/studentprogressanalytics" class="menu-item"><span class="icon">📈</span> Student Progress</a>
+        <div class="menu-label">Personal</div>
+        <a href="/faculty/profilemanagement" class="menu-item active"><span class="icon">👤</span> My Profile</a>
+        <a href="/faculty/facultyleave" class="menu-item"><span class="icon">🏖️</span> My Leave</a>
+        <a href="/faculty/researchpublication" class="menu-item"><span class="icon">🔬</span> Research</a>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout"><span>🚪</span> Logout</a></div>
+</div>
+<div class="main">
+    <div class="topbar"><h1>👤 My Profile</h1><span class="faculty-badge">👩‍🏫 Faculty</span></div>
+    <div class="content">
+        <div class="alert-success" th:if="${param.success != null and param.success[0] == 'profile'}">✅ Profile updated successfully!</div>
+        <div class="alert-success" th:if="${param.pwd != null and param.pwd[0] == 'success'}">✅ Password changed successfully!</div>
+        <div class="alert-success" th:if="${param.photo != null and (param.photo[0] == 'success' or param.photo[0] == 'removed')}">✅ Profile picture updated.</div>
+        <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'wrong'}">Old password is incorrect.</div>
+        <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'mismatch'}">New password and confirmation do not match.</div>
+        <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'short'}">Password must be at least 4 characters.</div>
+        <div class="alert-error" th:if="${param.photo != null and param.photo[0] == 'type'}">Please upload a JPG, PNG, WebP, or GIF image.</div>
+        <div class="alert-error" th:if="${param.photo != null and param.photo[0] == 'size'}">Image must be 2 MB or smaller.</div>
+
+        <div class="no-profile" th:if="${faculty == null}">⚠️ Profile not found. Contact admin.</div>
+
+        <div class="profile-header" th:if="${faculty != null}">
+            <div class="avatar">
+                <img th:if="${profilePictureUrl != null}" th:src="${profilePictureUrl}" alt="Profile">
+                <span th:if="${profilePictureUrl == null}" th:text="${#strings.substring(faculty.name, 0, 1)}">F</span>
+            </div>
+            <div>
+                <h2 th:text="${faculty.name}">Name</h2>
+                <p th:text="${faculty.email}" style="color:#888;font-size:14px;margin-top:4px;"></p>
+                <p style="margin-top:8px;font-size:13px;"><strong th:text="${faculty.designation}"></strong> · <span th:text="${faculty.department}"></span></p>
+                <div class="photo-actions">
+                    <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('photoInput').click()">📷 Choose &amp; crop photo</button>
+                    <form th:if="${profilePictureUrl != null}" action="/faculty/remove-profile-picture" method="post" onsubmit="return confirm('Remove profile picture?');" style="display:inline;">
+                        <button type="submit" class="btn-danger-outline">🗑️ Remove Photo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards-grid" th:if="${faculty != null}">
+            <div class="card">
+                <div class="card-title">📋 Faculty Information</div>
+                <div class="info-row"><span class="info-label">Name</span><span class="info-value" th:text="${faculty.name}"></span></div>
+                <div class="info-row"><span class="info-label">Department</span><span class="info-value" th:text="${faculty.department}"></span></div>
+                <div class="info-row"><span class="info-label">Designation</span><span class="info-value" th:text="${faculty.designation}"></span></div>
+                <div class="info-row"><span class="info-label">Qualification</span><span class="info-value" th:text="${faculty.qualification}"></span></div>
+                <div class="info-row"><span class="info-label">Phone</span><span class="info-value" th:text="${faculty.phone}"></span></div>
+                <div class="info-row"><span class="info-label">Username</span><span class="info-value" th:text="${faculty.username}"></span></div>
+            </div>
+            <div class="card">
+                <div class="card-title">✏️ Update Contact Info</div>
+                <form action="/faculty/updateprofile" method="post" id="profileForm">
+                    <label>Email</label>
+                    <input type="email" name="email" id="profEmail" th:value="${faculty.email}">
+                    <label>Phone</label>
+                    <input type="text" name="phone" id="profPhone" th:value="${faculty.phone}">
+                    <label>Address</label>
+                    <input type="text" name="address" th:value="${faculty.address}">
+                    <button type="submit" class="btn-save">💾 Update Profile</button>
+                </form>
+            </div>
+            <div class="card">
+                <div class="card-title">🔒 Change Password</div>
+                <form action="/faculty/changepassword" method="post" id="passwordForm">
+                    <label>Current Password</label>
+                    <input type="password" name="oldPassword" id="oldPassword" autocomplete="current-password">
+                    <label>New Password</label>
+                    <input type="password" name="newPassword" id="newPassword" autocomplete="new-password">
+                    <span class="error-msg" id="newPassword-err"></span>
+                    <label>Confirm New Password</label>
+                    <input type="password" name="confirmPassword" id="confirmPassword" autocomplete="new-password">
+                    <span class="error-msg" id="confirmPassword-err"></span>
+                    <button type="submit" class="btn-save">🔑 Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function se(id,eid,msg){document.getElementById(id).classList.add('invalid');var e=document.getElementById(eid);e.textContent=msg;e.style.display='block';}
+    function ce(id,eid){document.getElementById(id).classList.remove('invalid');document.getElementById(eid).style.display='none';}
+    var passwordForm = document.getElementById('passwordForm');
+    if (passwordForm) passwordForm.addEventListener('submit',function(ev){
+        var ok=true,oldP=document.getElementById('oldPassword').value,newP=document.getElementById('newPassword').value,c=document.getElementById('confirmPassword').value;
+        ce('newPassword','newPassword-err');ce('confirmPassword','confirmPassword-err');
+        if(!oldP.trim()){ok=false;alert('Current password is required.');}
+        if(newP.length<4){se('newPassword','newPassword-err','At least 4 characters required.');ok=false;}
+        if(newP!==c){se('confirmPassword','confirmPassword-err','Passwords do not match.');ok=false;}
+        if(!ok)ev.preventDefault();
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script src="/js/profile-photo-crop.js"></script>
+<script>
+    initProfilePhotoCrop({
+        fileInputId: 'photoInput',
+        uploadUrl: '/faculty/upload-profile-picture',
+        accentColor: '#8e44ad'
+    });
+</script>
+</body>
+</html>

@@ -242,7 +242,7 @@
             </div>
 
             <!-- ── TAB 2: Attendance (real subject-wise from DB) ── -->
-            <!-- subjectSummary: Object[] = [subject, present, absent, late, total] -->
+            <!-- subjectSummary: Object[] = [subject, present, absent, classwork, countableTotal] -->
             <div id="tab-attendance" class="tab-content">
                 <div class="section-title">📅 Subject-wise Attendance</div>
 
@@ -257,8 +257,8 @@
                         <div style="font-size:12px; color:#888;">Absent</div>
                     </div>
                     <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
-                        <div style="font-size:22px; font-weight:bold; color:#e67e22;" th:text="${late}">0</div>
-                        <div style="font-size:12px; color:#888;">Late</div>
+                        <div style="font-size:22px; font-weight:bold; color:#0984e3;" th:text="${classwork}">0</div>
+                        <div style="font-size:12px; color:#888;">Classwork</div>
                     </div>
                     <div style="background:white; border-radius:10px; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center;">
                         <div style="font-size:22px; font-weight:bold; color:#0984e3;" th:text="${totalAtt}">0</div>
@@ -280,8 +280,8 @@
                             <th>Subject</th>
                             <th>Present</th>
                             <th>Absent</th>
-                            <th>Late</th>
-                            <th>Total</th>
+                            <th>Classwork</th>
+                            <th>Counted Classes</th>
                             <th>Attendance %</th>
                             <th>Status</th>
                         </tr>

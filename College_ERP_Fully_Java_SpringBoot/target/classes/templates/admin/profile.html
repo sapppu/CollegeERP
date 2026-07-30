@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Profile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background: #1e3799; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+        .sidebar-brand { padding: 25px 20px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-menu { flex: 1; padding: 15px 0; }
+        .menu-label { font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.5); padding: 15px 20px 5px; }
+        .menu-item { display: flex; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: #74b9ff; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
+        .main { margin-left: 250px; flex: 1; }
+        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; }
+        .topbar h1 { color: #1e3799; font-size: 20px; }
+        .admin-badge { background: #1e3799; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .content { padding: 30px; max-width: 720px; }
+        .card { background: white; border-radius: 12px; padding: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 22px; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 18px; color: #2d3436; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f8f9fa; font-size: 14px; }
+        label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 6px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 14px; font-size: 14px; }
+        input:focus { border-color: #1e3799; outline: none; }
+        .btn-save { background: #1e3799; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+        .alert-success { background: #eaf0ff; color: #1e3799; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: bold; }
+        .alert-error { background: #fdecea; color: #c0392b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: bold; }
+        .note { font-size: 13px; color: #888; margin-bottom: 16px; line-height: 1.5; }
+        .error-msg { color: #e55039; font-size: 11px; margin-top: -10px; margin-bottom: 10px; display: none; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-brand">🎓 College ERP<br><span style="font-size:11px;font-weight:normal;opacity:0.7;">Admin Panel</span></div>
+    <nav class="sidebar-menu">
+        <div class="menu-label">Main</div>
+        <a href="/admin/dashboard" class="menu-item"><span>📊</span> Dashboard</a>
+        <div class="menu-label">Account</div>
+        <a href="/admin/profile" class="menu-item active"><span>👤</span> My Profile</a>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout">🚪 Logout</a></div>
+</div>
+<div class="main">
+    <div class="topbar"><h1>👤 My Profile</h1><span class="admin-badge">👨‍💼 Admin</span></div>
+    <div class="content">
+        <div class="alert-success" th:if="${param.pwd != null and param.pwd[0] == 'success'}">✅ Password changed successfully!</div>
+        <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'wrong'}">Old password is incorrect.</div>
+        <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'mismatch'}">New password and confirmation do not match.</div>
+        <div class="alert-error" th:if="${param.pwd != null and param.pwd[0] == 'short'}">Password must be at least 4 characters.</div>
+
+        <div class="card">
+            <div class="card-title">Account</div>
+            <div class="info-row"><span>Username</span><strong th:text="${username}">admin</strong></div>
+            <div class="info-row"><span>Role</span><strong th:text="${role}">ROLE_ADMIN</strong></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🔒 Change Password</div>
+            <p class="note">You must enter your current password to set a new one.</p>
+            <form action="/admin/changepassword" method="post" id="passwordForm">
+                <label>Current Password</label>
+                <input type="password" name="oldPassword" id="oldPassword" autocomplete="current-password">
+                <label>New Password</label>
+                <input type="password" name="newPassword" id="newPassword" autocomplete="new-password">
+                <span class="error-msg" id="newPassword-err"></span>
+                <label>Confirm New Password</label>
+                <input type="password" name="confirmPassword" id="confirmPassword" autocomplete="new-password">
+                <span class="error-msg" id="confirmPassword-err"></span>
+                <button type="submit" class="btn-save">🔑 Update Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('passwordForm').addEventListener('submit', function (ev) {
+        var ok = true;
+        var oldP = document.getElementById('oldPassword').value;
+        var newP = document.getElementById('newPassword').value;
+        var c = document.getElementById('confirmPassword').value;
+        document.getElementById('newPassword-err').style.display = 'none';
+        document.getElementById('confirmPassword-err').style.display = 'none';
+        if (!oldP.trim()) { ok = false; alert('Current password is required.'); }
+        if (newP.length < 4) {
+            document.getElementById('newPassword-err').textContent = 'At least 4 characters required.';
+            document.getElementById('newPassword-err').style.display = 'block';
+            ok = false;
+        }
+        if (newP !== c) {
+            document.getElementById('confirmPassword-err').textContent = 'Passwords do not match.';
+            document.getElementById('confirmPassword-err').style.display = 'block';
+            ok = false;
+        }
+        if (!ok) ev.preventDefault();
+    });
+</script>
+</body>
+</html>
